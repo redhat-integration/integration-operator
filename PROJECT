@@ -1,0 +1,11 @@
+domain: redhat.com
+layout: go.kubebuilder.io/v2
+projectName: integration-operator
+repo: github.com/redhat-integration/integration-operator
+resources:
+- group: integration
+  kind: ProductOperators
+  version: v1
+version: 3-alpha
+plugins:
+  go.sdk.operatorframework.io/v2-alpha: {}

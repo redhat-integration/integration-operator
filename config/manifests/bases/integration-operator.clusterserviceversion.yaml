@@ -1,0 +1,107 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: '[]'
+    capabilities: Basic Install
+    operators.operatorframework.io/builder: operator-sdk-v1.0.0
+    operators.operatorframework.io/project_layout: go.kubebuilder.io/v2
+  name: integration-operator.vX.Y.Z
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions:
+    owned:
+    - description: ProductOperators is the Schema for the productoperators API
+      displayName: Product Operators
+      kind: ProductOperators
+      name: productoperators.integration.redhat.com
+      specDescriptors:
+      - displayName: Install 3scale Operator
+        path: install-3scale-operator
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Install AMQ Streams Operator
+        path: install-amq-streams-operator
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Install Apicurito Operator
+        path: install-apicurito-operator
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Install Camel K Operator
+        path: install-camel-k-operator
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Install Fuse Online Operator
+        path: install-fuse-online-operator
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Install Service Registry Operator
+        path: install-service-registry-operator
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Install Single Sign-On Operator
+        path: install-sso-operator
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      statusDescriptors:
+      - displayName: 3scale Operator
+        path: status-3scale-operator
+        x-descriptors:
+        - urn:alm:descriptor:text
+      - displayName: AMQ Streams Operator
+        path: status-amq-streams-operator
+        x-descriptors:
+        - urn:alm:descriptor:text
+      - displayName: Apicurito Operator
+        path: status-apicurito-operator
+        x-descriptors:
+        - urn:alm:descriptor:text
+      - displayName: Camel K Operator
+        path: status-camel-k-operator
+        x-descriptors:
+        - urn:alm:descriptor:text
+      - displayName: Fuse Online Operator
+        path: status-fuse-online-operator
+        x-descriptors:
+        - urn:alm:descriptor:text
+      - displayName: Service Registry Operator
+        path: status-service-registry-operator
+        x-descriptors:
+        - urn:alm:descriptor:text
+      - displayName: Single Sign-On Operator
+        path: status-sso-operator
+        x-descriptors:
+        - urn:alm:descriptor:text
+      version: v1
+  description: Installs Red Hat Integration product operators
+  displayName: Red Hat Integration
+  icon:
+  - base64data: ""
+    mediatype: ""
+  install:
+    spec:
+      deployments: null
+    strategy: ""
+  installModes:
+  - supported: true
+    type: OwnNamespace
+  - supported: true
+    type: SingleNamespace
+  - supported: false
+    type: MultiNamespace
+  - supported: true
+    type: AllNamespaces
+  keywords:
+  - integration
+  links:
+  - name: Integration Operator
+    url: https://integration-operator.domain
+  maintainers:
+  - email: abrianik@redhat.com
+    name: Alexandre Kieling
+  maturity: alpha
+  provider:
+    name: Red Hat
+  version: 0.0.0

@@ -1,0 +1,8 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: integration-operator
+  namespace: openshift-marketplace
+spec:
+  sourceType: grpc
+  image: quay.io/abkieling/my-index:1.0.13

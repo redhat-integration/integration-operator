@@ -1,0 +1,77 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.3.0
+  creationTimestamp: null
+  name: productoperators.integration.redhat.com
+spec:
+  group: integration.redhat.com
+  names:
+    kind: ProductOperators
+    listKind: ProductOperatorsList
+    plural: productoperators
+    singular: productoperators
+  scope: Cluster
+  subresources:
+    status: {}
+  validation:
+    openAPIV3Schema:
+      description: ProductOperators is the Schema for the productoperators API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: ProductOperatorsSpec defines the desired state of ProductOperators
+          properties:
+            install-3scale-operator:
+              type: boolean
+            install-amq-streams-operator:
+              type: boolean
+            install-apicurito-operator:
+              type: boolean
+            install-camel-k-operator:
+              type: boolean
+            install-fuse-online-operator:
+              type: boolean
+            install-service-registry-operator:
+              type: boolean
+            install-sso-operator:
+              type: boolean
+          type: object
+        status:
+          description: ProductOperatorsStatus defines the observed state of ProductOperators
+          properties:
+            status-3scale-operator:
+              type: string
+            status-amq-streams-operator:
+              type: string
+            status-apicurito-operator:
+              type: string
+            status-camel-k-operator:
+              type: string
+            status-fuse-online-operator:
+              type: string
+            status-service-registry-operator:
+              type: string
+            status-sso-operator:
+              type: string
+          type: object
+      type: object
+  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

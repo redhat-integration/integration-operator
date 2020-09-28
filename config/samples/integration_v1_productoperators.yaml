@@ -1,0 +1,12 @@
+apiVersion: integration.redhat.com/v1
+kind: ProductOperators
+metadata:
+  name: integration-product-operators
+spec:
+  install-3scale-operator: true
+  install-amq-streams-operator: true
+  install-apicurito-operator: false
+  install-camel-k-operator: false
+  install-fuse-online-operator: false
+  install-service-registry-operator: false
+  install-sso-operator: false
