@@ -5,4 +5,4 @@ metadata:
   namespace: openshift-marketplace
 spec:
   sourceType: grpc
-  image: quay.io/abkieling/my-index:1.0.13
+  image: quay.io/abkieling/my-index:1.0.21

@@ -5,94 +5,211 @@ metadata:
     alm-examples: |-
       [
         {
-          "apiVersion": "integration.redhat.com/v1",
-          "kind": "ProductOperators",
+          "apiVersion": "integration.redhat.com/v1alpha1",
+          "kind": "Installation",
           "metadata": {
-            "name": "integration-product-operators"
+            "name": "integration-installation"
           },
           "spec": {
-            "install-3scale-operator": true,
-            "install-amq-streams-operator": true,
-            "install-apicurito-operator": true,
-            "install-camel-k-operator": true,
-            "install-fuse-online-operator": true,
-            "install-service-registry-operator": true,
-            "install-sso-operator": true
+            "3scale-installation-plan": {
+              "approval-strategy": "Automatic",
+              "enabled": true,
+              "namespace": "integration-3scale",
+              "update-channel": "threescale-2.9"
+            },
+            "amq-streams-installation-plan": {
+              "approval-strategy": "Automatic",
+              "enabled": true,
+              "namespace": "integration-amq-streams",
+              "update-channel": "stable"
+            },
+            "api-designer-installation-plan": {
+              "approval-strategy": "Automatic",
+              "enabled": true,
+              "namespace": "integration-apicurito",
+              "update-channel": "alpha"
+            },
+            "camel-k-installation-plan": {
+              "approval-strategy": "Automatic",
+              "enabled": true,
+              "namespace": "integration-camel-k",
+              "update-channel": "techpreview"
+            },
+            "fuse-online-installation-plan": {
+              "approval-strategy": "Automatic",
+              "enabled": true,
+              "namespace": "integration-fuse-online",
+              "update-channel": "alpha"
+            },
+            "service-registry-installation-plan": {
+              "approval-strategy": "Automatic",
+              "enabled": true,
+              "namespace": "integration-service-registry",
+              "update-channel": "serviceregistry-1.0"
+            },
+            "sso-installation-plan": {
+              "approval-strategy": "Automatic",
+              "enabled": true,
+              "namespace": "integration-sso",
+              "update-channel": "alpha"
+            }
           }
         }
       ]
     capabilities: Basic Install
     operators.operatorframework.io/builder: operator-sdk-v1.0.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v2
-  name: integration-operator.v0.0.12
+  name: integration-operator.v0.0.21
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
   customresourcedefinitions:
     owned:
-    - description: ProductOperators is the Schema for the productoperators API
-      displayName: Product Operators
-      kind: ProductOperators
-      name: productoperators.integration.redhat.com
+    - description: Installation is the Schema for the installations API
+      displayName: Installation
+      kind: Installation
+      name: installations.integration.redhat.com
       specDescriptors:
-      - displayName: Install 3scale Operator
-        path: install-3scale-operator
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - displayName: Install AMQ Streams Operator
-        path: install-amq-streams-operator
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - displayName: Install Apicurito Operator
-        path: install-apicurito-operator
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - displayName: Install Camel K Operator
-        path: install-camel-k-operator
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - displayName: Install Fuse Online Operator
-        path: install-fuse-online-operator
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - displayName: Install Service Registry Operator
-        path: install-service-registry-operator
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - displayName: Install Single Sign-On Operator
-        path: install-sso-operator
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      statusDescriptors:
       - displayName: 3scale Operator
-        path: status-3scale-operator
+        path: 3scale-installation-plan
+      - displayName: Approval Strategy
+        path: 3scale-installation-plan.approval-strategy
         x-descriptors:
-        - urn:alm:descriptor:text
+        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
+        - urn:alm:descriptor:com.tectonic.ui:select:Manual
+      - displayName: Enabled
+        path: 3scale-installation-plan.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Namespace
+        path: 3scale-installation-plan.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - displayName: Update Channel
+        path: 3scale-installation-plan.update-channel
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:threescale-2.6
+        - urn:alm:descriptor:com.tectonic.ui:select:threescale-2.7
+        - urn:alm:descriptor:com.tectonic.ui:select:threescale-2.8
+        - urn:alm:descriptor:com.tectonic.ui:select:threescale-2.9
       - displayName: AMQ Streams Operator
-        path: status-amq-streams-operator
+        path: amq-streams-installation-plan
+      - displayName: Approval Strategy
+        path: amq-streams-installation-plan.approval-strategy
         x-descriptors:
-        - urn:alm:descriptor:text
-      - displayName: Apicurito Operator
-        path: status-apicurito-operator
+        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
+        - urn:alm:descriptor:com.tectonic.ui:select:Manual
+      - displayName: Enabled
+        path: amq-streams-installation-plan.enabled
         x-descriptors:
-        - urn:alm:descriptor:text
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Namespace
+        path: amq-streams-installation-plan.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - displayName: Update Channel
+        path: amq-streams-installation-plan.update-channel
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:stable
+        - urn:alm:descriptor:com.tectonic.ui:select:amq-streams-1.5.x
+        - urn:alm:descriptor:com.tectonic.ui:select:amq-streams-1.x
+      - displayName: API Designer Operator
+        path: api-designer-installation-plan
+      - displayName: Approval Strategy
+        path: api-designer-installation-plan.approval-strategy
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
+        - urn:alm:descriptor:com.tectonic.ui:select:Manual
+      - displayName: Enabled
+        path: api-designer-installation-plan.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Namespace
+        path: api-designer-installation-plan.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - displayName: Update Channel
+        path: api-designer-installation-plan.update-channel
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:alpha
       - displayName: Camel K Operator
-        path: status-camel-k-operator
+        path: camel-k-installation-plan
+      - displayName: Approval Strategy
+        path: camel-k-installation-plan.approval-strategy
         x-descriptors:
-        - urn:alm:descriptor:text
+        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
+        - urn:alm:descriptor:com.tectonic.ui:select:Manual
+      - displayName: Enabled
+        path: camel-k-installation-plan.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Namespace
+        path: camel-k-installation-plan.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - displayName: Update Channel
+        path: camel-k-installation-plan.update-channel
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:techpreview
       - displayName: Fuse Online Operator
-        path: status-fuse-online-operator
+        path: fuse-online-installation-plan
+      - displayName: Approval Strategy
+        path: fuse-online-installation-plan.approval-strategy
         x-descriptors:
-        - urn:alm:descriptor:text
+        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
+        - urn:alm:descriptor:com.tectonic.ui:select:Manual
+      - displayName: Enabled
+        path: fuse-online-installation-plan.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Namespace
+        path: fuse-online-installation-plan.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - displayName: Update Channel
+        path: fuse-online-installation-plan.update-channel
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:alpha
       - displayName: Service Registry Operator
-        path: status-service-registry-operator
+        path: service-registry-installation-plan
+      - displayName: Approval Strategy
+        path: service-registry-installation-plan.approval-strategy
         x-descriptors:
-        - urn:alm:descriptor:text
+        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
+        - urn:alm:descriptor:com.tectonic.ui:select:Manual
+      - displayName: Enabled
+        path: service-registry-installation-plan.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Namespace
+        path: service-registry-installation-plan.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - displayName: Update Channel
+        path: service-registry-installation-plan.update-channel
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:serviceregistry-1
+        - urn:alm:descriptor:com.tectonic.ui:select:serviceregistry-1.0
       - displayName: Single Sign-On Operator
-        path: status-sso-operator
+        path: sso-installation-plan
+      - displayName: Approval Strategy
+        path: sso-installation-plan.approval-strategy
         x-descriptors:
-        - urn:alm:descriptor:text
-      version: v1
+        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
+        - urn:alm:descriptor:com.tectonic.ui:select:Manual
+      - displayName: Enabled
+        path: sso-installation-plan.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Namespace
+        path: sso-installation-plan.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - displayName: Update Channel
+        path: sso-installation-plan.update-channel
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:alpha
+      version: v1alpha1
   description: Installs Red Hat Integration product operators
   displayName: Red Hat Integration
   icon:
@@ -117,7 +234,7 @@ spec:
         - apiGroups:
           - integration.redhat.com
           resources:
-          - productoperators
+          - installations
           verbs:
           - create
           - delete
@@ -129,7 +246,7 @@ spec:
         - apiGroups:
           - integration.redhat.com
           resources:
-          - productoperators/status
+          - installations/status
           verbs:
           - get
           - patch
@@ -158,12 +275,6 @@ spec:
           - patch
           - update
           - watch
-        - apiGroups:
-          - operators.coreos.com
-          resources:
-          - subscriptions/status
-          verbs:
-          - get
         - apiGroups:
           - authentication.k8s.io
           resources:
@@ -207,7 +318,7 @@ spec:
                 - --enable-leader-election
                 command:
                 - /manager
-                image: quay.io/abkieling/integration-operator:0.0.12
+                image: quay.io/abkieling/integration-operator:0.0.21
                 name: manager
                 resources:
                   limits:
@@ -268,4 +379,4 @@ spec:
   maturity: alpha
   provider:
     name: Red Hat
-  version: 0.0.12
+  version: 0.0.21

@@ -21,7 +21,7 @@ rules:
 - apiGroups:
   - integration.redhat.com
   resources:
-  - productoperators
+  - installations
   verbs:
   - create
   - delete
@@ -33,7 +33,7 @@ rules:
 - apiGroups:
   - integration.redhat.com
   resources:
-  - productoperators/status
+  - installations/status
   verbs:
   - get
   - patch
@@ -62,9 +62,3 @@ rules:
   - patch
   - update
   - watch
-- apiGroups:
-  - operators.coreos.com
-  resources:
-  - subscriptions/status
-  verbs:
-  - get

@@ -1,0 +1,22 @@
+    required:
+    - kind: APIManagerBackup
+      name: apimanagerbackups.apps.3scale.net
+      version: v1alpha1
+    - kind: Kafka
+      name: kafkas.kafka.strimzi.io
+      version: v1beta1
+    - kind: Apicurito
+      name: apicuritos.apicur.io
+      version: v1alpha1
+    - kind: Integration
+      name: integrations.camel.apache.org
+      version: v1
+    - kind: Syndesis
+      name: syndesises.syndesis.io
+      version: v1beta1
+    - kind: ApicurioRegistry
+      name: apicurioregistries.apicur.io
+      version: v1alpha1
+    - kind: Keycloak
+      name: keycloaks.keycloak.org
+      version: v1alpha1

@@ -4,8 +4,8 @@ projectName: integration-operator
 repo: github.com/redhat-integration/integration-operator
 resources:
 - group: integration
-  kind: ProductOperators
-  version: v1
+  kind: Installation
+  version: v1alpha1
 version: 3-alpha
 plugins:
   go.sdk.operatorframework.io/v2-alpha: {}
