@@ -1,5 +1,5 @@
 # Current Operator version
-VERSION ?= 0.0.21
+VERSION ?= 0.0.22
 # Default bundle image tag
 BUNDLE_IMG ?= quay.io/abkieling/integration-operator-bundle:$(VERSION)
 # Options for 'bundle-build'
@@ -124,10 +124,10 @@ bundle-push:
 	docker push ${BUNDLE_IMG}
 
 delete-namespaces:
-	kubectl delete namespace integration-3scale-operator --ignore-not-found
-	kubectl delete namespace integration-amq-streams-operator --ignore-not-found
-	kubectl delete namespace integration-apicurito-operator --ignore-not-found
-	kubectl delete namespace integration-camel-k-operator --ignore-not-found
-	kubectl delete namespace integration-fuse-online-operator --ignore-not-found
-	kubectl delete namespace integration-service-registry-operator --ignore-not-found
-	kubectl delete namespace integration-sso-operator --ignore-not-found
+	kubectl delete namespace integration-3scale --ignore-not-found
+	kubectl delete namespace integration-amq-streams --ignore-not-found
+	kubectl delete namespace integration-apicurito --ignore-not-found
+	kubectl delete namespace integration-camel-k --ignore-not-found
+	kubectl delete namespace integration-fuse-online --ignore-not-found
+	kubectl delete namespace integration-service-registry --ignore-not-found
+	kubectl delete namespace integration-sso --ignore-not-found

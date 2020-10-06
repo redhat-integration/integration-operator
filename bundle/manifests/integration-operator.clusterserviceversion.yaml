@@ -59,7 +59,7 @@ metadata:
     capabilities: Basic Install
     operators.operatorframework.io/builder: operator-sdk-v1.0.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v2
-  name: integration-operator.v0.0.21
+  name: integration-operator.v0.0.22
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -318,7 +318,7 @@ spec:
                 - --enable-leader-election
                 command:
                 - /manager
-                image: quay.io/abkieling/integration-operator:0.0.21
+                image: quay.io/abkieling/integration-operator:0.0.22
                 name: manager
                 resources:
                   limits:
@@ -379,4 +379,4 @@ spec:
   maturity: alpha
   provider:
     name: Red Hat
-  version: 0.0.21
+  version: 0.0.22
