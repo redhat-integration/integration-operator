@@ -1,40 +1,47 @@
 apiVersion: integration.redhat.com/v1alpha1
 kind: Installation
 metadata:
-  name: integration-installation
+  name: rhi-installation
 spec:
-  3scale-installation-plan:
-    update-channel: threescale-2.9
-    namespace: integration-3scale
-    approval-strategy: Automatic
+  3scale-installation:
     enabled: true
-  amq-streams-installation-plan:
-    update-channel: stable
-    namespace: integration-amq-streams
-    approval-strategy: Automatic
+    channel: threescale-2.9
+    mode: Namespace
+    namespace: rhi-3scale
+    approval: Automatic
+  amq-streams-installation:
     enabled: true
-  api-designer-installation-plan:
-    update-channel: alpha
-    namespace: integration-apicurito
-    approval-strategy: Automatic
+    channel: stable
+    mode: Cluster
+    namespace: rhi-amq-streams
+    approval: Automatic
+  api-designer-installation:
     enabled: true
-  camel-k-installation-plan:
-    update-channel: techpreview
-    namespace: integration-camel-k
-    approval-strategy: Automatic
+    channel: alpha
+    mode: Namespace
+    namespace: rhi-apicurito
+    approval: Automatic
+  camel-k-installation:
     enabled: true
-  fuse-online-installation-plan:
-    update-channel: alpha
-    namespace: integration-fuse-online
-    approval-strategy: Automatic
+    channel: techpreview
+    mode: Cluster
+    namespace: rhi-camel-k
+    approval: Automatic
+  fuse-online-installation:
     enabled: true
-  service-registry-installation-plan:
-    update-channel: serviceregistry-1.0
-    namespace: integration-service-registry
-    approval-strategy: Automatic
+    channel: alpha
+    mode: Namespace
+    namespace: rhi-fuse-online
+    approval: Automatic
+  service-registry-installation:
     enabled: true
-  sso-installation-plan:
-    update-channel: alpha
-    namespace: integration-sso
-    approval-strategy: Automatic
+    channel: serviceregistry-1.0
+    mode: Namespace
+    namespace: rhi-service-registry
+    approval: Automatic
+  sso-installation:
     enabled: true
+    channel: alpha
+    mode: Namespace
+    namespace: rhi-sso
+    approval: Automatic

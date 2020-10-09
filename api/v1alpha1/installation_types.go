@@ -21,84 +21,149 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-type BaseInstallationPlan struct {
-	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors="urn:alm:descriptor:com.tectonic.ui:text"
-	Namespace string `json:"namespace,omitempty"`
-	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Approval Strategy",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Automatic","urn:alm:descriptor:com.tectonic.ui:select:Manual"}
-	ApprovalStrategy operatorsv1alpha1.Approval `json:"approval-strategy,omitempty"`
-	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Enabled",xDescriptors="urn:alm:descriptor:com.tectonic.ui:booleanSwitch"
-	Enabled bool `json:"enabled,omitempty"`
+type InstallationMode string
+
+const (
+	ClusterMode   InstallationMode = "Cluster"
+	NamespaceMode InstallationMode = "Namespace"
+)
+
+type InstallationPlan struct {
+	Enabled   bool
+	Channel   string
+	Mode      InstallationMode
+	Namespace string
+	Approval  operatorsv1alpha1.Approval
 }
 
 // Installation plan
 type ThreeScaleInstallationPlan struct {
-	BaseInstallationPlan `json:",omitempty"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Enabled",xDescriptors="urn:alm:descriptor:com.tectonic.ui:booleanSwitch"
+	Enabled bool `json:"enabled"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Update Channel",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:threescale-2.6","urn:alm:descriptor:com.tectonic.ui:select:threescale-2.7","urn:alm:descriptor:com.tectonic.ui:select:threescale-2.8","urn:alm:descriptor:com.tectonic.ui:select:threescale-2.9"}
-	UpdateChannel string `json:"update-channel,omitempty"`
+	Channel string `json:"channel"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Installation Mode",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Namespace"}
+	Mode InstallationMode `json:"mode"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:3scale-installation.mode:Namespace"}
+	Namespace string `json:"namespace"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Approval Strategy",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Automatic","urn:alm:descriptor:com.tectonic.ui:select:Manual"}
+	Approval operatorsv1alpha1.Approval `json:"approval"`
 }
 
 // Installation plan
 type AMQStreamsInstallationPlan struct {
-	BaseInstallationPlan `json:",omitempty"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Enabled",xDescriptors="urn:alm:descriptor:com.tectonic.ui:booleanSwitch"
+	Enabled bool `json:"enabled"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Update Channel",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:stable","urn:alm:descriptor:com.tectonic.ui:select:amq-streams-1.5.x","urn:alm:descriptor:com.tectonic.ui:select:amq-streams-1.x"}
-	UpdateChannel string `json:"update-channel,omitempty"`
+	Channel string `json:"channel"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Installation Mode",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Namespace","urn:alm:descriptor:com.tectonic.ui:select:Cluster"}
+	Mode InstallationMode `json:"mode"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:amq-streams-installation.mode:Namespace"}
+	Namespace string `json:"namespace"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Approval Strategy",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Automatic","urn:alm:descriptor:com.tectonic.ui:select:Manual"}
+	Approval operatorsv1alpha1.Approval `json:"approval"`
 }
 
 // Installation plan
 type APIDesignerInstallationPlan struct {
-	BaseInstallationPlan `json:",omitempty"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Enabled",xDescriptors="urn:alm:descriptor:com.tectonic.ui:booleanSwitch"
+	Enabled bool `json:"enabled"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Update Channel",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:alpha"}
-	UpdateChannel string `json:"update-channel,omitempty"`
+	Channel string `json:"channel"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Installation Mode",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Namespace"}
+	Mode InstallationMode `json:"mode"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:api-designer-installation.mode:Namespace"}
+	Namespace string `json:"namespace"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Approval Strategy",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Automatic","urn:alm:descriptor:com.tectonic.ui:select:Manual"}
+	Approval operatorsv1alpha1.Approval `json:"approval"`
 }
 
 // Installation plan
 type CamelKInstallationPlan struct {
-	BaseInstallationPlan `json:",omitempty"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Enabled",xDescriptors="urn:alm:descriptor:com.tectonic.ui:booleanSwitch"
+	Enabled bool `json:"enabled"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Update Channel",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:techpreview"}
-	UpdateChannel string `json:"update-channel,omitempty"`
+	Channel string `json:"channel"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Installation Mode",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Namespace","urn:alm:descriptor:com.tectonic.ui:select:Cluster"}
+	Mode InstallationMode `json:"mode"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:camel-k-installation.mode:Namespace"}
+	Namespace string `json:"namespace"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Approval Strategy",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Automatic","urn:alm:descriptor:com.tectonic.ui:select:Manual"}
+	Approval operatorsv1alpha1.Approval `json:"approval"`
 }
 
 // Installation plan
 type FuseOnlineInstallationPlan struct {
-	BaseInstallationPlan `json:",omitempty"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Enabled",xDescriptors="urn:alm:descriptor:com.tectonic.ui:booleanSwitch"
+	Enabled bool `json:"enabled"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Update Channel",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:alpha"}
-	UpdateChannel string `json:"update-channel,omitempty"`
+	Channel string `json:"channel"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Installation Mode",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Namespace"}
+	Mode InstallationMode `json:"mode"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:fuse-online-installation.mode:Namespace"}
+	Namespace string `json:"namespace"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Approval Strategy",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Automatic","urn:alm:descriptor:com.tectonic.ui:select:Manual"}
+	Approval operatorsv1alpha1.Approval `json:"approval"`
 }
 
 // Installation plan
 type ServiceRegistryInstallationPlan struct {
-	BaseInstallationPlan `json:",omitempty"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Enabled",xDescriptors="urn:alm:descriptor:com.tectonic.ui:booleanSwitch"
+	Enabled bool `json:"enabled"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Update Channel",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:serviceregistry-1","urn:alm:descriptor:com.tectonic.ui:select:serviceregistry-1.0"}
-	UpdateChannel string `json:"update-channel,omitempty"`
+	Channel string `json:"channel"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Installation Mode",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Namespace"}
+	Mode InstallationMode `json:"mode"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:service-registry-installation.mode:Namespace"}
+	Namespace string `json:"namespace"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Approval Strategy",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Automatic","urn:alm:descriptor:com.tectonic.ui:select:Manual"}
+	Approval operatorsv1alpha1.Approval `json:"approval"`
 }
 
 // Installation plan
 type SSOInstallationPlan struct {
-	BaseInstallationPlan `json:",omitempty"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Enabled",xDescriptors="urn:alm:descriptor:com.tectonic.ui:booleanSwitch"
+	Enabled bool `json:"enabled"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Update Channel",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:alpha"}
-	UpdateChannel string `json:"update-channel,omitempty"`
+	Channel string `json:"channel"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Installation Mode",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Namespace"}
+	Mode InstallationMode `json:"mode"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:sso-installation.mode:Namespace"}
+	Namespace string `json:"namespace"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Approval Strategy",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Automatic","urn:alm:descriptor:com.tectonic.ui:select:Manual"}
+	Approval operatorsv1alpha1.Approval `json:"approval"`
 }
 
 // InstallationSpec defines the desired state of Installation
 type InstallationSpec struct {
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="3scale Operator"
-	ThreeScaleInstallationPlan ThreeScaleInstallationPlan `json:"3scale-installation-plan,omitempty"`
+	ThreeScaleInstallationPlan ThreeScaleInstallationPlan `json:"3scale-installation"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="AMQ Streams Operator"
-	AMQStreamsInstallationPlan AMQStreamsInstallationPlan `json:"amq-streams-installation-plan,omitempty"`
+	AMQStreamsInstallationPlan AMQStreamsInstallationPlan `json:"amq-streams-installation"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="API Designer Operator"
-	APIDesignerInstallationPlan APIDesignerInstallationPlan `json:"api-designer-installation-plan,omitempty"`
+	APIDesignerInstallationPlan APIDesignerInstallationPlan `json:"api-designer-installation"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Camel K Operator"
-	CamelKInstallationPlan CamelKInstallationPlan `json:"camel-k-installation-plan,omitempty"`
+	CamelKInstallationPlan CamelKInstallationPlan `json:"camel-k-installation"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Fuse Online Operator"
-	FuseOnlineInstallationPlan FuseOnlineInstallationPlan `json:"fuse-online-installation-plan,omitempty"`
+	FuseOnlineInstallationPlan FuseOnlineInstallationPlan `json:"fuse-online-installation"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Service Registry Operator"
-	ServiceRegistryInstallationPlan ServiceRegistryInstallationPlan `json:"service-registry-installation-plan,omitempty"`
+	ServiceRegistryInstallationPlan ServiceRegistryInstallationPlan `json:"service-registry-installation"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Single Sign-On Operator"
-	SSOInstallationPlan SSOInstallationPlan `json:"sso-installation-plan,omitempty"`
+	SSOInstallationPlan SSOInstallationPlan `json:"sso-installation"`
+}
+
+// StatusMapValue comment
+type StatusMapValue struct {
+	// +operator-sdk:csv:customresourcedefinitions:type=status,displayName="Status",xDescriptors="urn:alm:descriptor:text"
+	Phase operatorsv1alpha1.ClusterServiceVersionPhase `json:"phase"`
+	// +operator-sdk:csv:customresourcedefinitions:type=status,displayName="Status Reason",xDescriptors="urn:alm:descriptor:text"
+	Message string `json:"message"`
 }
 
 // InstallationStatus defines the observed state of Installation
 type InstallationStatus struct {
+	Phase     operatorsv1alpha1.ClusterServiceVersionPhase `json:"phase"`
+	StatusMap map[string]StatusMapValue                    `json:"products"`
 }
 
 // +kubebuilder:object:root=true

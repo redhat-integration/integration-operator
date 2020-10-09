@@ -33,92 +33,106 @@ spec:
             3scale-installation-plan:
               description: Installation plan
               properties:
-                approval-strategy:
+                approval:
                   description: Approval is the user approval policy for an InstallPlan.
+                  type: string
+                channel:
                   type: string
                 enabled:
                   type: boolean
-                namespace:
+                mode:
                   type: string
-                update-channel:
+                namespace:
                   type: string
               type: object
             amq-streams-installation-plan:
               description: Installation plan
               properties:
-                approval-strategy:
+                approval:
                   description: Approval is the user approval policy for an InstallPlan.
+                  type: string
+                channel:
                   type: string
                 enabled:
                   type: boolean
-                namespace:
+                mode:
                   type: string
-                update-channel:
+                namespace:
                   type: string
               type: object
             api-designer-installation-plan:
               description: Installation plan
               properties:
-                approval-strategy:
+                approval:
                   description: Approval is the user approval policy for an InstallPlan.
+                  type: string
+                channel:
                   type: string
                 enabled:
                   type: boolean
-                namespace:
+                mode:
                   type: string
-                update-channel:
+                namespace:
                   type: string
               type: object
             camel-k-installation-plan:
               description: Installation plan
               properties:
-                approval-strategy:
+                approval:
                   description: Approval is the user approval policy for an InstallPlan.
+                  type: string
+                channel:
                   type: string
                 enabled:
                   type: boolean
-                namespace:
+                mode:
                   type: string
-                update-channel:
+                namespace:
                   type: string
               type: object
             fuse-online-installation-plan:
               description: Installation plan
               properties:
-                approval-strategy:
+                approval:
                   description: Approval is the user approval policy for an InstallPlan.
+                  type: string
+                channel:
                   type: string
                 enabled:
                   type: boolean
-                namespace:
+                mode:
                   type: string
-                update-channel:
+                namespace:
                   type: string
               type: object
             service-registry-installation-plan:
               description: Installation plan
               properties:
-                approval-strategy:
+                approval:
                   description: Approval is the user approval policy for an InstallPlan.
+                  type: string
+                channel:
                   type: string
                 enabled:
                   type: boolean
-                namespace:
+                mode:
                   type: string
-                update-channel:
+                namespace:
                   type: string
               type: object
             sso-installation-plan:
               description: Installation plan
               properties:
-                approval-strategy:
+                approval:
                   description: Approval is the user approval policy for an InstallPlan.
+                  type: string
+                channel:
                   type: string
                 enabled:
                   type: boolean
-                namespace:
+                mode:
                   type: string
-                update-channel:
+                namespace:
                   type: string
               type: object
           type: object
