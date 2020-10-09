@@ -21,6 +21,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// Operator available cluster wide or in a specific namespace
 type InstallationMode string
 
 const (
@@ -56,7 +57,7 @@ type AMQStreamsInstallationPlan struct {
 	Enabled bool `json:"enabled"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Update Channel",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:stable","urn:alm:descriptor:com.tectonic.ui:select:amq-streams-1.5.x","urn:alm:descriptor:com.tectonic.ui:select:amq-streams-1.x"}
 	Channel string `json:"channel"`
-	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Installation Mode",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Namespace","urn:alm:descriptor:com.tectonic.ui:select:Cluster"}
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Installation Mode",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Cluster","urn:alm:descriptor:com.tectonic.ui:select:Namespace"}
 	Mode InstallationMode `json:"mode"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:amq-streams-installation.mode:Namespace"}
 	Namespace string `json:"namespace"`
@@ -84,7 +85,7 @@ type CamelKInstallationPlan struct {
 	Enabled bool `json:"enabled"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Update Channel",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:techpreview"}
 	Channel string `json:"channel"`
-	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Installation Mode",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Namespace","urn:alm:descriptor:com.tectonic.ui:select:Cluster"}
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Installation Mode",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Cluster","urn:alm:descriptor:com.tectonic.ui:select:Namespace"}
 	Mode InstallationMode `json:"mode"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:camel-k-installation.mode:Namespace"}
 	Namespace string `json:"namespace"`
@@ -152,8 +153,8 @@ type InstallationSpec struct {
 	SSOInstallationPlan SSOInstallationPlan `json:"sso-installation"`
 }
 
-// StatusMapValue comment
-type StatusMapValue struct {
+// ProductStatusValue contains the status of a product operator installation
+type ProductStatusValue struct {
 	// +operator-sdk:csv:customresourcedefinitions:type=status,displayName="Status",xDescriptors="urn:alm:descriptor:text"
 	Phase operatorsv1alpha1.ClusterServiceVersionPhase `json:"phase"`
 	// +operator-sdk:csv:customresourcedefinitions:type=status,displayName="Status Reason",xDescriptors="urn:alm:descriptor:text"
@@ -162,8 +163,9 @@ type StatusMapValue struct {
 
 // InstallationStatus defines the observed state of Installation
 type InstallationStatus struct {
-	Phase     operatorsv1alpha1.ClusterServiceVersionPhase `json:"phase"`
-	StatusMap map[string]StatusMapValue                    `json:"products"`
+	Phase         operatorsv1alpha1.ClusterServiceVersionPhase `json:"phase"`
+	Message       string                                       `json:"message"`
+	ProductStatus map[string]ProductStatusValue                `json:"products"`
 }
 
 // +kubebuilder:object:root=true

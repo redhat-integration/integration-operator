@@ -61,6 +61,7 @@ type InstallationReconciler struct {
 // +kubebuilder:rbac:groups="",resources=namespaces,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=operators.coreos.com,resources=operatorgroups,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=operators.coreos.com,resources=subscriptions,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=operators.coreos.com,resources=clusterserviceversions,verbs=get;list;watch;create;update;patch;delete
 
 // Reconcile is called when watch events happen
 func (r *InstallationReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
@@ -291,17 +292,18 @@ func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log 
 }
 
 func (r *InstallationReconciler) initializeStatus(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, installationPlans map[string]integrationv1alpha1.InstallationPlan) bool {
-	if installation.Status.StatusMap == nil {
-		statusMap := make(map[string]integrationv1alpha1.StatusMapValue)
+	if installation.Status.ProductStatus == nil {
+		statusMap := make(map[string]integrationv1alpha1.ProductStatusValue)
 
 		for packageName, installationPlan := range installationPlans {
 			if installationPlan.Enabled {
-				statusMap[packageName] = integrationv1alpha1.StatusMapValue{Phase: operatorsv1alpha1.CSVPhaseInstalling, Message: ""}
+				statusMap[packageName] = integrationv1alpha1.ProductStatusValue{Phase: operatorsv1alpha1.CSVPhaseInstalling, Message: ""}
 			}
 		}
 
 		installation.Status.Phase = operatorsv1alpha1.CSVPhaseInstalling
-		installation.Status.StatusMap = statusMap
+		installation.Status.Message = ""
+		installation.Status.ProductStatus = statusMap
 
 		log.Info("Initializing Installation status")
 		err := r.Status().Update(ctx, installation)
@@ -315,7 +317,7 @@ func (r *InstallationReconciler) initializeStatus(ctx context.Context, log logr.
 }
 
 func (r *InstallationReconciler) updateStatus(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, installationPlans map[string]integrationv1alpha1.InstallationPlan) (ctrl.Result, error) {
-	statusMap := make(map[string]integrationv1alpha1.StatusMapValue)
+	statusMap := make(map[string]integrationv1alpha1.ProductStatusValue)
 
 	for packageName, installationPlan := range installationPlans {
 		if installationPlan.Enabled {
@@ -336,13 +338,13 @@ func (r *InstallationReconciler) updateStatus(ctx context.Context, log logr.Logg
 				return ctrl.Result{}, err
 			}
 
-			statusMap[packageName] = integrationv1alpha1.StatusMapValue{Phase: csv.Status.Phase, Message: csv.Status.Message}
+			statusMap[packageName] = integrationv1alpha1.ProductStatusValue{Phase: csv.Status.Phase, Message: csv.Status.Message}
 		}
 	}
 
-	if !reflect.DeepEqual(statusMap, installation.Status.StatusMap) {
-		installation.Status.Phase = r.getOverallPhase(statusMap)
-		installation.Status.StatusMap = statusMap
+	if !reflect.DeepEqual(statusMap, installation.Status.ProductStatus) {
+		installation.Status.Phase, installation.Status.Message = r.getOverallPhaseAndMessage(statusMap)
+		installation.Status.ProductStatus = statusMap
 		log.Info("Updating Installation status")
 		err := r.Status().Update(ctx, installation)
 		if err != nil {
@@ -360,16 +362,16 @@ func (r *InstallationReconciler) updateStatus(ctx context.Context, log logr.Logg
 	return ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) getOverallPhase(statusMap map[string]integrationv1alpha1.StatusMapValue) operatorsv1alpha1.ClusterServiceVersionPhase {
+func (r *InstallationReconciler) getOverallPhaseAndMessage(statusMap map[string]integrationv1alpha1.ProductStatusValue) (operatorsv1alpha1.ClusterServiceVersionPhase, string) {
 	for _, value := range statusMap {
 		if value.Phase == operatorsv1alpha1.CSVPhaseFailed {
-			return operatorsv1alpha1.CSVPhaseFailed
+			return operatorsv1alpha1.CSVPhaseFailed, "Some installations failed"
 		}
 		if value.Phase != operatorsv1alpha1.CSVPhaseSucceeded {
-			return operatorsv1alpha1.CSVPhaseInstalling
+			return operatorsv1alpha1.CSVPhaseInstalling, ""
 		}
 	}
-	return operatorsv1alpha1.CSVPhaseSucceeded
+	return operatorsv1alpha1.CSVPhaseSucceeded, "All installations succeeded"
 }
 
 func (r *InstallationReconciler) shouldReturn(result ctrl.Result, err error) bool {

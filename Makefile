@@ -1,5 +1,5 @@
 # Current Operator version
-VERSION ?= 0.0.24
+VERSION ?= 0.0.30
 # Default bundle image tag
 BUNDLE_IMG ?= quay.io/abkieling/integration-operator-bundle:$(VERSION)
 # Options for 'bundle-build'

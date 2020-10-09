@@ -30,7 +30,7 @@ spec:
         spec:
           description: InstallationSpec defines the desired state of Installation
           properties:
-            3scale-installation-plan:
+            3scale-installation:
               description: Installation plan
               properties:
                 approval:
@@ -41,11 +41,18 @@ spec:
                 enabled:
                   type: boolean
                 mode:
+                  description: Operator available cluster wide or in a specific namespace
                   type: string
                 namespace:
                   type: string
+              required:
+              - approval
+              - channel
+              - enabled
+              - mode
+              - namespace
               type: object
-            amq-streams-installation-plan:
+            amq-streams-installation:
               description: Installation plan
               properties:
                 approval:
@@ -56,11 +63,18 @@ spec:
                 enabled:
                   type: boolean
                 mode:
+                  description: Operator available cluster wide or in a specific namespace
                   type: string
                 namespace:
                   type: string
+              required:
+              - approval
+              - channel
+              - enabled
+              - mode
+              - namespace
               type: object
-            api-designer-installation-plan:
+            api-designer-installation:
               description: Installation plan
               properties:
                 approval:
@@ -71,11 +85,18 @@ spec:
                 enabled:
                   type: boolean
                 mode:
+                  description: Operator available cluster wide or in a specific namespace
                   type: string
                 namespace:
                   type: string
+              required:
+              - approval
+              - channel
+              - enabled
+              - mode
+              - namespace
               type: object
-            camel-k-installation-plan:
+            camel-k-installation:
               description: Installation plan
               properties:
                 approval:
@@ -86,11 +107,18 @@ spec:
                 enabled:
                   type: boolean
                 mode:
+                  description: Operator available cluster wide or in a specific namespace
                   type: string
                 namespace:
                   type: string
+              required:
+              - approval
+              - channel
+              - enabled
+              - mode
+              - namespace
               type: object
-            fuse-online-installation-plan:
+            fuse-online-installation:
               description: Installation plan
               properties:
                 approval:
@@ -101,11 +129,18 @@ spec:
                 enabled:
                   type: boolean
                 mode:
+                  description: Operator available cluster wide or in a specific namespace
                   type: string
                 namespace:
                   type: string
+              required:
+              - approval
+              - channel
+              - enabled
+              - mode
+              - namespace
               type: object
-            service-registry-installation-plan:
+            service-registry-installation:
               description: Installation plan
               properties:
                 approval:
@@ -116,11 +151,18 @@ spec:
                 enabled:
                   type: boolean
                 mode:
+                  description: Operator available cluster wide or in a specific namespace
                   type: string
                 namespace:
                   type: string
+              required:
+              - approval
+              - channel
+              - enabled
+              - mode
+              - namespace
               type: object
-            sso-installation-plan:
+            sso-installation:
               description: Installation plan
               properties:
                 approval:
@@ -131,13 +173,56 @@ spec:
                 enabled:
                   type: boolean
                 mode:
+                  description: Operator available cluster wide or in a specific namespace
                   type: string
                 namespace:
                   type: string
+              required:
+              - approval
+              - channel
+              - enabled
+              - mode
+              - namespace
               type: object
+          required:
+          - 3scale-installation
+          - amq-streams-installation
+          - api-designer-installation
+          - camel-k-installation
+          - fuse-online-installation
+          - service-registry-installation
+          - sso-installation
           type: object
         status:
           description: InstallationStatus defines the observed state of Installation
+          properties:
+            message:
+              type: string
+            phase:
+              description: ClusterServiceVersionPhase is a label for the condition of a ClusterServiceVersion at the current time.
+              type: string
+            products:
+              additionalProperties:
+                description: ProductStatusValue contains the status of a product operator installation
+                properties:
+                  message:
+                    type: string
+                  phase:
+                    description: ClusterServiceVersionPhase is a label for the condition of a ClusterServiceVersion at the current time.
+                    type: string
+                required:
+                - message
+                - phase
+                type: object
+              type: object
+            reason:
+              description: ConditionReason is a camelcased reason for the state transition
+              type: string
+          required:
+          - message
+          - phase
+          - products
+          - reason
           type: object
       type: object
   version: v1alpha1

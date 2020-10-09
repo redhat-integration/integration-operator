@@ -47,6 +47,7 @@ spec:
                 enabled:
                   type: boolean
                 mode:
+                  description: Operator available cluster wide or in a specific namespace
                   type: string
                 namespace:
                   type: string
@@ -68,6 +69,7 @@ spec:
                 enabled:
                   type: boolean
                 mode:
+                  description: Operator available cluster wide or in a specific namespace
                   type: string
                 namespace:
                   type: string
@@ -89,6 +91,7 @@ spec:
                 enabled:
                   type: boolean
                 mode:
+                  description: Operator available cluster wide or in a specific namespace
                   type: string
                 namespace:
                   type: string
@@ -110,6 +113,7 @@ spec:
                 enabled:
                   type: boolean
                 mode:
+                  description: Operator available cluster wide or in a specific namespace
                   type: string
                 namespace:
                   type: string
@@ -131,6 +135,7 @@ spec:
                 enabled:
                   type: boolean
                 mode:
+                  description: Operator available cluster wide or in a specific namespace
                   type: string
                 namespace:
                   type: string
@@ -152,6 +157,7 @@ spec:
                 enabled:
                   type: boolean
                 mode:
+                  description: Operator available cluster wide or in a specific namespace
                   type: string
                 namespace:
                   type: string
@@ -173,6 +179,7 @@ spec:
                 enabled:
                   type: boolean
                 mode:
+                  description: Operator available cluster wide or in a specific namespace
                   type: string
                 namespace:
                   type: string
@@ -195,13 +202,16 @@ spec:
         status:
           description: InstallationStatus defines the observed state of Installation
           properties:
+            message:
+              type: string
             phase:
               description: ClusterServiceVersionPhase is a label for the condition
                 of a ClusterServiceVersion at the current time.
               type: string
             products:
               additionalProperties:
-                description: StatusMapValue comment
+                description: ProductStatusValue contains the status of a product operator
+                  installation
                 properties:
                   message:
                     type: string
@@ -214,9 +224,14 @@ spec:
                 - phase
                 type: object
               type: object
+            reason:
+              description: ConditionReason is a camelcased reason for the state transition
+              type: string
           required:
+          - message
           - phase
           - products
+          - reason
           type: object
       type: object
   version: v1alpha1
