@@ -193,15 +193,6 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
         - urn:alm:descriptor:com.tectonic.ui:fieldDependency:sso-installation.mode:Namespace
-      statusDescriptors:
-      - displayName: Status Reason
-        path: products.message
-        x-descriptors:
-        - urn:alm:descriptor:text
-      - displayName: Status
-        path: products.phase
-        x-descriptors:
-        - urn:alm:descriptor:text
       version: v1alpha1
   description: Installs Red Hat Integration product operators
   displayName: Red Hat Integration

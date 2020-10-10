@@ -66,7 +66,7 @@ metadata:
     capabilities: Basic Install
     operators.operatorframework.io/builder: operator-sdk-v1.0.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v2
-  name: integration-operator.v0.0.30
+  name: integration-operator.v0.0.31
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -253,15 +253,6 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
         - urn:alm:descriptor:com.tectonic.ui:fieldDependency:sso-installation.mode:Namespace
-      statusDescriptors:
-      - displayName: Status Reason
-        path: products.message
-        x-descriptors:
-        - urn:alm:descriptor:text
-      - displayName: Status
-        path: products.phase
-        x-descriptors:
-        - urn:alm:descriptor:text
       version: v1alpha1
   description: Installs Red Hat Integration product operators
   displayName: Red Hat Integration
@@ -383,7 +374,7 @@ spec:
                 - --enable-leader-election
                 command:
                 - /manager
-                image: quay.io/abkieling/integration-operator:0.0.30
+                image: quay.io/abkieling/integration-operator:0.0.31
                 name: manager
                 resources:
                   limits:
@@ -444,4 +435,4 @@ spec:
   maturity: alpha
   provider:
     name: Red Hat
-  version: 0.0.30
+  version: 0.0.31

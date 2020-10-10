@@ -79,12 +79,26 @@ func (r *InstallationReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error
 		return ctrl.Result{}, nil
 	}
 
-	result, err := r.reconcileInstallations(ctx, log, installation, installationPlans)
-	if r.shouldReturn(result, err) {
-		return result, err
+	for operatorID, installationPlan := range installationPlans {
+		if installationPlan.Enabled {
+			result, err := r.reconcileInstallation(ctx, log, installation, operatorID, &installationPlan)
+			if r.shouldReturn(result, err) {
+				return result, err
+			}
+			shouldReturn = r.updateStatus(ctx, log, installation, operatorID, &installationPlan)
+			if shouldReturn {
+				return ctrl.Result{}, nil
+			}
+		}
 	}
 
-	return r.updateStatus(ctx, log, installation, installationPlans)
+	if r.isInstalling(installation.Status.Conditions) {
+		log.Info("Installation in progress")
+		return ctrl.Result{RequeueAfter: 5 * time.Second}, nil
+	}
+
+	log.Info("Installation completed")
+	return ctrl.Result{}, nil
 }
 
 func (r *InstallationReconciler) getInstallation(ctx context.Context, log logr.Logger, req ctrl.Request) (*integrationv1alpha1.Installation, error) {
@@ -143,19 +157,6 @@ func (r *InstallationReconciler) updateNamespaceForClusterInstallations(ctx cont
 	}
 
 	return false
-}
-
-func (r *InstallationReconciler) reconcileInstallations(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, installationPlans map[string]integrationv1alpha1.InstallationPlan) (ctrl.Result, error) {
-	for operatorID, installationPlan := range installationPlans {
-		if installationPlan.Enabled {
-			result, err := r.reconcileInstallation(ctx, log, installation, operatorID, &installationPlan)
-			if r.shouldReturn(result, err) {
-				return result, err
-			}
-		}
-	}
-
-	return ctrl.Result{}, nil
 }
 
 func (r *InstallationReconciler) reconcileInstallation(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, operatorID string, installationPlan *integrationv1alpha1.InstallationPlan) (ctrl.Result, error) {
@@ -272,7 +273,7 @@ func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log 
 				return ctrl.Result{}, err
 			}
 			// Subscription created successfully - return and requeue
-			return ctrl.Result{RequeueAfter: 10 * time.Second}, nil
+			return ctrl.Result{RequeueAfter: 5 * time.Second}, nil
 		}
 		// Error reading the object - requeue the request
 		log.Error(err, "Failed to get Subscription", "Subscription.Name", name, "Subscription.Namespace", namespace)
@@ -310,31 +311,33 @@ func (r *InstallationReconciler) initializeStatus(ctx context.Context, log logr.
 	return false
 }
 
-func (r *InstallationReconciler) updateStatus(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, installationPlans map[string]integrationv1alpha1.InstallationPlan) (ctrl.Result, error) {
-	newConditions := []metav1.Condition{}
-
-	for _, condition := range installation.Status.Conditions {
-		operatorID := operatorIDs[condition.Type]
-		installationPlan := installationPlans[operatorID]
-		if installationPlan.Enabled {
+func (r *InstallationReconciler) updateStatus(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, operatorID string, installationPlan *integrationv1alpha1.InstallationPlan) bool {
+	for i, condition := range installation.Status.Conditions {
+		if operatorID == operatorIDs[condition.Type] {
 			namespace := installationPlan.Namespace
 
 			subscriptionName := operatorID
 			subscription := &operatorsv1alpha1.Subscription{}
 			err := r.Get(ctx, types.NamespacedName{Name: subscriptionName, Namespace: namespace}, subscription)
 			if err != nil {
+				if errors.IsNotFound(err) {
+					return false
+				}
 				// Error reading the object - requeue the request
 				log.Error(err, "Failed to get Subscription", "Subscription.Name", subscriptionName, "Subscription.Namespace", namespace)
-				return ctrl.Result{}, err
+				return true
 			}
 
 			csvName := subscription.Status.InstalledCSV
 			csv := &operatorsv1alpha1.ClusterServiceVersion{}
 			err = r.Get(ctx, types.NamespacedName{Name: csvName, Namespace: namespace}, csv)
 			if err != nil && !errors.IsNotFound(err) {
+				if errors.IsNotFound(err) {
+					return false
+				}
 				// Error reading the object - requeue the request
 				log.Error(err, "Failed to get ClusterServiceVersion", "ClusterServiceVersion.Name", csvName, "ClusterServiceVersion.Namespace", namespace)
-				return ctrl.Result{}, err
+				return true
 			}
 
 			newCondition := metav1.Condition{
@@ -362,27 +365,21 @@ func (r *InstallationReconciler) updateStatus(ctx context.Context, log logr.Logg
 				newCondition.Reason = string(csv.Status.Phase)
 			}
 
-			newConditions = append(newConditions, newCondition)
+			if !reflect.DeepEqual(newCondition, condition) {
+				installation.Status.Conditions[i] = newCondition
+				log.Info("Updating Installation status")
+				err := r.Status().Update(ctx, installation)
+				if err != nil {
+					log.Error(err, "Failed to update Installation status")
+				}
+				return true
+			}
+
+			break
 		}
 	}
 
-	if !reflect.DeepEqual(newConditions, installation.Status.Conditions) {
-		installation.Status.Conditions = newConditions
-		log.Info("Updating Installation status")
-		err := r.Status().Update(ctx, installation)
-		if err != nil {
-			log.Error(err, "Failed to update Installation status")
-			return ctrl.Result{}, err
-		}
-	}
-
-	if r.isInstalling(installation.Status.Conditions) {
-		log.Info("Installation in progress")
-		return ctrl.Result{RequeueAfter: 10 * time.Second}, nil
-	}
-
-	log.Info("Installation completed")
-	return ctrl.Result{}, nil
+	return false
 }
 
 func (r *InstallationReconciler) isInstalling(conditions []metav1.Condition) bool {
