@@ -153,19 +153,9 @@ type InstallationSpec struct {
 	SSOInstallationPlan SSOInstallationPlan `json:"sso-installation"`
 }
 
-// ProductStatusValue contains the status of a product operator installation
-type ProductStatusValue struct {
-	// +operator-sdk:csv:customresourcedefinitions:type=status,displayName="Status",xDescriptors="urn:alm:descriptor:text"
-	Phase operatorsv1alpha1.ClusterServiceVersionPhase `json:"phase"`
-	// +operator-sdk:csv:customresourcedefinitions:type=status,displayName="Status Reason",xDescriptors="urn:alm:descriptor:text"
-	Message string `json:"message"`
-}
-
 // InstallationStatus defines the observed state of Installation
 type InstallationStatus struct {
-	Phase         operatorsv1alpha1.ClusterServiceVersionPhase `json:"phase"`
-	Message       string                                       `json:"message"`
-	ProductStatus map[string]ProductStatusValue                `json:"products"`
+	Conditions []metav1.Condition `json:"conditions,omitempty"`
 }
 
 // +kubebuilder:object:root=true

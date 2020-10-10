@@ -35,20 +35,6 @@ import (
 	integrationv1alpha1 "github.com/redhat-integration/integration-operator/api/v1alpha1"
 )
 
-const (
-	catalogSource          = "redhat-operators"
-	catalogSourceNamespace = "openshift-marketplace"
-	clusterModeNamespace   = "openshift-operators"
-	// Package names
-	threeScalePackageName      = "3scale-operator"
-	amqStreamsPackageName      = "amq-streams"
-	apiDesignerPackageName     = "fuse-apicurito"
-	camelKPackageName          = "red-hat-camel-k"
-	fuseOnlinePackageName      = "fuse-online"
-	serviceRegistryPackageName = "service-registry-operator"
-	ssoPackageName             = "rhsso-operator"
-)
-
 // InstallationReconciler reconciles a Installation object
 type InstallationReconciler struct {
 	client.Client
@@ -79,13 +65,13 @@ func (r *InstallationReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error
 	}
 
 	installationPlans := map[string]integrationv1alpha1.InstallationPlan{
-		threeScalePackageName:      integrationv1alpha1.InstallationPlan(installation.Spec.ThreeScaleInstallationPlan),
-		amqStreamsPackageName:      integrationv1alpha1.InstallationPlan(installation.Spec.AMQStreamsInstallationPlan),
-		apiDesignerPackageName:     integrationv1alpha1.InstallationPlan(installation.Spec.APIDesignerInstallationPlan),
-		camelKPackageName:          integrationv1alpha1.InstallationPlan(installation.Spec.CamelKInstallationPlan),
-		fuseOnlinePackageName:      integrationv1alpha1.InstallationPlan(installation.Spec.FuseOnlineInstallationPlan),
-		serviceRegistryPackageName: integrationv1alpha1.InstallationPlan(installation.Spec.ServiceRegistryInstallationPlan),
-		ssoPackageName:             integrationv1alpha1.InstallationPlan(installation.Spec.SSOInstallationPlan),
+		operator3scale:          integrationv1alpha1.InstallationPlan(installation.Spec.ThreeScaleInstallationPlan),
+		operatorAMQStreams:      integrationv1alpha1.InstallationPlan(installation.Spec.AMQStreamsInstallationPlan),
+		operatorAPIDesigner:     integrationv1alpha1.InstallationPlan(installation.Spec.APIDesignerInstallationPlan),
+		operatorCamelK:          integrationv1alpha1.InstallationPlan(installation.Spec.CamelKInstallationPlan),
+		operatorFuseOnline:      integrationv1alpha1.InstallationPlan(installation.Spec.FuseOnlineInstallationPlan),
+		operatorServiceRegistry: integrationv1alpha1.InstallationPlan(installation.Spec.ServiceRegistryInstallationPlan),
+		operatorSSO:             integrationv1alpha1.InstallationPlan(installation.Spec.SSOInstallationPlan),
 	}
 
 	shouldReturn = r.initializeStatus(ctx, log, installation, installationPlans)
@@ -160,9 +146,9 @@ func (r *InstallationReconciler) updateNamespaceForClusterInstallations(ctx cont
 }
 
 func (r *InstallationReconciler) reconcileInstallations(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, installationPlans map[string]integrationv1alpha1.InstallationPlan) (ctrl.Result, error) {
-	for packageName, installationPlan := range installationPlans {
+	for operatorID, installationPlan := range installationPlans {
 		if installationPlan.Enabled {
-			result, err := r.reconcileInstallation(ctx, log, installation, packageName, &installationPlan)
+			result, err := r.reconcileInstallation(ctx, log, installation, operatorID, &installationPlan)
 			if r.shouldReturn(result, err) {
 				return result, err
 			}
@@ -172,20 +158,20 @@ func (r *InstallationReconciler) reconcileInstallations(ctx context.Context, log
 	return ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) reconcileInstallation(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, packageName string, installationPlan *integrationv1alpha1.InstallationPlan) (ctrl.Result, error) {
+func (r *InstallationReconciler) reconcileInstallation(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, operatorID string, installationPlan *integrationv1alpha1.InstallationPlan) (ctrl.Result, error) {
 	if installationPlan.Mode == integrationv1alpha1.NamespaceMode {
 		result, err := r.reconcileNamespace(ctx, log, installationPlan.Namespace)
 		if r.shouldReturn(result, err) {
 			return result, err
 		}
 
-		result, err = r.reconcileOperatorGroupTargetingOwnNamespace(ctx, log, installation, packageName, installationPlan.Namespace)
+		result, err = r.reconcileOperatorGroupTargetingOwnNamespace(ctx, log, installation, operatorID, installationPlan.Namespace)
 		if r.shouldReturn(result, err) {
 			return result, err
 		}
 	}
 
-	result, err := r.reconcileSubscription(ctx, log, installation, packageName, installationPlan)
+	result, err := r.reconcileSubscription(ctx, log, installation, operatorID, installationPlan)
 	if r.shouldReturn(result, err) {
 		return result, err
 	}
@@ -221,15 +207,17 @@ func (r *InstallationReconciler) reconcileNamespace(ctx context.Context, log log
 	return ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) reconcileOperatorGroupTargetingOwnNamespace(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, packageName string, namespace string) (ctrl.Result, error) {
+func (r *InstallationReconciler) reconcileOperatorGroupTargetingOwnNamespace(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, operatorID string, namespace string) (ctrl.Result, error) {
+	name := operatorID
+
 	operatorGroup := &operatorsv1.OperatorGroup{}
-	err := r.Get(ctx, types.NamespacedName{Name: packageName, Namespace: namespace}, operatorGroup)
+	err := r.Get(ctx, types.NamespacedName{Name: name, Namespace: namespace}, operatorGroup)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			// Define a new OperatorGroup
 			operatorGroup = &operatorsv1.OperatorGroup{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:      packageName,
+					Name:      name,
 					Namespace: namespace,
 				},
 				Spec: operatorsv1.OperatorGroupSpec{
@@ -248,30 +236,33 @@ func (r *InstallationReconciler) reconcileOperatorGroupTargetingOwnNamespace(ctx
 			return ctrl.Result{Requeue: true}, nil
 		}
 		// Error reading the object - requeue the request
-		log.Error(err, "Failed to get OperatorGroup", "OperatorGroup.Name", packageName, "OperatorGroup.Namespace", namespace)
+		log.Error(err, "Failed to get OperatorGroup", "OperatorGroup.Name", name, "OperatorGroup.Namespace", namespace)
 		return ctrl.Result{}, err
 	}
 
 	return ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, packageName string, installationPlan *integrationv1alpha1.InstallationPlan) (ctrl.Result, error) {
+func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, operatorID string, installationPlan *integrationv1alpha1.InstallationPlan) (ctrl.Result, error) {
+	name := operatorID
+	namespace := installationPlan.Namespace
+
 	subscription := &operatorsv1alpha1.Subscription{}
-	err := r.Get(ctx, types.NamespacedName{Name: packageName, Namespace: installationPlan.Namespace}, subscription)
+	err := r.Get(ctx, types.NamespacedName{Name: name, Namespace: namespace}, subscription)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			// Define a new Subscription
 			subscription = &operatorsv1alpha1.Subscription{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:      packageName,
-					Namespace: installationPlan.Namespace,
+					Name:      name,
+					Namespace: namespace,
 				},
 				Spec: &operatorsv1alpha1.SubscriptionSpec{
 					CatalogSource:          catalogSource,
 					CatalogSourceNamespace: catalogSourceNamespace,
 					Channel:                installationPlan.Channel,
 					InstallPlanApproval:    installationPlan.Approval,
-					Package:                packageName,
+					Package:                packageNames[operatorID],
 				},
 			}
 			log.Info("Creating a new Subscription", "Subscription.Name", subscription.Name, "Subscription.Namespace", subscription.Namespace)
@@ -284,7 +275,7 @@ func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log 
 			return ctrl.Result{RequeueAfter: 10 * time.Second}, nil
 		}
 		// Error reading the object - requeue the request
-		log.Error(err, "Failed to get Subscription", "Subscription.Name", packageName, "Subscription.Namespace", installationPlan.Namespace)
+		log.Error(err, "Failed to get Subscription", "Subscription.Name", name, "Subscription.Namespace", namespace)
 		return ctrl.Result{}, err
 	}
 
@@ -292,19 +283,22 @@ func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log 
 }
 
 func (r *InstallationReconciler) initializeStatus(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, installationPlans map[string]integrationv1alpha1.InstallationPlan) bool {
-	if installation.Status.ProductStatus == nil {
-		statusMap := make(map[string]integrationv1alpha1.ProductStatusValue)
+	if installation.Status.Conditions == nil {
+		conditions := []metav1.Condition{}
 
-		for packageName, installationPlan := range installationPlans {
+		for operatorID, installationPlan := range installationPlans {
 			if installationPlan.Enabled {
-				statusMap[packageName] = integrationv1alpha1.ProductStatusValue{Phase: operatorsv1alpha1.CSVPhaseInstalling, Message: ""}
+				conditions = append(conditions, metav1.Condition{
+					Type:               conditionTypes[operatorID],
+					Status:             metav1.ConditionUnknown,
+					LastTransitionTime: metav1.Now(),
+					Reason:             string(operatorsv1alpha1.CSVPhaseInstalling),
+					Message:            "",
+				})
 			}
 		}
 
-		installation.Status.Phase = operatorsv1alpha1.CSVPhaseInstalling
-		installation.Status.Message = ""
-		installation.Status.ProductStatus = statusMap
-
+		installation.Status.Conditions = conditions
 		log.Info("Initializing Installation status")
 		err := r.Status().Update(ctx, installation)
 		if err != nil {
@@ -317,34 +311,63 @@ func (r *InstallationReconciler) initializeStatus(ctx context.Context, log logr.
 }
 
 func (r *InstallationReconciler) updateStatus(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, installationPlans map[string]integrationv1alpha1.InstallationPlan) (ctrl.Result, error) {
-	statusMap := make(map[string]integrationv1alpha1.ProductStatusValue)
+	newConditions := []metav1.Condition{}
 
-	for packageName, installationPlan := range installationPlans {
+	for _, condition := range installation.Status.Conditions {
+		operatorID := operatorIDs[condition.Type]
+		installationPlan := installationPlans[operatorID]
 		if installationPlan.Enabled {
+			namespace := installationPlan.Namespace
+
+			subscriptionName := operatorID
 			subscription := &operatorsv1alpha1.Subscription{}
-			err := r.Get(ctx, types.NamespacedName{Name: packageName, Namespace: installationPlan.Namespace}, subscription)
+			err := r.Get(ctx, types.NamespacedName{Name: subscriptionName, Namespace: namespace}, subscription)
 			if err != nil {
 				// Error reading the object - requeue the request
-				log.Error(err, "Failed to get Subscription", "Subscription.Name", packageName, "Subscription.Namespace", installationPlan.Namespace)
+				log.Error(err, "Failed to get Subscription", "Subscription.Name", subscriptionName, "Subscription.Namespace", namespace)
 				return ctrl.Result{}, err
 			}
 
 			csvName := subscription.Status.InstalledCSV
 			csv := &operatorsv1alpha1.ClusterServiceVersion{}
-			err = r.Get(ctx, types.NamespacedName{Name: csvName, Namespace: installationPlan.Namespace}, csv)
+			err = r.Get(ctx, types.NamespacedName{Name: csvName, Namespace: namespace}, csv)
 			if err != nil && !errors.IsNotFound(err) {
 				// Error reading the object - requeue the request
-				log.Error(err, "Failed to get ClusterServiceVersion", "ClusterServiceVersion.Name", csvName, "ClusterServiceVersion.Namespace", installationPlan.Namespace)
+				log.Error(err, "Failed to get ClusterServiceVersion", "ClusterServiceVersion.Name", csvName, "ClusterServiceVersion.Namespace", namespace)
 				return ctrl.Result{}, err
 			}
 
-			statusMap[packageName] = integrationv1alpha1.ProductStatusValue{Phase: csv.Status.Phase, Message: csv.Status.Message}
+			newCondition := metav1.Condition{
+				Type:    condition.Type,
+				Message: csv.Status.Message,
+			}
+
+			if csv.Status.Phase == operatorsv1alpha1.CSVPhaseSucceeded {
+				newCondition.Status = metav1.ConditionTrue
+			} else if csv.Status.Phase == operatorsv1alpha1.CSVPhaseFailed {
+				newCondition.Status = metav1.ConditionFalse
+			} else {
+				newCondition.Status = condition.Status
+			}
+
+			if newCondition.Status == condition.Status {
+				newCondition.LastTransitionTime = condition.LastTransitionTime
+			} else {
+				newCondition.LastTransitionTime = metav1.Now()
+			}
+
+			if csv.Status.Phase == operatorsv1alpha1.CSVPhaseNone {
+				newCondition.Reason = condition.Reason
+			} else {
+				newCondition.Reason = string(csv.Status.Phase)
+			}
+
+			newConditions = append(newConditions, newCondition)
 		}
 	}
 
-	if !reflect.DeepEqual(statusMap, installation.Status.ProductStatus) {
-		installation.Status.Phase, installation.Status.Message = r.getOverallPhaseAndMessage(statusMap)
-		installation.Status.ProductStatus = statusMap
+	if !reflect.DeepEqual(newConditions, installation.Status.Conditions) {
+		installation.Status.Conditions = newConditions
 		log.Info("Updating Installation status")
 		err := r.Status().Update(ctx, installation)
 		if err != nil {
@@ -353,7 +376,7 @@ func (r *InstallationReconciler) updateStatus(ctx context.Context, log logr.Logg
 		}
 	}
 
-	if installation.Status.Phase == operatorsv1alpha1.CSVPhaseInstalling {
+	if r.isInstalling(installation.Status.Conditions) {
 		log.Info("Installation in progress")
 		return ctrl.Result{RequeueAfter: 10 * time.Second}, nil
 	}
@@ -362,16 +385,13 @@ func (r *InstallationReconciler) updateStatus(ctx context.Context, log logr.Logg
 	return ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) getOverallPhaseAndMessage(statusMap map[string]integrationv1alpha1.ProductStatusValue) (operatorsv1alpha1.ClusterServiceVersionPhase, string) {
-	for _, value := range statusMap {
-		if value.Phase == operatorsv1alpha1.CSVPhaseFailed {
-			return operatorsv1alpha1.CSVPhaseFailed, "Some installations failed"
-		}
-		if value.Phase != operatorsv1alpha1.CSVPhaseSucceeded {
-			return operatorsv1alpha1.CSVPhaseInstalling, ""
+func (r *InstallationReconciler) isInstalling(conditions []metav1.Condition) bool {
+	for _, condition := range conditions {
+		if condition.Status == metav1.ConditionUnknown {
+			return true
 		}
 	}
-	return operatorsv1alpha1.CSVPhaseSucceeded, "All installations succeeded"
+	return false
 }
 
 func (r *InstallationReconciler) shouldReturn(result ctrl.Result, err error) bool {
