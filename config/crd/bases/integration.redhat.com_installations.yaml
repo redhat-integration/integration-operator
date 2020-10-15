@@ -58,6 +58,50 @@ spec:
               - mode
               - namespace
               type: object
+            amq-broker-installation:
+              description: Installation plan
+              properties:
+                approval:
+                  description: Approval is the user approval policy for an InstallPlan.
+                  type: string
+                channel:
+                  type: string
+                enabled:
+                  type: boolean
+                mode:
+                  description: Operator available cluster wide or in a specific namespace
+                  type: string
+                namespace:
+                  type: string
+              required:
+              - approval
+              - channel
+              - enabled
+              - mode
+              - namespace
+              type: object
+            amq-interconnect-installation:
+              description: Installation plan
+              properties:
+                approval:
+                  description: Approval is the user approval policy for an InstallPlan.
+                  type: string
+                channel:
+                  type: string
+                enabled:
+                  type: boolean
+                mode:
+                  description: Operator available cluster wide or in a specific namespace
+                  type: string
+                namespace:
+                  type: string
+              required:
+              - approval
+              - channel
+              - enabled
+              - mode
+              - namespace
+              type: object
             amq-streams-installation:
               description: Installation plan
               properties:
@@ -192,6 +236,8 @@ spec:
               type: object
           required:
           - 3scale-installation
+          - amq-broker-installation
+          - amq-interconnect-installation
           - amq-streams-installation
           - api-designer-installation
           - camel-k-installation

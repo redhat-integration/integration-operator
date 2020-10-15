@@ -9,6 +9,18 @@ spec:
     mode: Namespace
     namespace: rhi-3scale
     approval: Automatic
+  amq-broker-installation:
+    enabled: true
+    channel: current
+    mode: Namespace
+    namespace: rhi-amq-broker
+    approval: Automatic
+  amq-interconnect-installation:
+    enabled: true
+    channel: "1.2.0"
+    mode: Namespace
+    namespace: rhi-amq-interconnect
+    approval: Automatic
   amq-streams-installation:
     enabled: true
     channel: stable

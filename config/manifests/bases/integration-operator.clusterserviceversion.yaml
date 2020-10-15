@@ -44,6 +44,54 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
         - urn:alm:descriptor:com.tectonic.ui:fieldDependency:3scale-installation.mode:Namespace
+      - displayName: AMQ Broker Operator
+        path: amq-broker-installation
+      - displayName: Approval Strategy
+        path: amq-broker-installation.approval
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
+        - urn:alm:descriptor:com.tectonic.ui:select:Manual
+      - displayName: Update Channel
+        path: amq-broker-installation.channel
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:current
+      - displayName: Enabled
+        path: amq-broker-installation.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Installation Mode
+        path: amq-broker-installation.mode
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
+      - displayName: Namespace
+        path: amq-broker-installation.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:amq-broker-installation.mode:Namespace
+      - displayName: AMQ Interconnect Operator
+        path: amq-interconnect-installation
+      - displayName: Approval Strategy
+        path: amq-interconnect-installation.approval
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
+        - urn:alm:descriptor:com.tectonic.ui:select:Manual
+      - displayName: Update Channel
+        path: amq-interconnect-installation.channel
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:1.2.0
+      - displayName: Enabled
+        path: amq-interconnect-installation.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Installation Mode
+        path: amq-interconnect-installation.mode
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
+      - displayName: Namespace
+        path: amq-interconnect-installation.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:amq-interconnect-installation.mode:Namespace
       - displayName: AMQ Streams Operator
         path: amq-streams-installation
       - displayName: Approval Strategy

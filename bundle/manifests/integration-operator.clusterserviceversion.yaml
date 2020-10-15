@@ -18,6 +18,20 @@ metadata:
               "mode": "Namespace",
               "namespace": "rhi-3scale"
             },
+            "amq-broker-installation": {
+              "approval": "Automatic",
+              "channel": "current",
+              "enabled": true,
+              "mode": "Namespace",
+              "namespace": "rhi-amq-broker"
+            },
+            "amq-interconnect-installation": {
+              "approval": "Automatic",
+              "channel": "1.2.0",
+              "enabled": true,
+              "mode": "Namespace",
+              "namespace": "rhi-amq-interconnect"
+            },
             "amq-streams-installation": {
               "approval": "Automatic",
               "channel": "stable",
@@ -66,7 +80,7 @@ metadata:
     capabilities: Basic Install
     operators.operatorframework.io/builder: operator-sdk-v1.0.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v2
-  name: integration-operator.v0.0.31
+  name: integration-operator.v0.0.36
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -104,6 +118,54 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
         - urn:alm:descriptor:com.tectonic.ui:fieldDependency:3scale-installation.mode:Namespace
+      - displayName: AMQ Broker Operator
+        path: amq-broker-installation
+      - displayName: Approval Strategy
+        path: amq-broker-installation.approval
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
+        - urn:alm:descriptor:com.tectonic.ui:select:Manual
+      - displayName: Update Channel
+        path: amq-broker-installation.channel
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:current
+      - displayName: Enabled
+        path: amq-broker-installation.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Installation Mode
+        path: amq-broker-installation.mode
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
+      - displayName: Namespace
+        path: amq-broker-installation.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:amq-broker-installation.mode:Namespace
+      - displayName: AMQ Interconnect Operator
+        path: amq-interconnect-installation
+      - displayName: Approval Strategy
+        path: amq-interconnect-installation.approval
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
+        - urn:alm:descriptor:com.tectonic.ui:select:Manual
+      - displayName: Update Channel
+        path: amq-interconnect-installation.channel
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:1.2.0
+      - displayName: Enabled
+        path: amq-interconnect-installation.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Installation Mode
+        path: amq-interconnect-installation.mode
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
+      - displayName: Namespace
+        path: amq-interconnect-installation.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:amq-interconnect-installation.mode:Namespace
       - displayName: AMQ Streams Operator
         path: amq-streams-installation
       - displayName: Approval Strategy
@@ -374,7 +436,7 @@ spec:
                 - --enable-leader-election
                 command:
                 - /manager
-                image: quay.io/abkieling/integration-operator:0.0.31
+                image: quay.io/abkieling/integration-operator:0.0.36
                 name: manager
                 resources:
                   limits:
@@ -435,4 +497,4 @@ spec:
   maturity: alpha
   provider:
     name: Red Hat
-  version: 0.0.31
+  version: 0.0.36

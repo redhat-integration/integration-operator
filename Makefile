@@ -1,5 +1,5 @@
 # Current Operator version
-VERSION ?= 0.0.31
+VERSION ?= 0.0.36
 # Default bundle image tag
 BUNDLE_IMG ?= quay.io/abkieling/integration-operator-bundle:$(VERSION)
 # Options for 'bundle-build'
@@ -128,6 +128,8 @@ bundle-push:
 
 delete-namespaces:
 	kubectl delete namespace rhi-3scale --ignore-not-found
+	kubectl delete namespace rhi-amq-broker --ignore-not-found
+	kubectl delete namespace rhi-amq-interconnect --ignore-not-found
 	kubectl delete namespace rhi-amq-streams --ignore-not-found
 	kubectl delete namespace rhi-apicurito --ignore-not-found
 	kubectl delete namespace rhi-camel-k --ignore-not-found

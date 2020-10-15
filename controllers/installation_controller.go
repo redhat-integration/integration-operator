@@ -35,6 +35,12 @@ import (
 	integrationv1alpha1 "github.com/redhat-integration/integration-operator/api/v1alpha1"
 )
 
+const (
+	// Values used when creating a new Subscription
+	catalogSource          = "redhat-operators"
+	catalogSourceNamespace = "openshift-marketplace"
+)
+
 // InstallationReconciler reconciles a Installation object
 type InstallationReconciler struct {
 	client.Client
@@ -64,28 +70,20 @@ func (r *InstallationReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error
 		return ctrl.Result{}, nil
 	}
 
-	installationPlans := map[string]integrationv1alpha1.InstallationPlan{
-		operator3scale:          integrationv1alpha1.InstallationPlan(installation.Spec.ThreeScaleInstallationPlan),
-		operatorAMQStreams:      integrationv1alpha1.InstallationPlan(installation.Spec.AMQStreamsInstallationPlan),
-		operatorAPIDesigner:     integrationv1alpha1.InstallationPlan(installation.Spec.APIDesignerInstallationPlan),
-		operatorCamelK:          integrationv1alpha1.InstallationPlan(installation.Spec.CamelKInstallationPlan),
-		operatorFuseOnline:      integrationv1alpha1.InstallationPlan(installation.Spec.FuseOnlineInstallationPlan),
-		operatorServiceRegistry: integrationv1alpha1.InstallationPlan(installation.Spec.ServiceRegistryInstallationPlan),
-		operatorSSO:             integrationv1alpha1.InstallationPlan(installation.Spec.SSOInstallationPlan),
-	}
+	installationPlans := installation.GetInstallationPlans()
 
 	shouldReturn = r.initializeStatus(ctx, log, installation, installationPlans)
 	if shouldReturn {
 		return ctrl.Result{}, nil
 	}
 
-	for operatorID, installationPlan := range installationPlans {
+	for _, installationPlan := range installationPlans {
 		if installationPlan.Enabled {
-			result, err := r.reconcileInstallation(ctx, log, installation, operatorID, &installationPlan)
+			result, err := r.reconcileInstallationPlan(ctx, log, installation, installationPlan)
 			if r.shouldReturn(result, err) {
 				return result, err
 			}
-			shouldReturn = r.updateStatus(ctx, log, installation, operatorID, &installationPlan)
+			shouldReturn = r.updateStatus(ctx, log, installation, installationPlan)
 			if shouldReturn {
 				return ctrl.Result{}, nil
 			}
@@ -121,32 +119,10 @@ func (r *InstallationReconciler) getInstallation(ctx context.Context, log logr.L
 }
 
 func (r *InstallationReconciler) updateNamespaceForClusterInstallations(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation) bool {
-	spec := *installation.Spec.DeepCopy()
+	specCopy := *installation.Spec.DeepCopy()
+	installation.UpdateNamespaceForClusterInstallations()
 
-	if spec.ThreeScaleInstallationPlan.Mode == integrationv1alpha1.ClusterMode {
-		spec.ThreeScaleInstallationPlan.Namespace = clusterModeNamespace
-	}
-	if spec.AMQStreamsInstallationPlan.Mode == integrationv1alpha1.ClusterMode {
-		spec.AMQStreamsInstallationPlan.Namespace = clusterModeNamespace
-	}
-	if spec.APIDesignerInstallationPlan.Mode == integrationv1alpha1.ClusterMode {
-		spec.APIDesignerInstallationPlan.Namespace = clusterModeNamespace
-	}
-	if spec.CamelKInstallationPlan.Mode == integrationv1alpha1.ClusterMode {
-		spec.CamelKInstallationPlan.Namespace = clusterModeNamespace
-	}
-	if spec.FuseOnlineInstallationPlan.Mode == integrationv1alpha1.ClusterMode {
-		spec.FuseOnlineInstallationPlan.Namespace = clusterModeNamespace
-	}
-	if spec.ServiceRegistryInstallationPlan.Mode == integrationv1alpha1.ClusterMode {
-		spec.ServiceRegistryInstallationPlan.Namespace = clusterModeNamespace
-	}
-	if spec.SSOInstallationPlan.Mode == integrationv1alpha1.ClusterMode {
-		spec.SSOInstallationPlan.Namespace = clusterModeNamespace
-	}
-
-	if !reflect.DeepEqual(spec, installation.Spec) {
-		installation.Spec = spec
+	if !reflect.DeepEqual(specCopy, installation.Spec) {
 		log.Info("Updating Installation spec")
 		err := r.Update(ctx, installation)
 		if err != nil {
@@ -159,20 +135,20 @@ func (r *InstallationReconciler) updateNamespaceForClusterInstallations(ctx cont
 	return false
 }
 
-func (r *InstallationReconciler) reconcileInstallation(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, operatorID string, installationPlan *integrationv1alpha1.InstallationPlan) (ctrl.Result, error) {
+func (r *InstallationReconciler) reconcileInstallationPlan(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, installationPlan *integrationv1alpha1.InstallationPlan) (ctrl.Result, error) {
 	if installationPlan.Mode == integrationv1alpha1.NamespaceMode {
 		result, err := r.reconcileNamespace(ctx, log, installationPlan.Namespace)
 		if r.shouldReturn(result, err) {
 			return result, err
 		}
 
-		result, err = r.reconcileOperatorGroupTargetingOwnNamespace(ctx, log, installation, operatorID, installationPlan.Namespace)
+		result, err = r.reconcileOperatorGroup(ctx, log, installationPlan)
 		if r.shouldReturn(result, err) {
 			return result, err
 		}
 	}
 
-	result, err := r.reconcileSubscription(ctx, log, installation, operatorID, installationPlan)
+	result, err := r.reconcileSubscription(ctx, log, installationPlan)
 	if r.shouldReturn(result, err) {
 		return result, err
 	}
@@ -208,8 +184,9 @@ func (r *InstallationReconciler) reconcileNamespace(ctx context.Context, log log
 	return ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) reconcileOperatorGroupTargetingOwnNamespace(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, operatorID string, namespace string) (ctrl.Result, error) {
-	name := operatorID
+func (r *InstallationReconciler) reconcileOperatorGroup(ctx context.Context, log logr.Logger, installationPlan *integrationv1alpha1.InstallationPlan) (ctrl.Result, error) {
+	name := installationPlan.PackageName
+	namespace := installationPlan.Namespace
 
 	operatorGroup := &operatorsv1.OperatorGroup{}
 	err := r.Get(ctx, types.NamespacedName{Name: name, Namespace: namespace}, operatorGroup)
@@ -244,8 +221,8 @@ func (r *InstallationReconciler) reconcileOperatorGroupTargetingOwnNamespace(ctx
 	return ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, operatorID string, installationPlan *integrationv1alpha1.InstallationPlan) (ctrl.Result, error) {
-	name := operatorID
+func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log logr.Logger, installationPlan *integrationv1alpha1.InstallationPlan) (ctrl.Result, error) {
+	name := installationPlan.PackageName
 	namespace := installationPlan.Namespace
 
 	subscription := &operatorsv1alpha1.Subscription{}
@@ -263,7 +240,7 @@ func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log 
 					CatalogSourceNamespace: catalogSourceNamespace,
 					Channel:                installationPlan.Channel,
 					InstallPlanApproval:    installationPlan.Approval,
-					Package:                packageNames[operatorID],
+					Package:                installationPlan.PackageName,
 				},
 			}
 			log.Info("Creating a new Subscription", "Subscription.Name", subscription.Name, "Subscription.Namespace", subscription.Namespace)
@@ -283,14 +260,14 @@ func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log 
 	return ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) initializeStatus(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, installationPlans map[string]integrationv1alpha1.InstallationPlan) bool {
+func (r *InstallationReconciler) initializeStatus(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, installationPlans []*integrationv1alpha1.InstallationPlan) bool {
 	if installation.Status.Conditions == nil {
 		conditions := []metav1.Condition{}
 
-		for operatorID, installationPlan := range installationPlans {
+		for _, installationPlan := range installationPlans {
 			if installationPlan.Enabled {
 				conditions = append(conditions, metav1.Condition{
-					Type:               conditionTypes[operatorID],
+					Type:               installationPlan.ConditionType,
 					Status:             metav1.ConditionUnknown,
 					LastTransitionTime: metav1.Now(),
 					Reason:             string(operatorsv1alpha1.CSVPhaseInstalling),
@@ -311,12 +288,12 @@ func (r *InstallationReconciler) initializeStatus(ctx context.Context, log logr.
 	return false
 }
 
-func (r *InstallationReconciler) updateStatus(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, operatorID string, installationPlan *integrationv1alpha1.InstallationPlan) bool {
+func (r *InstallationReconciler) updateStatus(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, installationPlan *integrationv1alpha1.InstallationPlan) bool {
 	for i, condition := range installation.Status.Conditions {
-		if operatorID == operatorIDs[condition.Type] {
+		if condition.Type == installationPlan.ConditionType {
 			namespace := installationPlan.Namespace
 
-			subscriptionName := operatorID
+			subscriptionName := installationPlan.PackageName
 			subscription := &operatorsv1alpha1.Subscription{}
 			err := r.Get(ctx, types.NamespacedName{Name: subscriptionName, Namespace: namespace}, subscription)
 			if err != nil {
