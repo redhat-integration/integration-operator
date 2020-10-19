@@ -17,6 +17,31 @@ spec:
       kind: Installation
       name: installations.integration.redhat.com
       specDescriptors:
+      - displayName: 3scale APIcast Operator
+        path: 3scale-apicast-installation
+      - displayName: Approval Strategy
+        path: 3scale-apicast-installation.approval
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
+        - urn:alm:descriptor:com.tectonic.ui:select:Manual
+      - displayName: Update Channel
+        path: 3scale-apicast-installation.channel
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:threescale-2.8
+        - urn:alm:descriptor:com.tectonic.ui:select:threescale-2.9
+      - displayName: Enabled
+        path: 3scale-apicast-installation.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Installation Mode
+        path: 3scale-apicast-installation.mode
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
+      - displayName: Namespace
+        path: 3scale-apicast-installation.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:3scale-apicast-installation.mode:Namespace
       - displayName: 3scale Operator
         path: 3scale-installation
       - displayName: Approval Strategy
@@ -168,6 +193,30 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
         - urn:alm:descriptor:com.tectonic.ui:fieldDependency:camel-k-installation.mode:Namespace
+      - displayName: Fuse Console Operator
+        path: fuse-console-installation
+      - displayName: Approval Strategy
+        path: fuse-console-installation.approval
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
+        - urn:alm:descriptor:com.tectonic.ui:select:Manual
+      - displayName: Update Channel
+        path: fuse-console-installation.channel
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:alpha
+      - displayName: Enabled
+        path: fuse-console-installation.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Installation Mode
+        path: fuse-console-installation.mode
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
+      - displayName: Namespace
+        path: fuse-console-installation.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:fuse-console-installation.mode:Namespace
       - displayName: Fuse Online Operator
         path: fuse-online-installation
       - displayName: Approval Strategy
@@ -217,30 +266,6 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
         - urn:alm:descriptor:com.tectonic.ui:fieldDependency:service-registry-installation.mode:Namespace
-      - displayName: Single Sign-On Operator
-        path: sso-installation
-      - displayName: Approval Strategy
-        path: sso-installation.approval
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
-        - urn:alm:descriptor:com.tectonic.ui:select:Manual
-      - displayName: Update Channel
-        path: sso-installation.channel
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:alpha
-      - displayName: Enabled
-        path: sso-installation.enabled
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - displayName: Installation Mode
-        path: sso-installation.mode
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
-      - displayName: Namespace
-        path: sso-installation.namespace
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:text
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:sso-installation.mode:Namespace
       version: v1alpha1
   description: Installs Red Hat Integration product operators
   displayName: Red Hat Integration

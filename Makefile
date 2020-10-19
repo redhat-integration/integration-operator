@@ -128,11 +128,12 @@ bundle-push:
 
 delete-namespaces:
 	kubectl delete namespace rhi-3scale --ignore-not-found
+	kubectl delete namespace rhi-3scale-apicast --ignore-not-found
 	kubectl delete namespace rhi-amq-broker --ignore-not-found
 	kubectl delete namespace rhi-amq-interconnect --ignore-not-found
 	kubectl delete namespace rhi-amq-streams --ignore-not-found
 	kubectl delete namespace rhi-apicurito --ignore-not-found
 	kubectl delete namespace rhi-camel-k --ignore-not-found
+	kubectl delete namespace rhi-fuse-console --ignore-not-found
 	kubectl delete namespace rhi-fuse-online --ignore-not-found
 	kubectl delete namespace rhi-service-registry --ignore-not-found
-	kubectl delete namespace rhi-sso --ignore-not-found

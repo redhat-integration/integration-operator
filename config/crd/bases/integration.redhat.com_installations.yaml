@@ -36,6 +36,28 @@ spec:
         spec:
           description: InstallationSpec defines the desired state of Installation
           properties:
+            3scale-apicast-installation:
+              description: Installation plan
+              properties:
+                approval:
+                  description: Approval is the user approval policy for an InstallPlan.
+                  type: string
+                channel:
+                  type: string
+                enabled:
+                  type: boolean
+                mode:
+                  description: Operator available cluster wide or in a specific namespace
+                  type: string
+                namespace:
+                  type: string
+              required:
+              - approval
+              - channel
+              - enabled
+              - mode
+              - namespace
+              type: object
             3scale-installation:
               description: Installation plan
               properties:
@@ -168,6 +190,28 @@ spec:
               - mode
               - namespace
               type: object
+            fuse-console-installation:
+              description: Installation plan
+              properties:
+                approval:
+                  description: Approval is the user approval policy for an InstallPlan.
+                  type: string
+                channel:
+                  type: string
+                enabled:
+                  type: boolean
+                mode:
+                  description: Operator available cluster wide or in a specific namespace
+                  type: string
+                namespace:
+                  type: string
+              required:
+              - approval
+              - channel
+              - enabled
+              - mode
+              - namespace
+              type: object
             fuse-online-installation:
               description: Installation plan
               properties:
@@ -212,38 +256,17 @@ spec:
               - mode
               - namespace
               type: object
-            sso-installation:
-              description: Installation plan
-              properties:
-                approval:
-                  description: Approval is the user approval policy for an InstallPlan.
-                  type: string
-                channel:
-                  type: string
-                enabled:
-                  type: boolean
-                mode:
-                  description: Operator available cluster wide or in a specific namespace
-                  type: string
-                namespace:
-                  type: string
-              required:
-              - approval
-              - channel
-              - enabled
-              - mode
-              - namespace
-              type: object
           required:
+          - 3scale-apicast-installation
           - 3scale-installation
           - amq-broker-installation
           - amq-interconnect-installation
           - amq-streams-installation
           - api-designer-installation
           - camel-k-installation
+          - fuse-console-installation
           - fuse-online-installation
           - service-registry-installation
-          - sso-installation
           type: object
         status:
           description: InstallationStatus defines the observed state of Installation

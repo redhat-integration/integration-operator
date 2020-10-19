@@ -33,24 +33,26 @@ const (
 	clusterModeNamespace = "openshift-operators"
 	// Package names
 	package3scale          = "3scale-operator"
+	package3scaleAPIcast   = "apicast-operator"
 	packageAMQBroker       = "amq-broker"
 	packageAMQInterconnect = "amq7-interconnect-operator"
 	packageAMQStreams      = "amq-streams"
 	packageAPIDesigner     = "fuse-apicurito"
 	packageCamelK          = "red-hat-camel-k"
+	packageFuseConsole     = "fuse-console"
 	packageFuseOnline      = "fuse-online"
 	packageServiceRegistry = "service-registry-operator"
-	packageSSO             = "rhsso-operator"
 	// Condition types
 	conditionType3scale          = "3scaleOperatorInstalled"
+	conditionType3scaleAPIcast   = "3scaleAPIcastOperatorInstalled"
 	conditionTypeAMQBroker       = "AMQBrokerOperatorInstalled"
 	conditionTypeAMQInterconnect = "AMQInterconnectOperatorInstalled"
 	conditionTypeAMQStreams      = "AMQStreamsOperatorInstalled"
 	conditionTypeAPIDesigner     = "APIDesignerOperatorInstalled"
 	conditionTypeCamelK          = "CamelKOperatorInstalled"
+	conditionTypeFuseConsole     = "FuseConsoleOperatorInstalled"
 	conditionTypeFuseOnline      = "FuseOnlineOperatorInstalled"
 	conditionTypeServiceRegistry = "ServiceRegistryOperatorInstalled"
-	conditionTypeSSO             = "SingleSignOnOperatorInstalled"
 )
 
 type InstallationInputFields struct {
@@ -70,6 +72,20 @@ type ThreeScaleInstallationInputFields struct {
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Installation Mode",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Namespace"}
 	Mode InstallationMode `json:"mode"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:3scale-installation.mode:Namespace"}
+	Namespace string `json:"namespace"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Approval Strategy",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Automatic","urn:alm:descriptor:com.tectonic.ui:select:Manual"}
+	Approval operatorsv1alpha1.Approval `json:"approval"`
+}
+
+// Installation plan
+type ThreeScaleAPIcastInstallationInputFields struct {
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Enabled",xDescriptors="urn:alm:descriptor:com.tectonic.ui:booleanSwitch"
+	Enabled bool `json:"enabled"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Update Channel",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:threescale-2.8","urn:alm:descriptor:com.tectonic.ui:select:threescale-2.9"}
+	Channel string `json:"channel"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Installation Mode",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Namespace"}
+	Mode InstallationMode `json:"mode"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:3scale-apicast-installation.mode:Namespace"}
 	Namespace string `json:"namespace"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Approval Strategy",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Automatic","urn:alm:descriptor:com.tectonic.ui:select:Manual"}
 	Approval operatorsv1alpha1.Approval `json:"approval"`
@@ -146,6 +162,20 @@ type CamelKInstallationInputFields struct {
 }
 
 // Installation plan
+type FuseConsoleInstallationInputFields struct {
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Enabled",xDescriptors="urn:alm:descriptor:com.tectonic.ui:booleanSwitch"
+	Enabled bool `json:"enabled"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Update Channel",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:alpha"}
+	Channel string `json:"channel"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Installation Mode",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Namespace"}
+	Mode InstallationMode `json:"mode"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:fuse-console-installation.mode:Namespace"}
+	Namespace string `json:"namespace"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Approval Strategy",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Automatic","urn:alm:descriptor:com.tectonic.ui:select:Manual"}
+	Approval operatorsv1alpha1.Approval `json:"approval"`
+}
+
+// Installation plan
 type FuseOnlineInstallationInputFields struct {
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Enabled",xDescriptors="urn:alm:descriptor:com.tectonic.ui:booleanSwitch"
 	Enabled bool `json:"enabled"`
@@ -173,24 +203,12 @@ type ServiceRegistryInstallationInputFields struct {
 	Approval operatorsv1alpha1.Approval `json:"approval"`
 }
 
-// Installation plan
-type SSOInstallationInputFields struct {
-	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Enabled",xDescriptors="urn:alm:descriptor:com.tectonic.ui:booleanSwitch"
-	Enabled bool `json:"enabled"`
-	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Update Channel",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:alpha"}
-	Channel string `json:"channel"`
-	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Installation Mode",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Namespace"}
-	Mode InstallationMode `json:"mode"`
-	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:sso-installation.mode:Namespace"}
-	Namespace string `json:"namespace"`
-	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Approval Strategy",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:Automatic","urn:alm:descriptor:com.tectonic.ui:select:Manual"}
-	Approval operatorsv1alpha1.Approval `json:"approval"`
-}
-
 // InstallationSpec defines the desired state of Installation
 type InstallationSpec struct {
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="3scale Operator"
 	ThreeScaleInstallationInputFields ThreeScaleInstallationInputFields `json:"3scale-installation"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="3scale APIcast Operator"
+	ThreeScaleAPIcastInstallationInputFields ThreeScaleAPIcastInstallationInputFields `json:"3scale-apicast-installation"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="AMQ Broker Operator"
 	AMQBrokerInstallationInputFields AMQBrokerInstallationInputFields `json:"amq-broker-installation"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="AMQ Interconnect Operator"
@@ -201,12 +219,12 @@ type InstallationSpec struct {
 	APIDesignerInstallationInputFields APIDesignerInstallationInputFields `json:"api-designer-installation"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Camel K Operator"
 	CamelKInstallationInputFields CamelKInstallationInputFields `json:"camel-k-installation"`
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Fuse Console Operator"
+	FuseConsoleInstallationInputFields FuseConsoleInstallationInputFields `json:"fuse-console-installation"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Fuse Online Operator"
 	FuseOnlineInstallationInputFields FuseOnlineInstallationInputFields `json:"fuse-online-installation"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Service Registry Operator"
 	ServiceRegistryInstallationInputFields ServiceRegistryInstallationInputFields `json:"service-registry-installation"`
-	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Single Sign-On Operator"
-	SSOInstallationInputFields SSOInstallationInputFields `json:"sso-installation"`
 }
 
 // InstallationStatus defines the observed state of Installation
@@ -229,6 +247,11 @@ type Installation struct {
 // GetInstallationPlans returns the product operators' installation plans
 func (i *Installation) GetInstallationPlans() []*InstallationPlan {
 	return []*InstallationPlan{
+		{
+			PackageName:             package3scaleAPIcast,
+			ConditionType:           conditionType3scaleAPIcast,
+			InstallationInputFields: InstallationInputFields(i.Spec.ThreeScaleAPIcastInstallationInputFields),
+		},
 		{
 			PackageName:             package3scale,
 			ConditionType:           conditionType3scale,
@@ -260,6 +283,11 @@ func (i *Installation) GetInstallationPlans() []*InstallationPlan {
 			InstallationInputFields: InstallationInputFields(i.Spec.CamelKInstallationInputFields),
 		},
 		{
+			PackageName:             packageFuseConsole,
+			ConditionType:           conditionTypeFuseConsole,
+			InstallationInputFields: InstallationInputFields(i.Spec.FuseConsoleInstallationInputFields),
+		},
+		{
 			PackageName:             packageFuseOnline,
 			ConditionType:           conditionTypeFuseOnline,
 			InstallationInputFields: InstallationInputFields(i.Spec.FuseOnlineInstallationInputFields),
@@ -269,16 +297,14 @@ func (i *Installation) GetInstallationPlans() []*InstallationPlan {
 			ConditionType:           conditionTypeServiceRegistry,
 			InstallationInputFields: InstallationInputFields(i.Spec.ServiceRegistryInstallationInputFields),
 		},
-		{
-			PackageName:             packageSSO,
-			ConditionType:           conditionTypeSSO,
-			InstallationInputFields: InstallationInputFields(i.Spec.SSOInstallationInputFields),
-		},
 	}
 }
 
 // UpdateNamespaceForClusterInstallations sets the correct namespace for installation where installation mode is cluster wide
 func (i *Installation) UpdateNamespaceForClusterInstallations() {
+	if i.Spec.ThreeScaleAPIcastInstallationInputFields.Mode == ClusterMode {
+		i.Spec.ThreeScaleAPIcastInstallationInputFields.Namespace = clusterModeNamespace
+	}
 	if i.Spec.ThreeScaleInstallationInputFields.Mode == ClusterMode {
 		i.Spec.ThreeScaleInstallationInputFields.Namespace = clusterModeNamespace
 	}
@@ -297,14 +323,14 @@ func (i *Installation) UpdateNamespaceForClusterInstallations() {
 	if i.Spec.CamelKInstallationInputFields.Mode == ClusterMode {
 		i.Spec.CamelKInstallationInputFields.Namespace = clusterModeNamespace
 	}
+	if i.Spec.FuseConsoleInstallationInputFields.Mode == ClusterMode {
+		i.Spec.FuseConsoleInstallationInputFields.Namespace = clusterModeNamespace
+	}
 	if i.Spec.FuseOnlineInstallationInputFields.Mode == ClusterMode {
 		i.Spec.FuseOnlineInstallationInputFields.Namespace = clusterModeNamespace
 	}
 	if i.Spec.ServiceRegistryInstallationInputFields.Mode == ClusterMode {
 		i.Spec.ServiceRegistryInstallationInputFields.Namespace = clusterModeNamespace
-	}
-	if i.Spec.SSOInstallationInputFields.Mode == ClusterMode {
-		i.Spec.SSOInstallationInputFields.Namespace = clusterModeNamespace
 	}
 }
 

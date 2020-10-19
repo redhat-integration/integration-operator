@@ -9,6 +9,12 @@ spec:
     mode: Namespace
     namespace: rhi-3scale
     approval: Automatic
+  3scale-apicast-installation:
+    enabled: true
+    channel: threescale-2.9
+    mode: Namespace
+    namespace: rhi-3scale-apicast
+    approval: Automatic
   amq-broker-installation:
     enabled: true
     channel: current
@@ -39,6 +45,12 @@ spec:
     mode: Cluster
     namespace: rhi-camel-k
     approval: Automatic
+  fuse-console-installation:
+    enabled: true
+    channel: alpha
+    mode: Namespace
+    namespace: rhi-fuse-console
+    approval: Automatic
   fuse-online-installation:
     enabled: true
     channel: alpha
@@ -50,10 +62,4 @@ spec:
     channel: serviceregistry-1.0
     mode: Namespace
     namespace: rhi-service-registry
-    approval: Automatic
-  sso-installation:
-    enabled: true
-    channel: alpha
-    mode: Namespace
-    namespace: rhi-sso
     approval: Automatic
