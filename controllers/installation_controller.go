@@ -39,6 +39,8 @@ const (
 	// Values used when creating a new Subscription
 	catalogSource          = "redhat-operators"
 	catalogSourceNamespace = "openshift-marketplace"
+	// Condition reason when installation is disabled
+	conditionReasonDisabled = "Disabled"
 )
 
 // InstallationReconciler reconciles a Installation object
@@ -265,15 +267,22 @@ func (r *InstallationReconciler) initializeStatus(ctx context.Context, log logr.
 		conditions := []metav1.Condition{}
 
 		for _, installationPlan := range installationPlans {
+			var status metav1.ConditionStatus
+			var reason string
 			if installationPlan.Enabled {
-				conditions = append(conditions, metav1.Condition{
-					Type:               installationPlan.ConditionType,
-					Status:             metav1.ConditionUnknown,
-					LastTransitionTime: metav1.Now(),
-					Reason:             string(operatorsv1alpha1.CSVPhaseInstalling),
-					Message:            "",
-				})
+				status = metav1.ConditionUnknown
+				reason = string(operatorsv1alpha1.CSVPhaseInstalling)
+			} else {
+				status = metav1.ConditionFalse
+				reason = conditionReasonDisabled
 			}
+			conditions = append(conditions, metav1.Condition{
+				Type:               installationPlan.ConditionType,
+				Status:             status,
+				LastTransitionTime: metav1.Now(),
+				Reason:             reason,
+				Message:            "",
+			})
 		}
 
 		installation.Status.Conditions = conditions
@@ -296,50 +305,48 @@ func (r *InstallationReconciler) updateStatus(ctx context.Context, log logr.Logg
 			subscriptionName := installationPlan.PackageName
 			subscription := &operatorsv1alpha1.Subscription{}
 			err := r.Get(ctx, types.NamespacedName{Name: subscriptionName, Namespace: namespace}, subscription)
-			if err != nil {
-				if errors.IsNotFound(err) {
-					return false
-				}
+			if err != nil && !errors.IsNotFound(err) {
 				// Error reading the object - requeue the request
 				log.Error(err, "Failed to get Subscription", "Subscription.Name", subscriptionName, "Subscription.Namespace", namespace)
 				return true
 			}
 
-			csvName := subscription.Status.InstalledCSV
 			csv := &operatorsv1alpha1.ClusterServiceVersion{}
-			err = r.Get(ctx, types.NamespacedName{Name: csvName, Namespace: namespace}, csv)
-			if err != nil && !errors.IsNotFound(err) {
-				if errors.IsNotFound(err) {
-					return false
+
+			if err == nil {
+				csvName := subscription.Status.InstalledCSV
+				err = r.Get(ctx, types.NamespacedName{Name: csvName, Namespace: namespace}, csv)
+				if err != nil && !errors.IsNotFound(err) {
+					// Error reading the object - requeue the request
+					log.Error(err, "Failed to get ClusterServiceVersion", "ClusterServiceVersion.Name", csvName, "ClusterServiceVersion.Namespace", namespace)
+					return true
 				}
-				// Error reading the object - requeue the request
-				log.Error(err, "Failed to get ClusterServiceVersion", "ClusterServiceVersion.Name", csvName, "ClusterServiceVersion.Namespace", namespace)
-				return true
 			}
 
-			newCondition := metav1.Condition{
-				Type:    condition.Type,
-				Message: csv.Status.Message,
+			newCondition := metav1.Condition(condition)
+
+			if newCondition.Reason == conditionReasonDisabled {
+				newCondition.Status = metav1.ConditionUnknown
+				newCondition.Reason = string(operatorsv1alpha1.CSVPhaseInstalling)
 			}
 
-			if csv.Status.Phase == operatorsv1alpha1.CSVPhaseSucceeded {
-				newCondition.Status = metav1.ConditionTrue
-			} else if csv.Status.Phase == operatorsv1alpha1.CSVPhaseFailed {
-				newCondition.Status = metav1.ConditionFalse
-			} else {
-				newCondition.Status = condition.Status
-			}
+			if err == nil {
+				switch csv.Status.Phase {
+				case operatorsv1alpha1.CSVPhaseSucceeded:
+					newCondition.Status = metav1.ConditionTrue
+				case operatorsv1alpha1.CSVPhaseFailed:
+					newCondition.Status = metav1.ConditionFalse
+				}
 
-			if newCondition.Status == condition.Status {
-				newCondition.LastTransitionTime = condition.LastTransitionTime
-			} else {
-				newCondition.LastTransitionTime = metav1.Now()
-			}
+				if newCondition.Status != condition.Status {
+					newCondition.LastTransitionTime = metav1.Now()
+				}
 
-			if csv.Status.Phase == operatorsv1alpha1.CSVPhaseNone {
-				newCondition.Reason = condition.Reason
-			} else {
-				newCondition.Reason = string(csv.Status.Phase)
+				if csv.Status.Phase != operatorsv1alpha1.CSVPhaseNone {
+					newCondition.Reason = string(csv.Status.Phase)
+				}
+
+				newCondition.Message = csv.Status.Message
 			}
 
 			if !reflect.DeepEqual(newCondition, condition) {
