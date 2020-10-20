@@ -286,6 +286,7 @@ func (r *InstallationReconciler) initializeStatus(ctx context.Context, log logr.
 		}
 
 		installation.Status.Conditions = conditions
+		installation.Status.Phase = r.calculatePhase(conditions)
 		log.Info("Initializing Installation status")
 		err := r.Status().Update(ctx, installation)
 		if err != nil {
@@ -351,6 +352,7 @@ func (r *InstallationReconciler) updateStatus(ctx context.Context, log logr.Logg
 
 			if !reflect.DeepEqual(newCondition, condition) {
 				installation.Status.Conditions[i] = newCondition
+				installation.Status.Phase = r.calculatePhase(installation.Status.Conditions)
 				log.Info("Updating Installation status")
 				err := r.Status().Update(ctx, installation)
 				if err != nil {
@@ -364,6 +366,18 @@ func (r *InstallationReconciler) updateStatus(ctx context.Context, log logr.Logg
 	}
 
 	return false
+}
+
+func (r *InstallationReconciler) calculatePhase(conditions []metav1.Condition) operatorsv1alpha1.ClusterServiceVersionPhase {
+	for _, condition := range conditions {
+		if condition.Status == metav1.ConditionUnknown {
+			return operatorsv1alpha1.CSVPhaseInstalling
+		}
+		if condition.Status == metav1.ConditionFalse && condition.Reason != conditionReasonDisabled {
+			return operatorsv1alpha1.CSVPhaseFailed
+		}
+	}
+	return operatorsv1alpha1.CSVPhaseSucceeded
 }
 
 func (r *InstallationReconciler) isInstalling(conditions []metav1.Condition) bool {
