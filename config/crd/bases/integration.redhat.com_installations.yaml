@@ -340,6 +340,10 @@ spec:
                 - type
                 type: object
               type: array
+            phase:
+              description: ClusterServiceVersionPhase is a label for the condition
+                of a ClusterServiceVersion at the current time.
+              type: string
           type: object
       type: object
   version: v1alpha1
