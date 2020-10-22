@@ -256,17 +256,6 @@ spec:
               - mode
               - namespace
               type: object
-          required:
-          - 3scale-apicast-installation
-          - 3scale-installation
-          - amq-broker-installation
-          - amq-interconnect-installation
-          - amq-streams-installation
-          - api-designer-installation
-          - camel-k-installation
-          - fuse-console-installation
-          - fuse-online-installation
-          - service-registry-installation
           type: object
         status:
           description: InstallationStatus defines the observed state of Installation

@@ -206,25 +206,25 @@ type ServiceRegistryInstallationInputFields struct {
 // InstallationSpec defines the desired state of Installation
 type InstallationSpec struct {
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="3scale Operator"
-	ThreeScaleInstallationInputFields ThreeScaleInstallationInputFields `json:"3scale-installation"`
+	ThreeScaleInstallationInputFields ThreeScaleInstallationInputFields `json:"3scale-installation,omitempty"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="3scale APIcast Operator"
-	ThreeScaleAPIcastInstallationInputFields ThreeScaleAPIcastInstallationInputFields `json:"3scale-apicast-installation"`
+	ThreeScaleAPIcastInstallationInputFields ThreeScaleAPIcastInstallationInputFields `json:"3scale-apicast-installation,omitempty"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="AMQ Broker Operator"
-	AMQBrokerInstallationInputFields AMQBrokerInstallationInputFields `json:"amq-broker-installation"`
+	AMQBrokerInstallationInputFields AMQBrokerInstallationInputFields `json:"amq-broker-installation,omitempty"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="AMQ Interconnect Operator"
-	AMQInterconnectInstallationInputFields AMQInterconnectInstallationInputFields `json:"amq-interconnect-installation"`
+	AMQInterconnectInstallationInputFields AMQInterconnectInstallationInputFields `json:"amq-interconnect-installation,omitempty"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="AMQ Streams Operator"
-	AMQStreamsInstallationInputFields AMQStreamsInstallationInputFields `json:"amq-streams-installation"`
+	AMQStreamsInstallationInputFields AMQStreamsInstallationInputFields `json:"amq-streams-installation,omitempty"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="API Designer Operator"
-	APIDesignerInstallationInputFields APIDesignerInstallationInputFields `json:"api-designer-installation"`
+	APIDesignerInstallationInputFields APIDesignerInstallationInputFields `json:"api-designer-installation,omitempty"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Camel K Operator"
-	CamelKInstallationInputFields CamelKInstallationInputFields `json:"camel-k-installation"`
+	CamelKInstallationInputFields CamelKInstallationInputFields `json:"camel-k-installation,omitempty"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Fuse Console Operator"
-	FuseConsoleInstallationInputFields FuseConsoleInstallationInputFields `json:"fuse-console-installation"`
+	FuseConsoleInstallationInputFields FuseConsoleInstallationInputFields `json:"fuse-console-installation,omitempty"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Fuse Online Operator"
-	FuseOnlineInstallationInputFields FuseOnlineInstallationInputFields `json:"fuse-online-installation"`
+	FuseOnlineInstallationInputFields FuseOnlineInstallationInputFields `json:"fuse-online-installation,omitempty"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Service Registry Operator"
-	ServiceRegistryInstallationInputFields ServiceRegistryInstallationInputFields `json:"service-registry-installation"`
+	ServiceRegistryInstallationInputFields ServiceRegistryInstallationInputFields `json:"service-registry-installation,omitempty"`
 }
 
 // InstallationStatus defines the observed state of Installation
