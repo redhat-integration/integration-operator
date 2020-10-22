@@ -12,7 +12,7 @@ spec:
     listKind: InstallationList
     plural: installations
     singular: installation
-  scope: Namespaced
+  scope: Cluster
   subresources:
     status: {}
   validation:

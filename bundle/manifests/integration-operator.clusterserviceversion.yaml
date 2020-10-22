@@ -97,6 +97,16 @@ spec:
       displayName: Installation
       kind: Installation
       name: installations.integration.redhat.com
+      resources:
+      - kind: Namespace
+        name: ""
+        version: v1
+      - kind: OperatorGroup
+        name: ""
+        version: v1
+      - kind: Subscription
+        name: ""
+        version: v1alpha1
       specDescriptors:
       - displayName: 3scale APIcast Operator
         path: 3scale-apicast-installation
@@ -529,5 +539,4 @@ spec:
   maturity: alpha
   provider:
     name: Red Hat
-  replaces: integration-operator.v0.0.1
   version: 0.0.2

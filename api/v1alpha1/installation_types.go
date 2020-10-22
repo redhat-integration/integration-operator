@@ -238,6 +238,7 @@ type InstallationStatus struct {
 
 // Installation is the Schema for the installations API
 // +kubebuilder:resource:path=installations,scope=Cluster
+// +operator-sdk:csv:customresourcedefinitions:resources={{Namespace,v1},{OperatorGroup,v1},{Subscription,v1alpha1}}
 type Installation struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
