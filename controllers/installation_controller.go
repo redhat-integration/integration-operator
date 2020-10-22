@@ -259,6 +259,19 @@ func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log 
 		return ctrl.Result{}, err
 	}
 
+	// Ensure the update channel is the same as the spec
+	if subscription.Spec.Channel != installationPlan.Channel || subscription.Spec.InstallPlanApproval != installationPlan.Approval {
+		subscription.Spec.Channel = installationPlan.Channel
+		subscription.Spec.InstallPlanApproval = installationPlan.Approval
+		err = r.Update(ctx, subscription)
+		if err != nil {
+			log.Error(err, "Failed to update Subscription", "Subscription.Name", subscription.Name, "Subscription.Namespace", subscription.Namespace)
+			return ctrl.Result{}, err
+		}
+		// Subscription update - return and requeue
+		return ctrl.Result{Requeue: true}, nil
+	}
+
 	return ctrl.Result{}, nil
 }
 
