@@ -206,25 +206,25 @@ type ServiceRegistryInstallationInputFields struct {
 // InstallationSpec defines the desired state of Installation
 type InstallationSpec struct {
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="3scale Operator"
-	ThreeScaleInstallationInputFields ThreeScaleInstallationInputFields `json:"3scale-installation,omitempty"`
+	ThreeScaleInstallationInputFields *ThreeScaleInstallationInputFields `json:"3scale-installation,omitempty"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="3scale APIcast Operator"
-	ThreeScaleAPIcastInstallationInputFields ThreeScaleAPIcastInstallationInputFields `json:"3scale-apicast-installation,omitempty"`
+	ThreeScaleAPIcastInstallationInputFields *ThreeScaleAPIcastInstallationInputFields `json:"3scale-apicast-installation,omitempty"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="AMQ Broker Operator"
-	AMQBrokerInstallationInputFields AMQBrokerInstallationInputFields `json:"amq-broker-installation,omitempty"`
+	AMQBrokerInstallationInputFields *AMQBrokerInstallationInputFields `json:"amq-broker-installation,omitempty"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="AMQ Interconnect Operator"
-	AMQInterconnectInstallationInputFields AMQInterconnectInstallationInputFields `json:"amq-interconnect-installation,omitempty"`
+	AMQInterconnectInstallationInputFields *AMQInterconnectInstallationInputFields `json:"amq-interconnect-installation,omitempty"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="AMQ Streams Operator"
-	AMQStreamsInstallationInputFields AMQStreamsInstallationInputFields `json:"amq-streams-installation,omitempty"`
+	AMQStreamsInstallationInputFields *AMQStreamsInstallationInputFields `json:"amq-streams-installation,omitempty"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="API Designer Operator"
-	APIDesignerInstallationInputFields APIDesignerInstallationInputFields `json:"api-designer-installation,omitempty"`
+	APIDesignerInstallationInputFields *APIDesignerInstallationInputFields `json:"api-designer-installation,omitempty"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Camel K Operator"
-	CamelKInstallationInputFields CamelKInstallationInputFields `json:"camel-k-installation,omitempty"`
+	CamelKInstallationInputFields *CamelKInstallationInputFields `json:"camel-k-installation,omitempty"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Fuse Console Operator"
-	FuseConsoleInstallationInputFields FuseConsoleInstallationInputFields `json:"fuse-console-installation,omitempty"`
+	FuseConsoleInstallationInputFields *FuseConsoleInstallationInputFields `json:"fuse-console-installation,omitempty"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Fuse Online Operator"
-	FuseOnlineInstallationInputFields FuseOnlineInstallationInputFields `json:"fuse-online-installation,omitempty"`
+	FuseOnlineInstallationInputFields *FuseOnlineInstallationInputFields `json:"fuse-online-installation,omitempty"`
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Service Registry Operator"
-	ServiceRegistryInstallationInputFields ServiceRegistryInstallationInputFields `json:"service-registry-installation,omitempty"`
+	ServiceRegistryInstallationInputFields *ServiceRegistryInstallationInputFields `json:"service-registry-installation,omitempty"`
 }
 
 // InstallationStatus defines the observed state of Installation
@@ -249,90 +249,112 @@ type Installation struct {
 
 // GetInstallationPlans returns the product operators' installation plans
 func (i *Installation) GetInstallationPlans() []*InstallationPlan {
-	return []*InstallationPlan{
-		{
+	installationPlans := []*InstallationPlan{}
+
+	if i.Spec.ThreeScaleAPIcastInstallationInputFields != nil {
+		installationPlans = append(installationPlans, &InstallationPlan{
 			PackageName:             package3scaleAPIcast,
 			ConditionType:           conditionType3scaleAPIcast,
-			InstallationInputFields: InstallationInputFields(i.Spec.ThreeScaleAPIcastInstallationInputFields),
-		},
-		{
+			InstallationInputFields: InstallationInputFields(*i.Spec.ThreeScaleAPIcastInstallationInputFields),
+		})
+	}
+	if i.Spec.ThreeScaleInstallationInputFields != nil {
+		installationPlans = append(installationPlans, &InstallationPlan{
 			PackageName:             package3scale,
 			ConditionType:           conditionType3scale,
-			InstallationInputFields: InstallationInputFields(i.Spec.ThreeScaleInstallationInputFields),
-		},
-		{
+			InstallationInputFields: InstallationInputFields(*i.Spec.ThreeScaleInstallationInputFields),
+		})
+	}
+	if i.Spec.AMQBrokerInstallationInputFields != nil {
+		installationPlans = append(installationPlans, &InstallationPlan{
 			PackageName:             packageAMQBroker,
 			ConditionType:           conditionTypeAMQBroker,
-			InstallationInputFields: InstallationInputFields(i.Spec.AMQBrokerInstallationInputFields),
-		},
-		{
+			InstallationInputFields: InstallationInputFields(*i.Spec.AMQBrokerInstallationInputFields),
+		})
+	}
+	if i.Spec.AMQInterconnectInstallationInputFields != nil {
+		installationPlans = append(installationPlans, &InstallationPlan{
 			PackageName:             packageAMQInterconnect,
 			ConditionType:           conditionTypeAMQInterconnect,
-			InstallationInputFields: InstallationInputFields(i.Spec.AMQInterconnectInstallationInputFields),
-		},
-		{
+			InstallationInputFields: InstallationInputFields(*i.Spec.AMQInterconnectInstallationInputFields),
+		})
+	}
+	if i.Spec.AMQStreamsInstallationInputFields != nil {
+		installationPlans = append(installationPlans, &InstallationPlan{
 			PackageName:             packageAMQStreams,
 			ConditionType:           conditionTypeAMQStreams,
-			InstallationInputFields: InstallationInputFields(i.Spec.AMQStreamsInstallationInputFields),
-		},
-		{
+			InstallationInputFields: InstallationInputFields(*i.Spec.AMQStreamsInstallationInputFields),
+		})
+	}
+	if i.Spec.APIDesignerInstallationInputFields != nil {
+		installationPlans = append(installationPlans, &InstallationPlan{
 			PackageName:             packageAPIDesigner,
 			ConditionType:           conditionTypeAPIDesigner,
-			InstallationInputFields: InstallationInputFields(i.Spec.APIDesignerInstallationInputFields),
-		},
-		{
+			InstallationInputFields: InstallationInputFields(*i.Spec.APIDesignerInstallationInputFields),
+		})
+	}
+	if i.Spec.CamelKInstallationInputFields != nil {
+		installationPlans = append(installationPlans, &InstallationPlan{
 			PackageName:             packageCamelK,
 			ConditionType:           conditionTypeCamelK,
-			InstallationInputFields: InstallationInputFields(i.Spec.CamelKInstallationInputFields),
-		},
-		{
+			InstallationInputFields: InstallationInputFields(*i.Spec.CamelKInstallationInputFields),
+		})
+	}
+	if i.Spec.FuseConsoleInstallationInputFields != nil {
+		installationPlans = append(installationPlans, &InstallationPlan{
 			PackageName:             packageFuseConsole,
 			ConditionType:           conditionTypeFuseConsole,
-			InstallationInputFields: InstallationInputFields(i.Spec.FuseConsoleInstallationInputFields),
-		},
-		{
+			InstallationInputFields: InstallationInputFields(*i.Spec.FuseConsoleInstallationInputFields),
+		})
+	}
+	if i.Spec.FuseOnlineInstallationInputFields != nil {
+		installationPlans = append(installationPlans, &InstallationPlan{
 			PackageName:             packageFuseOnline,
 			ConditionType:           conditionTypeFuseOnline,
-			InstallationInputFields: InstallationInputFields(i.Spec.FuseOnlineInstallationInputFields),
-		},
-		{
+			InstallationInputFields: InstallationInputFields(*i.Spec.FuseOnlineInstallationInputFields),
+		})
+	}
+	if i.Spec.ServiceRegistryInstallationInputFields != nil {
+		installationPlans = append(installationPlans, &InstallationPlan{
 			PackageName:             packageServiceRegistry,
 			ConditionType:           conditionTypeServiceRegistry,
-			InstallationInputFields: InstallationInputFields(i.Spec.ServiceRegistryInstallationInputFields),
-		},
+			InstallationInputFields: InstallationInputFields(*i.Spec.ServiceRegistryInstallationInputFields),
+		})
 	}
+
+	return installationPlans
 }
 
 // UpdateNamespaceForClusterInstallations sets the correct namespace for installation where installation mode is cluster wide
 func (i *Installation) UpdateNamespaceForClusterInstallations() {
-	if i.Spec.ThreeScaleAPIcastInstallationInputFields.Mode == ClusterMode {
+	if i.Spec.ThreeScaleAPIcastInstallationInputFields != nil && i.Spec.ThreeScaleAPIcastInstallationInputFields.Mode == ClusterMode {
 		i.Spec.ThreeScaleAPIcastInstallationInputFields.Namespace = clusterModeNamespace
 	}
-	if i.Spec.ThreeScaleInstallationInputFields.Mode == ClusterMode {
+	if i.Spec.ThreeScaleInstallationInputFields != nil && i.Spec.ThreeScaleInstallationInputFields.Mode == ClusterMode {
 		i.Spec.ThreeScaleInstallationInputFields.Namespace = clusterModeNamespace
 	}
-	if i.Spec.AMQBrokerInstallationInputFields.Mode == ClusterMode {
+	if i.Spec.AMQBrokerInstallationInputFields != nil && i.Spec.AMQBrokerInstallationInputFields.Mode == ClusterMode {
 		i.Spec.AMQBrokerInstallationInputFields.Namespace = clusterModeNamespace
 	}
-	if i.Spec.AMQInterconnectInstallationInputFields.Mode == ClusterMode {
+	if i.Spec.AMQInterconnectInstallationInputFields != nil && i.Spec.AMQInterconnectInstallationInputFields.Mode == ClusterMode {
 		i.Spec.AMQInterconnectInstallationInputFields.Namespace = clusterModeNamespace
 	}
-	if i.Spec.AMQStreamsInstallationInputFields.Mode == ClusterMode {
+	if i.Spec.AMQStreamsInstallationInputFields != nil && i.Spec.AMQStreamsInstallationInputFields.Mode == ClusterMode {
 		i.Spec.AMQStreamsInstallationInputFields.Namespace = clusterModeNamespace
 	}
-	if i.Spec.APIDesignerInstallationInputFields.Mode == ClusterMode {
+	if i.Spec.APIDesignerInstallationInputFields != nil && i.Spec.APIDesignerInstallationInputFields.Mode == ClusterMode {
 		i.Spec.APIDesignerInstallationInputFields.Namespace = clusterModeNamespace
 	}
-	if i.Spec.CamelKInstallationInputFields.Mode == ClusterMode {
+	if i.Spec.CamelKInstallationInputFields != nil && i.Spec.CamelKInstallationInputFields.Mode == ClusterMode {
 		i.Spec.CamelKInstallationInputFields.Namespace = clusterModeNamespace
 	}
-	if i.Spec.FuseConsoleInstallationInputFields.Mode == ClusterMode {
+	if i.Spec.FuseConsoleInstallationInputFields != nil && i.Spec.FuseConsoleInstallationInputFields.Mode == ClusterMode {
 		i.Spec.FuseConsoleInstallationInputFields.Namespace = clusterModeNamespace
 	}
-	if i.Spec.FuseOnlineInstallationInputFields.Mode == ClusterMode {
+	if i.Spec.FuseOnlineInstallationInputFields != nil && i.Spec.FuseOnlineInstallationInputFields.Mode == ClusterMode {
 		i.Spec.FuseOnlineInstallationInputFields.Namespace = clusterModeNamespace
 	}
-	if i.Spec.ServiceRegistryInstallationInputFields.Mode == ClusterMode {
+	if i.Spec.ServiceRegistryInstallationInputFields != nil && i.Spec.ServiceRegistryInstallationInputFields.Mode == ClusterMode {
 		i.Spec.ServiceRegistryInstallationInputFields.Namespace = clusterModeNamespace
 	}
 }
