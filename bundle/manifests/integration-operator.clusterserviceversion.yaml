@@ -12,71 +12,51 @@ metadata:
           },
           "spec": {
             "3scale-apicast-installation": {
-              "approval": "Automatic",
-              "channel": "threescale-2.9",
               "enabled": true,
               "mode": "Namespace",
               "namespace": "rhi-3scale-apicast"
             },
             "3scale-installation": {
-              "approval": "Automatic",
-              "channel": "threescale-2.9",
               "enabled": true,
               "mode": "Namespace",
               "namespace": "rhi-3scale"
             },
             "amq-broker-installation": {
-              "approval": "Automatic",
-              "channel": "current",
               "enabled": true,
               "mode": "Namespace",
               "namespace": "rhi-amq-broker"
             },
             "amq-interconnect-installation": {
-              "approval": "Automatic",
-              "channel": "1.2.0",
               "enabled": true,
               "mode": "Namespace",
               "namespace": "rhi-amq-interconnect"
             },
             "amq-streams-installation": {
-              "approval": "Automatic",
-              "channel": "stable",
               "enabled": true,
               "mode": "Cluster",
               "namespace": "rhi-amq-streams"
             },
             "api-designer-installation": {
-              "approval": "Automatic",
-              "channel": "alpha",
               "enabled": true,
               "mode": "Namespace",
               "namespace": "rhi-apicurito"
             },
             "camel-k-installation": {
-              "approval": "Automatic",
-              "channel": "techpreview",
               "enabled": true,
               "mode": "Cluster",
               "namespace": "rhi-camel-k"
             },
             "fuse-console-installation": {
-              "approval": "Automatic",
-              "channel": "alpha",
               "enabled": true,
               "mode": "Namespace",
               "namespace": "rhi-fuse-console"
             },
             "fuse-online-installation": {
-              "approval": "Automatic",
-              "channel": "alpha",
               "enabled": true,
               "mode": "Namespace",
               "namespace": "rhi-fuse-online"
             },
             "service-registry-installation": {
-              "approval": "Automatic",
-              "channel": "serviceregistry-1.0",
               "enabled": true,
               "mode": "Namespace",
               "namespace": "rhi-service-registry"
@@ -110,16 +90,6 @@ spec:
       specDescriptors:
       - displayName: 3scale APIcast Operator
         path: 3scale-apicast-installation
-      - displayName: Approval Strategy
-        path: 3scale-apicast-installation.approval
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
-        - urn:alm:descriptor:com.tectonic.ui:select:Manual
-      - displayName: Update Channel
-        path: 3scale-apicast-installation.channel
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:threescale-2.8
-        - urn:alm:descriptor:com.tectonic.ui:select:threescale-2.9
       - displayName: Enabled
         path: 3scale-apicast-installation.enabled
         x-descriptors:
@@ -135,19 +105,7 @@ spec:
         - urn:alm:descriptor:com.tectonic.ui:fieldDependency:3scale-apicast-installation.mode:Namespace
       - displayName: 3scale Operator
         path: 3scale-installation
-      - displayName: Approval Strategy
-        path: 3scale-installation.approval
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
-        - urn:alm:descriptor:com.tectonic.ui:select:Manual
-      - displayName: Update Channel
-        path: 3scale-installation.channel
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:threescale-2.6
-        - urn:alm:descriptor:com.tectonic.ui:select:threescale-2.7
-        - urn:alm:descriptor:com.tectonic.ui:select:threescale-2.8
-        - urn:alm:descriptor:com.tectonic.ui:select:threescale-2.9
-      - displayName: Enabled
+      - displayName: Install
         path: 3scale-installation.enabled
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
@@ -162,15 +120,6 @@ spec:
         - urn:alm:descriptor:com.tectonic.ui:fieldDependency:3scale-installation.mode:Namespace
       - displayName: AMQ Broker Operator
         path: amq-broker-installation
-      - displayName: Approval Strategy
-        path: amq-broker-installation.approval
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
-        - urn:alm:descriptor:com.tectonic.ui:select:Manual
-      - displayName: Update Channel
-        path: amq-broker-installation.channel
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:current
       - displayName: Enabled
         path: amq-broker-installation.enabled
         x-descriptors:
@@ -186,15 +135,6 @@ spec:
         - urn:alm:descriptor:com.tectonic.ui:fieldDependency:amq-broker-installation.mode:Namespace
       - displayName: AMQ Interconnect Operator
         path: amq-interconnect-installation
-      - displayName: Approval Strategy
-        path: amq-interconnect-installation.approval
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
-        - urn:alm:descriptor:com.tectonic.ui:select:Manual
-      - displayName: Update Channel
-        path: amq-interconnect-installation.channel
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:1.2.0
       - displayName: Enabled
         path: amq-interconnect-installation.enabled
         x-descriptors:
@@ -210,17 +150,6 @@ spec:
         - urn:alm:descriptor:com.tectonic.ui:fieldDependency:amq-interconnect-installation.mode:Namespace
       - displayName: AMQ Streams Operator
         path: amq-streams-installation
-      - displayName: Approval Strategy
-        path: amq-streams-installation.approval
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
-        - urn:alm:descriptor:com.tectonic.ui:select:Manual
-      - displayName: Update Channel
-        path: amq-streams-installation.channel
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:stable
-        - urn:alm:descriptor:com.tectonic.ui:select:amq-streams-1.5.x
-        - urn:alm:descriptor:com.tectonic.ui:select:amq-streams-1.x
       - displayName: Enabled
         path: amq-streams-installation.enabled
         x-descriptors:
@@ -237,15 +166,6 @@ spec:
         - urn:alm:descriptor:com.tectonic.ui:fieldDependency:amq-streams-installation.mode:Namespace
       - displayName: API Designer Operator
         path: api-designer-installation
-      - displayName: Approval Strategy
-        path: api-designer-installation.approval
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
-        - urn:alm:descriptor:com.tectonic.ui:select:Manual
-      - displayName: Update Channel
-        path: api-designer-installation.channel
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:alpha
       - displayName: Enabled
         path: api-designer-installation.enabled
         x-descriptors:
@@ -261,15 +181,6 @@ spec:
         - urn:alm:descriptor:com.tectonic.ui:fieldDependency:api-designer-installation.mode:Namespace
       - displayName: Camel K Operator
         path: camel-k-installation
-      - displayName: Approval Strategy
-        path: camel-k-installation.approval
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
-        - urn:alm:descriptor:com.tectonic.ui:select:Manual
-      - displayName: Update Channel
-        path: camel-k-installation.channel
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:techpreview
       - displayName: Enabled
         path: camel-k-installation.enabled
         x-descriptors:
@@ -286,15 +197,6 @@ spec:
         - urn:alm:descriptor:com.tectonic.ui:fieldDependency:camel-k-installation.mode:Namespace
       - displayName: Fuse Console Operator
         path: fuse-console-installation
-      - displayName: Approval Strategy
-        path: fuse-console-installation.approval
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
-        - urn:alm:descriptor:com.tectonic.ui:select:Manual
-      - displayName: Update Channel
-        path: fuse-console-installation.channel
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:alpha
       - displayName: Enabled
         path: fuse-console-installation.enabled
         x-descriptors:
@@ -310,15 +212,6 @@ spec:
         - urn:alm:descriptor:com.tectonic.ui:fieldDependency:fuse-console-installation.mode:Namespace
       - displayName: Fuse Online Operator
         path: fuse-online-installation
-      - displayName: Approval Strategy
-        path: fuse-online-installation.approval
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
-        - urn:alm:descriptor:com.tectonic.ui:select:Manual
-      - displayName: Update Channel
-        path: fuse-online-installation.channel
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:alpha
       - displayName: Enabled
         path: fuse-online-installation.enabled
         x-descriptors:
@@ -334,16 +227,6 @@ spec:
         - urn:alm:descriptor:com.tectonic.ui:fieldDependency:fuse-online-installation.mode:Namespace
       - displayName: Service Registry Operator
         path: service-registry-installation
-      - displayName: Approval Strategy
-        path: service-registry-installation.approval
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:Automatic
-        - urn:alm:descriptor:com.tectonic.ui:select:Manual
-      - displayName: Update Channel
-        path: service-registry-installation.channel
-        x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:serviceregistry-1
-        - urn:alm:descriptor:com.tectonic.ui:select:serviceregistry-1.0
       - displayName: Enabled
         path: service-registry-installation.enabled
         x-descriptors:
@@ -539,4 +422,5 @@ spec:
   maturity: alpha
   provider:
     name: Red Hat
+  replaces: integration-operator.v0.0.1
   version: 0.0.2

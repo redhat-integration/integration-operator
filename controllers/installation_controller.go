@@ -39,6 +39,7 @@ const (
 	// Values used when creating a new Subscription
 	catalogSource          = "redhat-operators"
 	catalogSourceNamespace = "openshift-marketplace"
+	approvalPolicy         = operatorsv1alpha1.ApprovalAutomatic
 	// Condition reason when installation is disabled
 	conditionReasonDisabled = "Disabled"
 )
@@ -241,7 +242,7 @@ func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log 
 					CatalogSource:          catalogSource,
 					CatalogSourceNamespace: catalogSourceNamespace,
 					Channel:                installationPlan.Channel,
-					InstallPlanApproval:    installationPlan.Approval,
+					InstallPlanApproval:    approvalPolicy,
 					Package:                installationPlan.PackageName,
 				},
 			}
@@ -260,9 +261,8 @@ func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log 
 	}
 
 	// Ensure the update channel is the same as the spec
-	if subscription.Spec.Channel != installationPlan.Channel || subscription.Spec.InstallPlanApproval != installationPlan.Approval {
+	if subscription.Spec.Channel != installationPlan.Channel {
 		subscription.Spec.Channel = installationPlan.Channel
-		subscription.Spec.InstallPlanApproval = installationPlan.Approval
 		err = r.Update(ctx, subscription)
 		if err != nil {
 			log.Error(err, "Failed to update Subscription", "Subscription.Name", subscription.Name, "Subscription.Namespace", subscription.Namespace)

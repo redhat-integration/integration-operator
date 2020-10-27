@@ -1,8 +1,8 @@
 apiVersion: operators.coreos.com/v1alpha1
 kind: CatalogSource
 metadata:
-  name: my-operators
+  name: custom-operators
   namespace: openshift-marketplace
 spec:
   sourceType: grpc
-  image: quay.io/abkieling/my-index:0.0.2
+  image: quay.io/abkieling/custom-operators:0.0.2

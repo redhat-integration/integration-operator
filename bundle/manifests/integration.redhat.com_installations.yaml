@@ -33,11 +33,6 @@ spec:
             3scale-apicast-installation:
               description: Installation plan
               properties:
-                approval:
-                  description: Approval is the user approval policy for an InstallPlan.
-                  type: string
-                channel:
-                  type: string
                 enabled:
                   type: boolean
                 mode:
@@ -46,8 +41,6 @@ spec:
                 namespace:
                   type: string
               required:
-              - approval
-              - channel
               - enabled
               - mode
               - namespace
@@ -55,11 +48,6 @@ spec:
             3scale-installation:
               description: Installation plan
               properties:
-                approval:
-                  description: Approval is the user approval policy for an InstallPlan.
-                  type: string
-                channel:
-                  type: string
                 enabled:
                   type: boolean
                 mode:
@@ -68,8 +56,6 @@ spec:
                 namespace:
                   type: string
               required:
-              - approval
-              - channel
               - enabled
               - mode
               - namespace
@@ -77,11 +63,6 @@ spec:
             amq-broker-installation:
               description: Installation plan
               properties:
-                approval:
-                  description: Approval is the user approval policy for an InstallPlan.
-                  type: string
-                channel:
-                  type: string
                 enabled:
                   type: boolean
                 mode:
@@ -90,8 +71,6 @@ spec:
                 namespace:
                   type: string
               required:
-              - approval
-              - channel
               - enabled
               - mode
               - namespace
@@ -99,11 +78,6 @@ spec:
             amq-interconnect-installation:
               description: Installation plan
               properties:
-                approval:
-                  description: Approval is the user approval policy for an InstallPlan.
-                  type: string
-                channel:
-                  type: string
                 enabled:
                   type: boolean
                 mode:
@@ -112,8 +86,6 @@ spec:
                 namespace:
                   type: string
               required:
-              - approval
-              - channel
               - enabled
               - mode
               - namespace
@@ -121,11 +93,6 @@ spec:
             amq-streams-installation:
               description: Installation plan
               properties:
-                approval:
-                  description: Approval is the user approval policy for an InstallPlan.
-                  type: string
-                channel:
-                  type: string
                 enabled:
                   type: boolean
                 mode:
@@ -134,8 +101,6 @@ spec:
                 namespace:
                   type: string
               required:
-              - approval
-              - channel
               - enabled
               - mode
               - namespace
@@ -143,11 +108,6 @@ spec:
             api-designer-installation:
               description: Installation plan
               properties:
-                approval:
-                  description: Approval is the user approval policy for an InstallPlan.
-                  type: string
-                channel:
-                  type: string
                 enabled:
                   type: boolean
                 mode:
@@ -156,8 +116,6 @@ spec:
                 namespace:
                   type: string
               required:
-              - approval
-              - channel
               - enabled
               - mode
               - namespace
@@ -165,11 +123,6 @@ spec:
             camel-k-installation:
               description: Installation plan
               properties:
-                approval:
-                  description: Approval is the user approval policy for an InstallPlan.
-                  type: string
-                channel:
-                  type: string
                 enabled:
                   type: boolean
                 mode:
@@ -178,8 +131,6 @@ spec:
                 namespace:
                   type: string
               required:
-              - approval
-              - channel
               - enabled
               - mode
               - namespace
@@ -187,11 +138,6 @@ spec:
             fuse-console-installation:
               description: Installation plan
               properties:
-                approval:
-                  description: Approval is the user approval policy for an InstallPlan.
-                  type: string
-                channel:
-                  type: string
                 enabled:
                   type: boolean
                 mode:
@@ -200,8 +146,6 @@ spec:
                 namespace:
                   type: string
               required:
-              - approval
-              - channel
               - enabled
               - mode
               - namespace
@@ -209,11 +153,6 @@ spec:
             fuse-online-installation:
               description: Installation plan
               properties:
-                approval:
-                  description: Approval is the user approval policy for an InstallPlan.
-                  type: string
-                channel:
-                  type: string
                 enabled:
                   type: boolean
                 mode:
@@ -222,8 +161,6 @@ spec:
                 namespace:
                   type: string
               required:
-              - approval
-              - channel
               - enabled
               - mode
               - namespace
@@ -231,11 +168,6 @@ spec:
             service-registry-installation:
               description: Installation plan
               properties:
-                approval:
-                  description: Approval is the user approval policy for an InstallPlan.
-                  type: string
-                channel:
-                  type: string
                 enabled:
                   type: boolean
                 mode:
@@ -244,23 +176,10 @@ spec:
                 namespace:
                   type: string
               required:
-              - approval
-              - channel
               - enabled
               - mode
               - namespace
               type: object
-          required:
-          - 3scale-apicast-installation
-          - 3scale-installation
-          - amq-broker-installation
-          - amq-interconnect-installation
-          - amq-streams-installation
-          - api-designer-installation
-          - camel-k-installation
-          - fuse-console-installation
-          - fuse-online-installation
-          - service-registry-installation
           type: object
         status:
           description: InstallationStatus defines the observed state of Installation
