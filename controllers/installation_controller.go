@@ -32,7 +32,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	integrationv1alpha1 "github.com/redhat-integration/integration-operator/api/v1alpha1"
+	integrationv1 "github.com/redhat-integration/integration-operator/api/v1"
 )
 
 const (
@@ -102,8 +102,8 @@ func (r *InstallationReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error
 	return ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) getInstallation(ctx context.Context, log logr.Logger, req ctrl.Request) (*integrationv1alpha1.Installation, error) {
-	installation := &integrationv1alpha1.Installation{}
+func (r *InstallationReconciler) getInstallation(ctx context.Context, log logr.Logger, req ctrl.Request) (*integrationv1.Installation, error) {
+	installation := &integrationv1.Installation{}
 	err := r.Get(ctx, req.NamespacedName, installation)
 	if err != nil {
 		if errors.IsNotFound(err) {
@@ -121,7 +121,7 @@ func (r *InstallationReconciler) getInstallation(ctx context.Context, log logr.L
 	return installation, nil
 }
 
-func (r *InstallationReconciler) updateNamespaceForClusterInstallations(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation) bool {
+func (r *InstallationReconciler) updateNamespaceForClusterInstallations(ctx context.Context, log logr.Logger, installation *integrationv1.Installation) bool {
 	specCopy := *installation.Spec.DeepCopy()
 	installation.UpdateNamespaceForClusterInstallations()
 
@@ -138,8 +138,8 @@ func (r *InstallationReconciler) updateNamespaceForClusterInstallations(ctx cont
 	return false
 }
 
-func (r *InstallationReconciler) reconcileInstallationPlan(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, installationPlan *integrationv1alpha1.InstallationPlan) (ctrl.Result, error) {
-	if installationPlan.Mode == integrationv1alpha1.NamespaceMode {
+func (r *InstallationReconciler) reconcileInstallationPlan(ctx context.Context, log logr.Logger, installation *integrationv1.Installation, installationPlan *integrationv1.InstallationPlan) (ctrl.Result, error) {
+	if installationPlan.Mode == integrationv1.NamespaceMode {
 		result, err := r.reconcileNamespace(ctx, log, installationPlan.Namespace)
 		if r.shouldReturn(result, err) {
 			return result, err
@@ -187,7 +187,7 @@ func (r *InstallationReconciler) reconcileNamespace(ctx context.Context, log log
 	return ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) reconcileOperatorGroup(ctx context.Context, log logr.Logger, installationPlan *integrationv1alpha1.InstallationPlan) (ctrl.Result, error) {
+func (r *InstallationReconciler) reconcileOperatorGroup(ctx context.Context, log logr.Logger, installationPlan *integrationv1.InstallationPlan) (ctrl.Result, error) {
 	name := installationPlan.PackageName
 	namespace := installationPlan.Namespace
 
@@ -224,7 +224,7 @@ func (r *InstallationReconciler) reconcileOperatorGroup(ctx context.Context, log
 	return ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log logr.Logger, installationPlan *integrationv1alpha1.InstallationPlan) (ctrl.Result, error) {
+func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log logr.Logger, installationPlan *integrationv1.InstallationPlan) (ctrl.Result, error) {
 	name := installationPlan.PackageName
 	namespace := installationPlan.Namespace
 
@@ -275,7 +275,7 @@ func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log 
 	return ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) initializeStatus(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, installationPlans []*integrationv1alpha1.InstallationPlan) bool {
+func (r *InstallationReconciler) initializeStatus(ctx context.Context, log logr.Logger, installation *integrationv1.Installation, installationPlans []*integrationv1.InstallationPlan) bool {
 	if installation.Status.Conditions == nil {
 		conditions := []metav1.Condition{}
 
@@ -311,7 +311,7 @@ func (r *InstallationReconciler) initializeStatus(ctx context.Context, log logr.
 	return false
 }
 
-func (r *InstallationReconciler) updateStatus(ctx context.Context, log logr.Logger, installation *integrationv1alpha1.Installation, installationPlan *integrationv1alpha1.InstallationPlan) bool {
+func (r *InstallationReconciler) updateStatus(ctx context.Context, log logr.Logger, installation *integrationv1.Installation, installationPlan *integrationv1.InstallationPlan) bool {
 	for i, condition := range installation.Status.Conditions {
 		if condition.Type == installationPlan.ConditionType {
 			namespace := installationPlan.Namespace
@@ -409,6 +409,6 @@ func (r *InstallationReconciler) shouldReturn(result ctrl.Result, err error) boo
 // SetupWithManager configures the controller
 func (r *InstallationReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&integrationv1alpha1.Installation{}).
+		For(&integrationv1.Installation{}).
 		Complete(r)
 }

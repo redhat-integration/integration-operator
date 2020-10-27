@@ -29,7 +29,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	integrationv1alpha1 "github.com/redhat-integration/integration-operator/api/v1alpha1"
+	integrationv1 "github.com/redhat-integration/integration-operator/api/v1"
 	"github.com/redhat-integration/integration-operator/controllers"
 	// +kubebuilder:scaffold:imports
 )
@@ -43,7 +43,7 @@ func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 	utilruntime.Must(operatorsv1.AddToScheme(scheme))
 	utilruntime.Must(operatorsv1alpha1.AddToScheme(scheme))
-	utilruntime.Must(integrationv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(integrationv1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
 }
 

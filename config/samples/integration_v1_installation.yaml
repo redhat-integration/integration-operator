@@ -1,4 +1,4 @@
-apiVersion: integration.redhat.com/v1alpha1
+apiVersion: integration.redhat.com/v1
 kind: Installation
 metadata:
   name: rhi-installation
