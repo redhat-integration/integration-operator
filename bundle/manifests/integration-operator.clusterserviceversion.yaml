@@ -5,7 +5,7 @@ metadata:
     alm-examples: |-
       [
         {
-          "apiVersion": "integration.redhat.com/v1alpha1",
+          "apiVersion": "integration.redhat.com/v1",
           "kind": "Installation",
           "metadata": {
             "name": "rhi-installation"
@@ -64,10 +64,10 @@ metadata:
           }
         }
       ]
-    capabilities: Basic Install
-    operators.operatorframework.io/builder: operator-sdk-v1.0.0
+    capabilities: Seamless Upgrades
+    operators.operatorframework.io/builder: operator-sdk-v1.1.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v2
-  name: integration-operator.v0.0.2
+  name: integration-operator.v0.0.1
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -240,7 +240,7 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
         - urn:alm:descriptor:com.tectonic.ui:fieldDependency:service-registry-installation.mode:Namespace
-      version: v1alpha1
+      version: v1
   description: Installs Red Hat Integration product operators
   displayName: Red Hat Integration
   icon:
@@ -361,7 +361,7 @@ spec:
                 - --enable-leader-election
                 command:
                 - /manager
-                image: quay.io/abkieling/integration-operator:0.0.2
+                image: quay.io/abkieling/integration-operator:0.0.1
                 name: manager
                 resources:
                   limits:
@@ -422,5 +422,4 @@ spec:
   maturity: alpha
   provider:
     name: Red Hat
-  replaces: integration-operator.v0.0.1
-  version: 0.0.2
+  version: 0.0.1

@@ -3,8 +3,8 @@ kind: ClusterServiceVersion
 metadata:
   annotations:
     alm-examples: '[]'
-    capabilities: Basic Install
-    operators.operatorframework.io/builder: operator-sdk-v1.0.0
+    capabilities: Seamless Upgrades
+    operators.operatorframework.io/builder: operator-sdk-v1.1.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v2
   name: integration-operator.vX.Y.Z
   namespace: placeholder
@@ -180,11 +180,191 @@ spec:
         - urn:alm:descriptor:com.tectonic.ui:text
         - urn:alm:descriptor:com.tectonic.ui:fieldDependency:service-registry-installation.mode:Namespace
       version: v1alpha1
-  description: Installs Red Hat Integration product operators
+    - description: Installation is the Schema for the installations API
+      displayName: Installation
+      kind: Installation
+      name: installations.integration.redhat.com
+      resources:
+      - kind: Namespace
+        name: ""
+        version: v1
+      - kind: OperatorGroup
+        name: ""
+        version: v1
+      - kind: Subscription
+        name: ""
+        version: v1alpha1
+      specDescriptors:
+      - displayName: 3scale APIcast Operator
+        path: 3scale-apicast-installation
+      - displayName: Enabled
+        path: 3scale-apicast-installation.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Installation Mode
+        path: 3scale-apicast-installation.mode
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
+      - displayName: Namespace
+        path: 3scale-apicast-installation.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:3scale-apicast-installation.mode:Namespace
+      - displayName: 3scale Operator
+        path: 3scale-installation
+      - displayName: Install
+        path: 3scale-installation.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Installation Mode
+        path: 3scale-installation.mode
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
+      - displayName: Namespace
+        path: 3scale-installation.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:3scale-installation.mode:Namespace
+      - displayName: AMQ Broker Operator
+        path: amq-broker-installation
+      - displayName: Enabled
+        path: amq-broker-installation.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Installation Mode
+        path: amq-broker-installation.mode
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
+      - displayName: Namespace
+        path: amq-broker-installation.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:amq-broker-installation.mode:Namespace
+      - displayName: AMQ Interconnect Operator
+        path: amq-interconnect-installation
+      - displayName: Enabled
+        path: amq-interconnect-installation.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Installation Mode
+        path: amq-interconnect-installation.mode
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
+      - displayName: Namespace
+        path: amq-interconnect-installation.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:amq-interconnect-installation.mode:Namespace
+      - displayName: AMQ Streams Operator
+        path: amq-streams-installation
+      - displayName: Enabled
+        path: amq-streams-installation.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Installation Mode
+        path: amq-streams-installation.mode
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:Cluster
+        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
+      - displayName: Namespace
+        path: amq-streams-installation.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:amq-streams-installation.mode:Namespace
+      - displayName: API Designer Operator
+        path: api-designer-installation
+      - displayName: Enabled
+        path: api-designer-installation.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Installation Mode
+        path: api-designer-installation.mode
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
+      - displayName: Namespace
+        path: api-designer-installation.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:api-designer-installation.mode:Namespace
+      - displayName: Camel K Operator
+        path: camel-k-installation
+      - displayName: Enabled
+        path: camel-k-installation.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Installation Mode
+        path: camel-k-installation.mode
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:Cluster
+        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
+      - displayName: Namespace
+        path: camel-k-installation.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:camel-k-installation.mode:Namespace
+      - displayName: Fuse Console Operator
+        path: fuse-console-installation
+      - displayName: Enabled
+        path: fuse-console-installation.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Installation Mode
+        path: fuse-console-installation.mode
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
+      - displayName: Namespace
+        path: fuse-console-installation.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:fuse-console-installation.mode:Namespace
+      - displayName: Fuse Online Operator
+        path: fuse-online-installation
+      - displayName: Enabled
+        path: fuse-online-installation.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Installation Mode
+        path: fuse-online-installation.mode
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
+      - displayName: Namespace
+        path: fuse-online-installation.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:fuse-online-installation.mode:Namespace
+      - displayName: Service Registry Operator
+        path: service-registry-installation
+      - displayName: Enabled
+        path: service-registry-installation.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - displayName: Installation Mode
+        path: service-registry-installation.mode
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
+      - displayName: Namespace
+        path: service-registry-installation.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:service-registry-installation.mode:Namespace
+      version: v1
+  description: >
+    Integration product operators available for installation:
+
+    - 3scale Operator
+    - 3scale APIcast Operator
+    - AMQ Broker Operator
+    - AMQ Interconnect Operator
+    - AMQ Streams Operator
+    - API Designer Operator
+    - Camel K Operator
+    - Fuse Console Operator
+    - Fuse Online Operator
+    - Service Registry Operator
   displayName: Red Hat Integration
   icon:
-  - base64data: ""
-    mediatype: ""
+  - base64data: PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIgMTQ1Ij48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6I2UwMDt9PC9zdHlsZT48L2RlZnM+PHRpdGxlPlJlZEhhdC1Mb2dvLUhhdC1Db2xvcjwvdGl0bGU+PHBhdGggZD0iTTE1Ny43Nyw2Mi42MWExNCwxNCwwLDAsMSwuMzEsMy40MmMwLDE0Ljg4LTE4LjEsMTcuNDYtMzAuNjEsMTcuNDZDNzguODMsODMuNDksNDIuNTMsNTMuMjYsNDIuNTMsNDRhNi40Myw2LjQzLDAsMCwxLC4yMi0xLjk0bC0zLjY2LDkuMDZhMTguNDUsMTguNDUsMCwwLDAtMS41MSw3LjMzYzAsMTguMTEsNDEsNDUuNDgsODcuNzQsNDUuNDgsMjAuNjksMCwzNi40My03Ljc2LDM2LjQzLTIxLjc3LDAtMS4wOCwwLTEuOTQtMS43My0xMC4xM1oiLz48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik0xMjcuNDcsODMuNDljMTIuNTEsMCwzMC42MS0yLjU4LDMwLjYxLTE3LjQ2YTE0LDE0LDAsMCwwLS4zMS0zLjQybC03LjQ1LTMyLjM2Yy0xLjcyLTcuMTItMy4yMy0xMC4zNS0xNS43My0xNi42QzEyNC44OSw4LjY5LDEwMy43Ni41LDk3LjUxLjUsOTEuNjkuNSw5MCw4LDgzLjA2LDhjLTYuNjgsMC0xMS42NC01LjYtMTcuODktNS42LTYsMC05LjkxLDQuMDktMTIuOTMsMTIuNSwwLDAtOC40MSwyMy43Mi05LjQ5LDI3LjE2QTYuNDMsNi40MywwLDAsMCw0Mi41Myw0NGMwLDkuMjIsMzYuMywzOS40NSw4NC45NCwzOS40NU0xNjAsNzIuMDdjMS43Myw4LjE5LDEuNzMsOS4wNSwxLjczLDEwLjEzLDAsMTQtMTUuNzQsMjEuNzctMzYuNDMsMjEuNzdDNzguNTQsMTA0LDM3LjU4LDc2LjYsMzcuNTgsNTguNDlhMTguNDUsMTguNDUsMCwwLDEsMS41MS03LjMzQzIyLjI3LDUyLC41LDU1LC41LDc0LjIyYzAsMzEuNDgsNzQuNTksNzAuMjgsMTMzLjY1LDcwLjI4LDQ1LjI4LDAsNTYuNy0yMC40OCw1Ni43LTM2LjY1LDAtMTIuNzItMTEtMjcuMTYtMzAuODMtMzUuNzgiLz48L3N2Zz4=
+    mediatype: image/svg+xml
   install:
     spec:
       deployments: null
@@ -201,12 +381,12 @@ spec:
   keywords:
   - integration
   links:
-  - name: Integration Operator
-    url: https://integration-operator.domain
+  - name: GitHub
+    url: https://github.com/redhat-integration/integration-operator
   maintainers:
   - email: abrianik@redhat.com
     name: Alexandre Kieling
-  maturity: alpha
+  maturity: stable
   provider:
     name: Red Hat
   version: 0.0.0

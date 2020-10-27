@@ -5,4 +5,4 @@ metadata:
   namespace: openshift-marketplace
 spec:
   sourceType: grpc
-  image: quay.io/abkieling/custom-operators:0.0.2
+  image: quay.io/abkieling/custom-operators:0.0.1
