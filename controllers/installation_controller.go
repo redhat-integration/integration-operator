@@ -33,13 +33,16 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	integrationv1 "github.com/redhat-integration/integration-operator/api/v1"
+	"github.com/redhat-integration/integration-operator/entities"
 )
 
 const (
-	// Values used when creating a new Subscription
-	catalogSource          = "redhat-operators"
+	// Subscriptions' catalog source
+	catalogSource = "redhat-operators"
+	// Subscriptions' catalog source namespace
 	catalogSourceNamespace = "openshift-marketplace"
-	approvalPolicy         = operatorsv1alpha1.ApprovalAutomatic
+	// Subscriptions' approval policy
+	approvalPolicy = operatorsv1alpha1.ApprovalAutomatic
 	// Condition reason when installation is disabled
 	conditionReasonDisabled = "Disabled"
 )
@@ -68,20 +71,15 @@ func (r *InstallationReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error
 		return ctrl.Result{}, err
 	}
 
-	shouldReturn := r.updateNamespaceForClusterInstallations(ctx, log, installation)
-	if shouldReturn {
-		return ctrl.Result{}, nil
-	}
+	installationPlans := entities.GetInstallationPlans(installation)
 
-	installationPlans := installation.GetInstallationPlans()
-
-	shouldReturn = r.initializeStatus(ctx, log, installation, installationPlans)
+	shouldReturn := r.initializeStatus(ctx, log, installation, installationPlans)
 	if shouldReturn {
 		return ctrl.Result{}, nil
 	}
 
 	for _, installationPlan := range installationPlans {
-		if installationPlan.Enabled {
+		if installationPlan.IsEnabled() {
 			result, err := r.reconcileInstallationPlan(ctx, log, installation, installationPlan)
 			if r.shouldReturn(result, err) {
 				return result, err
@@ -121,26 +119,9 @@ func (r *InstallationReconciler) getInstallation(ctx context.Context, log logr.L
 	return installation, nil
 }
 
-func (r *InstallationReconciler) updateNamespaceForClusterInstallations(ctx context.Context, log logr.Logger, installation *integrationv1.Installation) bool {
-	specCopy := *installation.Spec.DeepCopy()
-	installation.UpdateNamespaceForClusterInstallations()
-
-	if !reflect.DeepEqual(specCopy, installation.Spec) {
-		log.Info("Updating Installation spec")
-		err := r.Update(ctx, installation)
-		if err != nil {
-			log.Error(err, "Failed to update Installation spec")
-		}
-		// Installation updated successfully - return
-		return true
-	}
-
-	return false
-}
-
-func (r *InstallationReconciler) reconcileInstallationPlan(ctx context.Context, log logr.Logger, installation *integrationv1.Installation, installationPlan *integrationv1.InstallationPlan) (ctrl.Result, error) {
-	if installationPlan.Mode == integrationv1.NamespaceMode {
-		result, err := r.reconcileNamespace(ctx, log, installationPlan.Namespace)
+func (r *InstallationReconciler) reconcileInstallationPlan(ctx context.Context, log logr.Logger, installation *integrationv1.Installation, installationPlan *entities.InstallationPlan) (ctrl.Result, error) {
+	if installationPlan.IsNamespaceMode() {
+		result, err := r.reconcileNamespace(ctx, log, installationPlan.GetNamespace())
 		if r.shouldReturn(result, err) {
 			return result, err
 		}
@@ -187,9 +168,9 @@ func (r *InstallationReconciler) reconcileNamespace(ctx context.Context, log log
 	return ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) reconcileOperatorGroup(ctx context.Context, log logr.Logger, installationPlan *integrationv1.InstallationPlan) (ctrl.Result, error) {
-	name := installationPlan.PackageName
-	namespace := installationPlan.Namespace
+func (r *InstallationReconciler) reconcileOperatorGroup(ctx context.Context, log logr.Logger, installationPlan *entities.InstallationPlan) (ctrl.Result, error) {
+	name := installationPlan.GetPackageName()
+	namespace := installationPlan.GetNamespace()
 
 	operatorGroup := &operatorsv1.OperatorGroup{}
 	err := r.Get(ctx, types.NamespacedName{Name: name, Namespace: namespace}, operatorGroup)
@@ -224,9 +205,9 @@ func (r *InstallationReconciler) reconcileOperatorGroup(ctx context.Context, log
 	return ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log logr.Logger, installationPlan *integrationv1.InstallationPlan) (ctrl.Result, error) {
-	name := installationPlan.PackageName
-	namespace := installationPlan.Namespace
+func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log logr.Logger, installationPlan *entities.InstallationPlan) (ctrl.Result, error) {
+	name := installationPlan.GetPackageName()
+	namespace := installationPlan.GetNamespace()
 
 	subscription := &operatorsv1alpha1.Subscription{}
 	err := r.Get(ctx, types.NamespacedName{Name: name, Namespace: namespace}, subscription)
@@ -241,9 +222,9 @@ func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log 
 				Spec: &operatorsv1alpha1.SubscriptionSpec{
 					CatalogSource:          catalogSource,
 					CatalogSourceNamespace: catalogSourceNamespace,
-					Channel:                installationPlan.Channel,
+					Channel:                installationPlan.GetChannel(),
 					InstallPlanApproval:    approvalPolicy,
-					Package:                installationPlan.PackageName,
+					Package:                installationPlan.GetPackageName(),
 				},
 			}
 			log.Info("Creating a new Subscription", "Subscription.Name", subscription.Name, "Subscription.Namespace", subscription.Namespace)
@@ -261,8 +242,8 @@ func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log 
 	}
 
 	// Ensure the update channel is the same as the spec
-	if subscription.Spec.Channel != installationPlan.Channel {
-		subscription.Spec.Channel = installationPlan.Channel
+	if subscription.Spec.Channel != installationPlan.GetChannel() {
+		subscription.Spec.Channel = installationPlan.GetChannel()
 		err = r.Update(ctx, subscription)
 		if err != nil {
 			log.Error(err, "Failed to update Subscription", "Subscription.Name", subscription.Name, "Subscription.Namespace", subscription.Namespace)
@@ -275,14 +256,14 @@ func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log 
 	return ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) initializeStatus(ctx context.Context, log logr.Logger, installation *integrationv1.Installation, installationPlans []*integrationv1.InstallationPlan) bool {
+func (r *InstallationReconciler) initializeStatus(ctx context.Context, log logr.Logger, installation *integrationv1.Installation, installationPlans []*entities.InstallationPlan) bool {
 	if installation.Status.Conditions == nil {
 		conditions := []metav1.Condition{}
 
 		for _, installationPlan := range installationPlans {
 			var status metav1.ConditionStatus
 			var reason string
-			if installationPlan.Enabled {
+			if installationPlan.IsEnabled() {
 				status = metav1.ConditionUnknown
 				reason = string(operatorsv1alpha1.CSVPhaseInstalling)
 			} else {
@@ -290,7 +271,7 @@ func (r *InstallationReconciler) initializeStatus(ctx context.Context, log logr.
 				reason = conditionReasonDisabled
 			}
 			conditions = append(conditions, metav1.Condition{
-				Type:               installationPlan.ConditionType,
+				Type:               installationPlan.GetConditionType(),
 				Status:             status,
 				LastTransitionTime: metav1.Now(),
 				Reason:             reason,
@@ -311,12 +292,12 @@ func (r *InstallationReconciler) initializeStatus(ctx context.Context, log logr.
 	return false
 }
 
-func (r *InstallationReconciler) updateStatus(ctx context.Context, log logr.Logger, installation *integrationv1.Installation, installationPlan *integrationv1.InstallationPlan) bool {
+func (r *InstallationReconciler) updateStatus(ctx context.Context, log logr.Logger, installation *integrationv1.Installation, installationPlan *entities.InstallationPlan) bool {
 	for i, condition := range installation.Status.Conditions {
-		if condition.Type == installationPlan.ConditionType {
-			namespace := installationPlan.Namespace
+		if condition.Type == installationPlan.GetConditionType() {
+			namespace := installationPlan.GetNamespace()
 
-			subscriptionName := installationPlan.PackageName
+			subscriptionName := installationPlan.GetPackageName()
 			subscription := &operatorsv1alpha1.Subscription{}
 			err := r.Get(ctx, types.NamespacedName{Name: subscriptionName, Namespace: namespace}, subscription)
 			if err != nil && !errors.IsNotFound(err) {

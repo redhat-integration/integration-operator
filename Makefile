@@ -1,5 +1,5 @@
 # Current Operator version
-VERSION ?= 0.0.1
+VERSION ?= 0.0.3
 # Default bundle image tag
 BUNDLE_IMG ?= quay.io/abkieling/integration-operator-bundle:$(VERSION)
 # Options for 'bundle-build'
@@ -18,10 +18,6 @@ GOBIN=$(shell go env GOPATH)/bin
 else
 GOBIN=$(shell go env GOBIN)
 endif
-
-# Control the format for the built image's manifest and configuration data.
-# Recognized formats include oci (OCI image-spec v1.0, the default) and docker (version 2, using schema format 2 for the manifest).
-BUILDAH_FORMAT=docker
 
 all: manager
 

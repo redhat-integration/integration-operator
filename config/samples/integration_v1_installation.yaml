@@ -5,41 +5,39 @@ metadata:
 spec:
   3scale-installation:
     enabled: true
-    mode: Namespace
+    mode: namespace
     namespace: rhi-3scale
   3scale-apicast-installation:
     enabled: true
-    mode: Namespace
+    mode: namespace
     namespace: rhi-3scale-apicast
   amq-broker-installation:
     enabled: true
-    mode: Namespace
+    mode: namespace
     namespace: rhi-amq-broker
   amq-interconnect-installation:
     enabled: true
-    mode: Namespace
+    mode: namespace
     namespace: rhi-amq-interconnect
   amq-streams-installation:
     enabled: true
-    mode: Cluster
-    namespace: rhi-amq-streams
+    mode: cluster
   api-designer-installation:
     enabled: true
-    mode: Namespace
-    namespace: rhi-apicurito
+    mode: namespace
+    namespace: rhi-api-designer
   camel-k-installation:
     enabled: true
-    mode: Cluster
-    namespace: rhi-camel-k
+    mode: cluster
   fuse-console-installation:
     enabled: true
-    mode: Namespace
+    mode: namespace
     namespace: rhi-fuse-console
   fuse-online-installation:
     enabled: true
-    mode: Namespace
+    mode: namespace
     namespace: rhi-fuse-online
   service-registry-installation:
     enabled: true
-    mode: Namespace
+    mode: namespace
     namespace: rhi-service-registry

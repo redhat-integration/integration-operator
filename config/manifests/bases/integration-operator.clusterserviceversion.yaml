@@ -197,159 +197,191 @@ spec:
       specDescriptors:
       - displayName: 3scale APIcast Operator
         path: 3scale-apicast-installation
-      - displayName: Enabled
+      - description: Enabled this operator
+        displayName: Enabled
         path: 3scale-apicast-installation.enabled
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - displayName: Installation Mode
+      - description: Operator available cluster wide or in a specific namespace
+        displayName: Installation Mode
         path: 3scale-apicast-installation.mode
         x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
-      - displayName: Namespace
+        - urn:alm:descriptor:com.tectonic.ui:select:namespace
+      - description: Namespace where the operator will be installed
+        displayName: Namespace
         path: 3scale-apicast-installation.namespace
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:3scale-apicast-installation.mode:Namespace
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:3scale-apicast-installation.mode:namespace
       - displayName: 3scale Operator
         path: 3scale-installation
-      - displayName: Install
+      - description: Enabled this operator
+        displayName: Enabled
         path: 3scale-installation.enabled
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - displayName: Installation Mode
+      - description: Operator available cluster wide or in a specific namespace
+        displayName: Installation Mode
         path: 3scale-installation.mode
         x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
-      - displayName: Namespace
+        - urn:alm:descriptor:com.tectonic.ui:select:namespace
+      - description: Namespace where the operator will be installed
+        displayName: Namespace
         path: 3scale-installation.namespace
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:3scale-installation.mode:Namespace
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:3scale-installation.mode:namespace
       - displayName: AMQ Broker Operator
         path: amq-broker-installation
-      - displayName: Enabled
+      - description: Enabled this operator
+        displayName: Enabled
         path: amq-broker-installation.enabled
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - displayName: Installation Mode
+      - description: Operator available cluster wide or in a specific namespace
+        displayName: Installation Mode
         path: amq-broker-installation.mode
         x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
-      - displayName: Namespace
+        - urn:alm:descriptor:com.tectonic.ui:select:namespace
+      - description: Namespace where the operator will be installed
+        displayName: Namespace
         path: amq-broker-installation.namespace
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:amq-broker-installation.mode:Namespace
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:amq-broker-installation.mode:namespace
       - displayName: AMQ Interconnect Operator
         path: amq-interconnect-installation
-      - displayName: Enabled
+      - description: Enabled this operator
+        displayName: Enabled
         path: amq-interconnect-installation.enabled
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - displayName: Installation Mode
+      - description: Operator available cluster wide or in a specific namespace
+        displayName: Installation Mode
         path: amq-interconnect-installation.mode
         x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
-      - displayName: Namespace
+        - urn:alm:descriptor:com.tectonic.ui:select:namespace
+      - description: Namespace where the operator will be installed
+        displayName: Namespace
         path: amq-interconnect-installation.namespace
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:amq-interconnect-installation.mode:Namespace
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:amq-interconnect-installation.mode:namespace
       - displayName: AMQ Streams Operator
         path: amq-streams-installation
-      - displayName: Enabled
+      - description: Enabled this operator
+        displayName: Enabled
         path: amq-streams-installation.enabled
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - displayName: Installation Mode
+      - description: Operator available cluster wide or in a specific namespace
+        displayName: Installation Mode
         path: amq-streams-installation.mode
         x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:Cluster
-        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
-      - displayName: Namespace
+        - urn:alm:descriptor:com.tectonic.ui:select:cluster
+        - urn:alm:descriptor:com.tectonic.ui:select:namespace
+      - description: Namespace where the operator will be installed
+        displayName: Namespace
         path: amq-streams-installation.namespace
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:amq-streams-installation.mode:Namespace
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:amq-streams-installation.mode:namespace
       - displayName: API Designer Operator
         path: api-designer-installation
-      - displayName: Enabled
+      - description: Enabled this operator
+        displayName: Enabled
         path: api-designer-installation.enabled
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - displayName: Installation Mode
+      - description: Operator available cluster wide or in a specific namespace
+        displayName: Installation Mode
         path: api-designer-installation.mode
         x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
-      - displayName: Namespace
+        - urn:alm:descriptor:com.tectonic.ui:select:namespace
+      - description: Namespace where the operator will be installed
+        displayName: Namespace
         path: api-designer-installation.namespace
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:api-designer-installation.mode:Namespace
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:api-designer-installation.mode:namespace
       - displayName: Camel K Operator
         path: camel-k-installation
-      - displayName: Enabled
+      - description: Enabled this operator
+        displayName: Enabled
         path: camel-k-installation.enabled
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - displayName: Installation Mode
+      - description: Operator available cluster wide or in a specific namespace
+        displayName: Installation Mode
         path: camel-k-installation.mode
         x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:Cluster
-        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
-      - displayName: Namespace
+        - urn:alm:descriptor:com.tectonic.ui:select:cluster
+        - urn:alm:descriptor:com.tectonic.ui:select:namespace
+      - description: Namespace where the operator will be installed
+        displayName: Namespace
         path: camel-k-installation.namespace
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:camel-k-installation.mode:Namespace
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:camel-k-installation.mode:namespace
       - displayName: Fuse Console Operator
         path: fuse-console-installation
-      - displayName: Enabled
+      - description: Enabled this operator
+        displayName: Enabled
         path: fuse-console-installation.enabled
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - displayName: Installation Mode
+      - description: Operator available cluster wide or in a specific namespace
+        displayName: Installation Mode
         path: fuse-console-installation.mode
         x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
-      - displayName: Namespace
+        - urn:alm:descriptor:com.tectonic.ui:select:namespace
+      - description: Namespace where the operator will be installed
+        displayName: Namespace
         path: fuse-console-installation.namespace
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:fuse-console-installation.mode:Namespace
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:fuse-console-installation.mode:namespace
       - displayName: Fuse Online Operator
         path: fuse-online-installation
-      - displayName: Enabled
+      - description: Enabled this operator
+        displayName: Enabled
         path: fuse-online-installation.enabled
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - displayName: Installation Mode
+      - description: Operator available cluster wide or in a specific namespace
+        displayName: Installation Mode
         path: fuse-online-installation.mode
         x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
-      - displayName: Namespace
+        - urn:alm:descriptor:com.tectonic.ui:select:namespace
+      - description: Namespace where the operator will be installed
+        displayName: Namespace
         path: fuse-online-installation.namespace
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:fuse-online-installation.mode:Namespace
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:fuse-online-installation.mode:namespace
       - displayName: Service Registry Operator
         path: service-registry-installation
-      - displayName: Enabled
+      - description: Enabled this operator
+        displayName: Enabled
         path: service-registry-installation.enabled
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - displayName: Installation Mode
+      - description: Operator available cluster wide or in a specific namespace
+        displayName: Installation Mode
         path: service-registry-installation.mode
         x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:select:Namespace
-      - displayName: Namespace
+        - urn:alm:descriptor:com.tectonic.ui:select:namespace
+      - description: Namespace where the operator will be installed
+        displayName: Namespace
         path: service-registry-installation.namespace
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:service-registry-installation.mode:Namespace
+        - urn:alm:descriptor:com.tectonic.ui:fieldDependency:service-registry-installation.mode:namespace
       version: v1
-  description: >
-    Integration product operators available for installation:
+  description: |
+    The Red Hat Integration Operator installs the current version of the Integration components and performs automatic upgrades when new versions are available.
+
+    Components available for installation:
 
     - 3scale Operator
     - 3scale APIcast Operator

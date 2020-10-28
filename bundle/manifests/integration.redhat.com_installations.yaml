@@ -34,151 +34,183 @@ spec:
               description: Installation plan
               properties:
                 enabled:
+                  description: Enabled this operator
                   type: boolean
                 mode:
                   description: Operator available cluster wide or in a specific namespace
+                  enum:
+                  - namespace
                   type: string
                 namespace:
+                  description: Namespace where the operator will be installed
                   type: string
               required:
               - enabled
               - mode
-              - namespace
               type: object
             3scale-installation:
               description: Installation plan
               properties:
                 enabled:
+                  description: Enabled this operator
                   type: boolean
                 mode:
                   description: Operator available cluster wide or in a specific namespace
+                  enum:
+                  - namespace
                   type: string
                 namespace:
+                  description: Namespace where the operator will be installed
                   type: string
               required:
               - enabled
               - mode
-              - namespace
               type: object
             amq-broker-installation:
               description: Installation plan
               properties:
                 enabled:
+                  description: Enabled this operator
                   type: boolean
                 mode:
                   description: Operator available cluster wide or in a specific namespace
+                  enum:
+                  - namespace
                   type: string
                 namespace:
+                  description: Namespace where the operator will be installed
                   type: string
               required:
               - enabled
               - mode
-              - namespace
               type: object
             amq-interconnect-installation:
               description: Installation plan
               properties:
                 enabled:
+                  description: Enabled this operator
                   type: boolean
                 mode:
                   description: Operator available cluster wide or in a specific namespace
+                  enum:
+                  - namespace
                   type: string
                 namespace:
+                  description: Namespace where the operator will be installed
                   type: string
               required:
               - enabled
               - mode
-              - namespace
               type: object
             amq-streams-installation:
               description: Installation plan
               properties:
                 enabled:
+                  description: Enabled this operator
                   type: boolean
                 mode:
                   description: Operator available cluster wide or in a specific namespace
+                  enum:
+                  - namespace
+                  - cluster
                   type: string
                 namespace:
+                  description: Namespace where the operator will be installed
                   type: string
               required:
               - enabled
               - mode
-              - namespace
               type: object
             api-designer-installation:
               description: Installation plan
               properties:
                 enabled:
+                  description: Enabled this operator
                   type: boolean
                 mode:
                   description: Operator available cluster wide or in a specific namespace
+                  enum:
+                  - namespace
                   type: string
                 namespace:
+                  description: Namespace where the operator will be installed
                   type: string
               required:
               - enabled
               - mode
-              - namespace
               type: object
             camel-k-installation:
               description: Installation plan
               properties:
                 enabled:
+                  description: Enabled this operator
                   type: boolean
                 mode:
                   description: Operator available cluster wide or in a specific namespace
+                  enum:
+                  - namespace
+                  - cluster
                   type: string
                 namespace:
+                  description: Namespace where the operator will be installed
                   type: string
               required:
               - enabled
               - mode
-              - namespace
               type: object
             fuse-console-installation:
               description: Installation plan
               properties:
                 enabled:
+                  description: Enabled this operator
                   type: boolean
                 mode:
                   description: Operator available cluster wide or in a specific namespace
+                  enum:
+                  - namespace
                   type: string
                 namespace:
+                  description: Namespace where the operator will be installed
                   type: string
               required:
               - enabled
               - mode
-              - namespace
               type: object
             fuse-online-installation:
               description: Installation plan
               properties:
                 enabled:
+                  description: Enabled this operator
                   type: boolean
                 mode:
                   description: Operator available cluster wide or in a specific namespace
+                  enum:
+                  - namespace
                   type: string
                 namespace:
+                  description: Namespace where the operator will be installed
                   type: string
               required:
               - enabled
               - mode
-              - namespace
               type: object
             service-registry-installation:
               description: Installation plan
               properties:
                 enabled:
+                  description: Enabled this operator
                   type: boolean
                 mode:
                   description: Operator available cluster wide or in a specific namespace
+                  enum:
+                  - namespace
                   type: string
                 namespace:
+                  description: Namespace where the operator will be installed
                   type: string
               required:
               - enabled
               - mode
-              - namespace
               type: object
           type: object
         status:
