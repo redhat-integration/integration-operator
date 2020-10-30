@@ -49,6 +49,8 @@ spec:
                   type: string
                 namespace:
                   description: Namespace where the operator will be installed
+                  maxLength: 63
+                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
                   type: string
               required:
               - enabled
@@ -67,6 +69,8 @@ spec:
                   type: string
                 namespace:
                   description: Namespace where the operator will be installed
+                  maxLength: 63
+                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
                   type: string
               required:
               - enabled
@@ -85,6 +89,8 @@ spec:
                   type: string
                 namespace:
                   description: Namespace where the operator will be installed
+                  maxLength: 63
+                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
                   type: string
               required:
               - enabled
@@ -103,6 +109,8 @@ spec:
                   type: string
                 namespace:
                   description: Namespace where the operator will be installed
+                  maxLength: 63
+                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
                   type: string
               required:
               - enabled
@@ -122,6 +130,8 @@ spec:
                   type: string
                 namespace:
                   description: Namespace where the operator will be installed
+                  maxLength: 63
+                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
                   type: string
               required:
               - enabled
@@ -140,6 +150,8 @@ spec:
                   type: string
                 namespace:
                   description: Namespace where the operator will be installed
+                  maxLength: 63
+                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
                   type: string
               required:
               - enabled
@@ -159,6 +171,8 @@ spec:
                   type: string
                 namespace:
                   description: Namespace where the operator will be installed
+                  maxLength: 63
+                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
                   type: string
               required:
               - enabled
@@ -177,6 +191,8 @@ spec:
                   type: string
                 namespace:
                   description: Namespace where the operator will be installed
+                  maxLength: 63
+                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
                   type: string
               required:
               - enabled
@@ -195,6 +211,8 @@ spec:
                   type: string
                 namespace:
                   description: Namespace where the operator will be installed
+                  maxLength: 63
+                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
                   type: string
               required:
               - enabled
@@ -213,6 +231,8 @@ spec:
                   type: string
                 namespace:
                   description: Namespace where the operator will be installed
+                  maxLength: 63
+                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
                   type: string
               required:
               - enabled

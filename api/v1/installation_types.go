@@ -38,6 +38,8 @@ type ThreeScaleInstallationInput struct {
 	Mode string `json:"mode"`
 	// Namespace where the operator will be installed
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:3scale-installation.mode:namespace"}
+	// +kubebuilder:validation:MaxLength=63
+	// +kubebuilder:validation:Pattern=^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
 	Namespace string `json:"namespace,omitempty"`
 }
 
@@ -52,6 +54,8 @@ type ThreeScaleAPIcastInstallationInput struct {
 	Mode string `json:"mode"`
 	// Namespace where the operator will be installed
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:3scale-apicast-installation.mode:namespace"}
+	// +kubebuilder:validation:MaxLength=63
+	// +kubebuilder:validation:Pattern=^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
 	Namespace string `json:"namespace,omitempty"`
 }
 
@@ -66,6 +70,8 @@ type AMQBrokerInstallationInput struct {
 	Mode string `json:"mode"`
 	// Namespace where the operator will be installed
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:amq-broker-installation.mode:namespace"}
+	// +kubebuilder:validation:MaxLength=63
+	// +kubebuilder:validation:Pattern=^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
 	Namespace string `json:"namespace,omitempty"`
 }
 
@@ -80,6 +86,8 @@ type AMQInterconnectInstallationInput struct {
 	Mode string `json:"mode"`
 	// Namespace where the operator will be installed
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:amq-interconnect-installation.mode:namespace"}
+	// +kubebuilder:validation:MaxLength=63
+	// +kubebuilder:validation:Pattern=^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
 	Namespace string `json:"namespace,omitempty"`
 }
 
@@ -94,6 +102,8 @@ type AMQStreamsInstallationInput struct {
 	Mode string `json:"mode"`
 	// Namespace where the operator will be installed
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:amq-streams-installation.mode:namespace"}
+	// +kubebuilder:validation:MaxLength=63
+	// +kubebuilder:validation:Pattern=^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
 	Namespace string `json:"namespace,omitempty"`
 }
 
@@ -108,6 +118,8 @@ type APIDesignerInstallationInput struct {
 	Mode string `json:"mode"`
 	// Namespace where the operator will be installed
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:api-designer-installation.mode:namespace"}
+	// +kubebuilder:validation:MaxLength=63
+	// +kubebuilder:validation:Pattern=^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
 	Namespace string `json:"namespace,omitempty"`
 }
 
@@ -122,6 +134,8 @@ type CamelKInstallationInput struct {
 	Mode string `json:"mode"`
 	// Namespace where the operator will be installed
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:camel-k-installation.mode:namespace"}
+	// +kubebuilder:validation:MaxLength=63
+	// +kubebuilder:validation:Pattern=^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
 	Namespace string `json:"namespace,omitempty"`
 }
 
@@ -136,6 +150,8 @@ type FuseConsoleInstallationInput struct {
 	Mode string `json:"mode"`
 	// Namespace where the operator will be installed
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:fuse-console-installation.mode:namespace"}
+	// +kubebuilder:validation:MaxLength=63
+	// +kubebuilder:validation:Pattern=^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
 	Namespace string `json:"namespace,omitempty"`
 }
 
@@ -150,6 +166,8 @@ type FuseOnlineInstallationInput struct {
 	Mode string `json:"mode"`
 	// Namespace where the operator will be installed
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:fuse-online-installation.mode:namespace"}
+	// +kubebuilder:validation:MaxLength=63
+	// +kubebuilder:validation:Pattern=^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
 	Namespace string `json:"namespace,omitempty"`
 }
 
@@ -164,6 +182,8 @@ type ServiceRegistryInstallationInput struct {
 	Mode string `json:"mode"`
 	// Namespace where the operator will be installed
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:service-registry-installation.mode:namespace"}
+	// +kubebuilder:validation:MaxLength=63
+	// +kubebuilder:validation:Pattern=^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
 	Namespace string `json:"namespace,omitempty"`
 }
 
