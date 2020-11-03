@@ -155,24 +155,9 @@ func (ip *InstallationPlan) IsClusterMode() bool {
 	return ip.mode == clusterMode
 }
 
-// SetMode sets the installation mode if the input is valid
-func (ip *InstallationPlan) SetMode(mode string) {
-	ip.mode = mode
-}
-
 // GetNamespace returns the installation namespace
 func (ip *InstallationPlan) GetNamespace() string {
-	if ip.IsClusterMode() {
-		ip.namespace = clusterModeNamespace
-	}
 	return ip.namespace
-}
-
-// SetNamespace sets the installation namespace
-func (ip *InstallationPlan) SetNamespace(namespace string) {
-	if namespace != "" {
-		ip.namespace = namespace
-	}
 }
 
 // GetPackageName returns the Operator's package name
@@ -180,57 +165,74 @@ func (ip *InstallationPlan) GetPackageName() string {
 	return ip.packageName
 }
 
-// GetInstallationPlans returns installation plans updated with values from the Installation CR
-func GetInstallationPlans(i *integrationv1.Installation) []*InstallationPlan {
+// newInstallationPlan creates a new installation plan using installationPlan as the base and overriding some values from installationInput
+func newInstallationPlan(installationPlan InstallationPlan, installationInput *integrationv1.InstallationInput) *InstallationPlan {
+	installationPlan.enabled = installationInput.Enabled
+	installationPlan.mode = installationInput.Mode
+
+	if installationInput.Mode == clusterMode {
+		installationPlan.namespace = clusterModeNamespace
+	} else if installationInput.Namespace != "" {
+		installationPlan.namespace = installationInput.Namespace
+	}
+
+	return &installationPlan
+}
+
+// CreateInstallationPlans returns installation plans updated with values from the Installation CR
+func CreateInstallationPlans(i *integrationv1.Installation) []*InstallationPlan {
 	installationPlans := []*InstallationPlan{}
 
 	if i.Spec.ThreeScaleInstallationInput != nil {
 		installationInput := integrationv1.InstallationInput(*i.Spec.ThreeScaleInstallationInput)
-		installationPlans = append(installationPlans, newInstallationPlan(installationPlanFor3scale, &installationInput))
+		installationPlan := newInstallationPlan(installationPlanFor3scale, &installationInput)
+		installationPlans = append(installationPlans, installationPlan)
 	}
 	if i.Spec.ThreeScaleAPIcastInstallationInput != nil {
 		installationInput := integrationv1.InstallationInput(*i.Spec.ThreeScaleAPIcastInstallationInput)
-		installationPlans = append(installationPlans, newInstallationPlan(installationPlanFor3scaleAPIcast, &installationInput))
+		installationPlan := newInstallationPlan(installationPlanFor3scaleAPIcast, &installationInput)
+		installationPlans = append(installationPlans, installationPlan)
 	}
 	if i.Spec.AMQBrokerInstallationInput != nil {
 		installationInput := integrationv1.InstallationInput(*i.Spec.AMQBrokerInstallationInput)
-		installationPlans = append(installationPlans, newInstallationPlan(installationPlanForAMQBroker, &installationInput))
+		installationPlan := newInstallationPlan(installationPlanForAMQBroker, &installationInput)
+		installationPlans = append(installationPlans, installationPlan)
 	}
 	if i.Spec.AMQInterconnectInstallationInput != nil {
 		installationInput := integrationv1.InstallationInput(*i.Spec.AMQInterconnectInstallationInput)
-		installationPlans = append(installationPlans, newInstallationPlan(installationPlanForAMQInterconnect, &installationInput))
+		installationPlan := newInstallationPlan(installationPlanForAMQInterconnect, &installationInput)
+		installationPlans = append(installationPlans, installationPlan)
 	}
 	if i.Spec.AMQStreamsInstallationInput != nil {
 		installationInput := integrationv1.InstallationInput(*i.Spec.AMQStreamsInstallationInput)
-		installationPlans = append(installationPlans, newInstallationPlan(installationPlanForAMQStreams, &installationInput))
+		installationPlan := newInstallationPlan(installationPlanForAMQStreams, &installationInput)
+		installationPlans = append(installationPlans, installationPlan)
 	}
 	if i.Spec.APIDesignerInstallationInput != nil {
 		installationInput := integrationv1.InstallationInput(*i.Spec.APIDesignerInstallationInput)
-		installationPlans = append(installationPlans, newInstallationPlan(installationPlanForAPIDesigner, &installationInput))
+		installationPlan := newInstallationPlan(installationPlanForAPIDesigner, &installationInput)
+		installationPlans = append(installationPlans, installationPlan)
 	}
 	if i.Spec.CamelKInstallationInput != nil {
 		installationInput := integrationv1.InstallationInput(*i.Spec.CamelKInstallationInput)
-		installationPlans = append(installationPlans, newInstallationPlan(installationPlanForCamelK, &installationInput))
+		installationPlan := newInstallationPlan(installationPlanForCamelK, &installationInput)
+		installationPlans = append(installationPlans, installationPlan)
 	}
 	if i.Spec.FuseConsoleInstallationInput != nil {
 		installationInput := integrationv1.InstallationInput(*i.Spec.FuseConsoleInstallationInput)
-		installationPlans = append(installationPlans, newInstallationPlan(installationPlanForFuseConsole, &installationInput))
+		installationPlan := newInstallationPlan(installationPlanForFuseConsole, &installationInput)
+		installationPlans = append(installationPlans, installationPlan)
 	}
 	if i.Spec.FuseOnlineInstallationInput != nil {
 		installationInput := integrationv1.InstallationInput(*i.Spec.FuseOnlineInstallationInput)
-		installationPlans = append(installationPlans, newInstallationPlan(installationPlanForFuseOnline, &installationInput))
+		installationPlan := newInstallationPlan(installationPlanForFuseOnline, &installationInput)
+		installationPlans = append(installationPlans, installationPlan)
 	}
 	if i.Spec.ServiceRegistryInstallationInput != nil {
 		installationInput := integrationv1.InstallationInput(*i.Spec.ServiceRegistryInstallationInput)
-		installationPlans = append(installationPlans, newInstallationPlan(installationPlanForServiceRegistry, &installationInput))
+		installationPlan := newInstallationPlan(installationPlanForServiceRegistry, &installationInput)
+		installationPlans = append(installationPlans, installationPlan)
 	}
 
 	return installationPlans
-}
-
-func newInstallationPlan(installationPlan InstallationPlan, installationInput *integrationv1.InstallationInput) *InstallationPlan {
-	installationPlan.SetEnabled(installationInput.Enabled)
-	installationPlan.SetMode(installationInput.Mode)
-	installationPlan.SetNamespace(installationInput.Namespace)
-	return &installationPlan
 }

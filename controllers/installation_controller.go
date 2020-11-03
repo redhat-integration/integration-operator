@@ -71,7 +71,7 @@ func (r *InstallationReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error
 		return ctrl.Result{}, err
 	}
 
-	installationPlans := entities.GetInstallationPlans(installation)
+	installationPlans := entities.CreateInstallationPlans(installation)
 
 	shouldReturn := r.initializeStatus(ctx, log, installation, installationPlans)
 	if shouldReturn {
