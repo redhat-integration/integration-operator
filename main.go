@@ -18,6 +18,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 
 	operatorsv1 "github.com/operator-framework/api/pkg/operators/v1"
@@ -58,6 +59,12 @@ func main() {
 
 	ctrl.SetLogger(zap.New(zap.UseDevMode(true)))
 
+	config, err := createInstallationConfig()
+	if err != nil {
+		setupLog.Error(err, "unable to read configuration")
+		os.Exit(1)
+	}
+
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:             scheme,
 		MetricsBindAddress: metricsAddr,
@@ -74,6 +81,7 @@ func main() {
 		Client: mgr.GetClient(),
 		Log:    ctrl.Log.WithName("controllers").WithName("Installation"),
 		Scheme: mgr.GetScheme(),
+		Config: config,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Installation")
 		os.Exit(1)
@@ -85,4 +93,42 @@ func main() {
 		setupLog.Error(err, "problem running manager")
 		os.Exit(1)
 	}
+}
+
+func createInstallationConfig() (*controllers.InstallationConfig, error) {
+	config := &controllers.InstallationConfig{}
+	var ok bool
+
+	if config.Channel3scale, ok = os.LookupEnv("CHANNEL_3SCALE"); !ok {
+		return nil, fmt.Errorf("missing CHANNEL_3SCALE environment variable")
+	}
+	if config.Channel3scaleAPIcast, ok = os.LookupEnv("CHANNEL_3SCALE_APICAST"); !ok {
+		return nil, fmt.Errorf("missing CHANNEL_3SCALE_APICAST environment variable")
+	}
+	if config.ChannelAMQBroker, ok = os.LookupEnv("CHANNEL_AMQ_BROKER"); !ok {
+		return nil, fmt.Errorf("missing CHANNEL_AMQ_BROKER environment variable")
+	}
+	if config.ChannelAMQInterconnect, ok = os.LookupEnv("CHANNEL_AMQ_INTERCONNECT"); !ok {
+		return nil, fmt.Errorf("missing CHANNEL_AMQ_INTERCONNECT environment variable")
+	}
+	if config.ChannelAMQStreams, ok = os.LookupEnv("CHANNEL_AMQ_STREAMS"); !ok {
+		return nil, fmt.Errorf("missing CHANNEL_AMQ_STREAMS environment variable")
+	}
+	if config.ChannelAPIDesigner, ok = os.LookupEnv("CHANNEL_API_DESIGNER"); !ok {
+		return nil, fmt.Errorf("missing CHANNEL_API_DESIGNER environment variable")
+	}
+	if config.ChannelCamelK, ok = os.LookupEnv("CHANNEL_CAMEL_K"); !ok {
+		return nil, fmt.Errorf("missing CHANNEL_CAMEL_K environment variable")
+	}
+	if config.ChannelFuseConsole, ok = os.LookupEnv("CHANNEL_FUSE_CONSOLE"); !ok {
+		return nil, fmt.Errorf("missing CHANNEL_FUSE_CONSOLE environment variable")
+	}
+	if config.ChannelFuseOnline, ok = os.LookupEnv("CHANNEL_FUSE_ONLINE"); !ok {
+		return nil, fmt.Errorf("missing CHANNEL_FUSE_ONLINE environment variable")
+	}
+	if config.ChannelServiceRegistry, ok = os.LookupEnv("CHANNEL_SERVICE_REGISTRY"); !ok {
+		return nil, fmt.Errorf("missing CHANNEL_SERVICE_REGISTRY environment variable")
+	}
+
+	return config, nil
 }

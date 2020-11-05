@@ -1,5 +1,17 @@
+# Environment variables required for 'make run'
+export CHANNEL_3SCALE = threescale-2.9
+export CHANNEL_3SCALE_APICAST = threescale-2.9
+export CHANNEL_AMQ_BROKER = current
+export CHANNEL_AMQ_INTERCONNECT = 1.2.0
+export CHANNEL_AMQ_STREAMS = stable
+export CHANNEL_API_DESIGNER = fuse-apicurito-7.7.x
+export CHANNEL_CAMEL_K = stable
+export CHANNEL_FUSE_CONSOLE = fuse-console-7.7.x
+export CHANNEL_FUSE_ONLINE = fuse-online-7.7.x
+export CHANNEL_SERVICE_REGISTRY = serviceregistry-1
+
 # Current Operator version
-VERSION ?= 0.0.3
+VERSION ?= 0.0.6
 # Default bundle image tag
 BUNDLE_IMG ?= quay.io/abkieling/integration-operator-bundle:$(VERSION)
 # Options for 'bundle-build'
@@ -115,7 +127,7 @@ bundle: manifests
 
 # Build the bundle image.
 .PHONY: bundle-build
-bundle-build:
+bundle-build: bundle
 	docker build -f bundle.Dockerfile -t $(BUNDLE_IMG) .
 
 # Push the bundle image
@@ -128,7 +140,7 @@ delete-namespaces:
 	kubectl delete namespace rhi-amq-broker --ignore-not-found
 	kubectl delete namespace rhi-amq-interconnect --ignore-not-found
 	kubectl delete namespace rhi-amq-streams --ignore-not-found
-	kubectl delete namespace rhi-apicurito --ignore-not-found
+	kubectl delete namespace rhi-api-designer --ignore-not-found
 	kubectl delete namespace rhi-camel-k --ignore-not-found
 	kubectl delete namespace rhi-fuse-console --ignore-not-found
 	kubectl delete namespace rhi-fuse-online --ignore-not-found
