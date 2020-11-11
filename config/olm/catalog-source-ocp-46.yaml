@@ -1,8 +1,8 @@
 apiVersion: operators.coreos.com/v1alpha1
 kind: CatalogSource
 metadata:
-  name: custom-operators
+  name: rhi-operator-index-dev
   namespace: openshift-marketplace
 spec:
   sourceType: grpc
-  image: quay.io/abkieling/custom-operators:0.0.5
+  image: quay.io/rh_integration/rhi-operator-index-dev:0.0.1

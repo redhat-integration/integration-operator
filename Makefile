@@ -11,18 +11,26 @@ export CHANNEL_FUSE_ONLINE = fuse-online-7.7.x
 export CHANNEL_SERVICE_REGISTRY = serviceregistry-1
 
 # Current Operator version
-VERSION ?= 0.0.6
+MAJOR ?= 0
+MINOR ?= 0
+PATCH ?= 1
+VERSION ?= ${MAJOR}.${MINOR}.${PATCH}
 # Default bundle image tag
-BUNDLE_IMG ?= quay.io/abkieling/integration-operator-bundle:$(VERSION)
+BUNDLE_IMG ?= quay.io/rh_integration/rhi-operator-bundle-dev:$(VERSION)
 # Options for 'bundle-build'
 BUNDLE_CHANNELS := --channels=current
 BUNDLE_DEFAULT_CHANNEL := --default-channel=current
 BUNDLE_METADATA_OPTS ?= $(BUNDLE_CHANNELS) $(BUNDLE_DEFAULT_CHANNEL)
 
 # Image URL to use all building/pushing image targets
-IMG ?= quay.io/abkieling/integration-operator:$(VERSION)
+IMG ?= quay.io/rh_integration/rhi-operator-dev:$(VERSION)
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:trivialVersions=true"
+
+# Index image tag
+INDEX_IMG ?= quay.io/rh_integration/rhi-operator-index-dev:$(VERSION)
+PREVIOUS_VERSION ?= ${MAJOR}.${MINOR}.$(shell echo $$(($(PATCH)-1)))
+PREVIOUS_INDEX_IMG ?= quay.io/rh_integration/rhi-operator-index-dev:$(PREVIOUS_VERSION)
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
@@ -125,7 +133,7 @@ bundle: manifests
 	$(KUSTOMIZE) build config/manifests | operator-sdk generate bundle -q --overwrite --version $(VERSION) $(BUNDLE_METADATA_OPTS)
 	operator-sdk bundle validate ./bundle
 
-# Build the bundle image.
+# Build the bundle image
 .PHONY: bundle-build
 bundle-build: bundle
 	docker build -f bundle.Dockerfile -t $(BUNDLE_IMG) .
@@ -133,6 +141,14 @@ bundle-build: bundle
 # Push the bundle image
 bundle-push:
 	docker push ${BUNDLE_IMG}
+
+# Build the index image
+index-build:
+	opm index add -c docker --bundles $(BUNDLE_IMG) --from-index $(PREVIOUS_INDEX_IMG) --tag $(INDEX_IMG)
+
+# Push the index image
+index-push:
+	docker push $(INDEX_IMG)
 
 delete-namespaces:
 	kubectl delete namespace rhi-3scale --ignore-not-found
