@@ -13,7 +13,7 @@ export CHANNEL_SERVICE_REGISTRY = serviceregistry-1
 # Current Operator version
 MAJOR ?= 0
 MINOR ?= 0
-PATCH ?= 1
+PATCH ?= 2
 VERSION ?= ${MAJOR}.${MINOR}.${PATCH}
 # Default bundle image tag
 BUNDLE_IMG ?= quay.io/rh_integration/rhi-operator-bundle-dev:$(VERSION)
