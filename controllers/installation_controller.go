@@ -169,37 +169,37 @@ func (r *InstallationReconciler) reconcileNamespace(ctx context.Context, log log
 }
 
 func (r *InstallationReconciler) reconcileOperatorGroup(ctx context.Context, log logr.Logger, installationPlan *InstallationPlan) (ctrl.Result, error) {
-	name := installationPlan.Name
 	namespace := installationPlan.Namespace
 
-	operatorGroup := &operatorsv1.OperatorGroup{}
-	err := r.Get(ctx, types.NamespacedName{Name: name, Namespace: namespace}, operatorGroup)
+	operatorGroupList := &operatorsv1.OperatorGroupList{}
+	err := r.List(ctx, operatorGroupList, &client.ListOptions{Namespace: namespace})
 	if err != nil {
-		if errors.IsNotFound(err) {
-			// Define a new OperatorGroup
-			operatorGroup = &operatorsv1.OperatorGroup{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      name,
-					Namespace: namespace,
-				},
-				Spec: operatorsv1.OperatorGroupSpec{
-					TargetNamespaces: []string{
-						namespace,
-					},
-				},
-			}
-			log.Info("Creating a new OperatorGroup", "OperatorGroup.Name", operatorGroup.Name, "OperatorGroup.Namespace", operatorGroup.Namespace)
-			err = r.Create(ctx, operatorGroup)
-			if err != nil {
-				log.Error(err, "Failed to create new OperatorGroup", "OperatorGroup.Name", operatorGroup.Name, "OperatorGroup.Namespace", operatorGroup.Namespace)
-				return ctrl.Result{}, err
-			}
-			// OperatorGroup created successfully - return and requeue
-			return ctrl.Result{Requeue: true}, nil
-		}
-		// Error reading the object - requeue the request
-		log.Error(err, "Failed to get OperatorGroup", "OperatorGroup.Name", name, "OperatorGroup.Namespace", namespace)
+		// Error reading objects - requeue the request
+		log.Error(err, "Failed to list OperatorGroups", "Namespace", namespace)
 		return ctrl.Result{}, err
+	}
+
+	if len(operatorGroupList.Items) == 0 {
+		// Define a new OperatorGroup
+		operatorGroup := &operatorsv1.OperatorGroup{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      namespace,
+				Namespace: namespace,
+			},
+			Spec: operatorsv1.OperatorGroupSpec{
+				TargetNamespaces: []string{
+					namespace,
+				},
+			},
+		}
+		log.Info("Creating a new OperatorGroup", "OperatorGroup.Name", operatorGroup.Name, "OperatorGroup.Namespace", operatorGroup.Namespace)
+		err = r.Create(ctx, operatorGroup)
+		if err != nil {
+			log.Error(err, "Failed to create new OperatorGroup", "OperatorGroup.Name", operatorGroup.Name, "OperatorGroup.Namespace", operatorGroup.Namespace)
+			return ctrl.Result{}, err
+		}
+		// OperatorGroup created successfully - return and requeue
+		return ctrl.Result{Requeue: true}, nil
 	}
 
 	return ctrl.Result{}, nil

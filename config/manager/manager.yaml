@@ -50,7 +50,7 @@ spec:
           - name: CHANNEL_API_DESIGNER
             value: fuse-apicurito-7.7.x
           - name: CHANNEL_CAMEL_K
-            value: stable
+            value: techpreview
           - name: CHANNEL_FUSE_CONSOLE
             value: fuse-console-7.7.x
           - name: CHANNEL_FUSE_ONLINE

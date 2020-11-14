@@ -10,7 +10,18 @@
             "request": "launch",
             "mode": "debug",
             "program": "${workspaceFolder}/main.go",
-            "env": {},
+            "env": {
+                "CHANNEL_3SCALE": "threescale-2.9",
+                "CHANNEL_3SCALE_APICAST": "threescale-2.9",
+                "CHANNEL_AMQ_BROKER": "current",
+                "CHANNEL_AMQ_INTERCONNECT": "1.2.0",
+                "CHANNEL_AMQ_STREAMS": "stable",
+                "CHANNEL_API_DESIGNER": "fuse-apicurito-7.7.x",
+                "CHANNEL_CAMEL_K": "techpreview",
+                "CHANNEL_FUSE_CONSOLE": "fuse-console-7.7.x",
+                "CHANNEL_FUSE_ONLINE": "fuse-online-7.7.x",
+                "CHANNEL_SERVICE_REGISTRY": "serviceregistry-1"
+            },
             "args": []
         }
     ]
