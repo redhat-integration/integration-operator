@@ -1,6 +1,6 @@
 module github.com/redhat-integration/integration-operator
 
-go 1.13
+go 1.15
 
 require (
 	github.com/go-logr/logr v0.2.1
