@@ -11,15 +11,15 @@ export CHANNEL_FUSE_ONLINE = fuse-online-7.7.x
 export CHANNEL_SERVICE_REGISTRY = serviceregistry-1
 
 # Current Operator version
-MAJOR ?= 0
-MINOR ?= 0
-PATCH ?= 2
-VERSION ?= ${MAJOR}.${MINOR}.${PATCH}
+VERSION_CORE = 1.0.0
+PRE_RELEASE_NAME = alpha
+PRE_RELEASE_ID = 2
+VERSION = $(VERSION_CORE)-$(PRE_RELEASE_NAME).$(PRE_RELEASE_ID)
 # Default bundle image tag
 BUNDLE_IMG ?= quay.io/rh_integration/rhi-operator-bundle-dev:$(VERSION)
 # Options for 'bundle-build'
-BUNDLE_CHANNELS := --channels=current
-BUNDLE_DEFAULT_CHANNEL := --default-channel=current
+BUNDLE_CHANNELS := --channels=1.x
+BUNDLE_DEFAULT_CHANNEL := --default-channel=1.x
 BUNDLE_METADATA_OPTS ?= $(BUNDLE_CHANNELS) $(BUNDLE_DEFAULT_CHANNEL)
 
 # Image URL to use all building/pushing image targets
@@ -29,7 +29,7 @@ CRD_OPTIONS ?= "crd:trivialVersions=true"
 
 # Index image tag
 INDEX_IMG ?= quay.io/rh_integration/rhi-operator-index-dev:$(VERSION)
-PREVIOUS_VERSION ?= ${MAJOR}.${MINOR}.$(shell echo $$(($(PATCH)-1)))
+PREVIOUS_VERSION ?= $(VERSION_CORE)-$(PRE_RELEASE_NAME).$(shell echo $$(($(PRE_RELEASE_ID)-1)))
 PREVIOUS_INDEX_IMG ?= quay.io/rh_integration/rhi-operator-index-dev:$(PREVIOUS_VERSION)
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
@@ -142,7 +142,7 @@ bundle-build: bundle
 bundle-push:
 	docker push ${BUNDLE_IMG}
 
-# Build the index image
+# Build the index image (only use it for patch version upgrades)
 index-build:
 	opm index add -c docker --bundles $(BUNDLE_IMG) --from-index $(PREVIOUS_INDEX_IMG) --tag $(INDEX_IMG)
 
