@@ -11,26 +11,28 @@ export CHANNEL_FUSE_ONLINE = fuse-online-7.7.x
 export CHANNEL_SERVICE_REGISTRY = serviceregistry-1
 
 # Current Operator version
-VERSION_CORE = 1.0.0
-PRE_RELEASE_NAME = alpha
-PRE_RELEASE_ID = 2
-VERSION = $(VERSION_CORE)-$(PRE_RELEASE_NAME).$(PRE_RELEASE_ID)
+VERSION ?= 0.0.1
 # Default bundle image tag
 BUNDLE_IMG ?= quay.io/rh_integration/rhi-operator-bundle-dev:$(VERSION)
 # Options for 'bundle-build'
-BUNDLE_CHANNELS := --channels=1.x
-BUNDLE_DEFAULT_CHANNEL := --default-channel=1.x
+CHANNELS ?= 1.x
+BUNDLE_CHANNELS := --channels=$(CHANNELS)
+DEFAULT_CHANNEL ?= 1.x
+BUNDLE_DEFAULT_CHANNEL := --default-channel=$(DEFAULT_CHANNEL)
 BUNDLE_METADATA_OPTS ?= $(BUNDLE_CHANNELS) $(BUNDLE_DEFAULT_CHANNEL)
 
 # Image URL to use all building/pushing image targets
-IMG ?= quay.io/rh_integration/rhi-operator-dev:$(VERSION)
+IMG ?= quay.io/rh_integration/rhi-operator-dev:latest
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:trivialVersions=true"
 
 # Index image tag
-INDEX_IMG ?= quay.io/rh_integration/rhi-operator-index-dev:$(VERSION)
-PREVIOUS_VERSION ?= $(VERSION_CORE)-$(PRE_RELEASE_NAME).$(shell echo $$(($(PRE_RELEASE_ID)-1)))
-PREVIOUS_INDEX_IMG ?= quay.io/rh_integration/rhi-operator-index-dev:$(PREVIOUS_VERSION)
+INDEX_IMG_NAME ?= quay.io/rh_integration/rhi-operator-index-dev
+INDEX_IMG ?= $(INDEX_IMG_NAME):$(VERSION)
+# Options for 'index-build'
+ifneq ($(origin FROM_INDEX_VERSION), undefined)
+FROM_INDEX_IMG := --from-index $(INDEX_IMG_NAME):$(FROM_INDEX_VERSION)
+endif
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
@@ -42,11 +44,11 @@ endif
 all: manager
 
 # Run tests
-ENVTEST_ASSETS_DIR=$(shell pwd)/testbin
+ENVTEST_ASSETS_DIR = $(shell pwd)/testbin
 test: generate fmt vet manifests
-	mkdir -p ${ENVTEST_ASSETS_DIR}
-	test -f ${ENVTEST_ASSETS_DIR}/setup-envtest.sh || curl -sSLo ${ENVTEST_ASSETS_DIR}/setup-envtest.sh https://raw.githubusercontent.com/kubernetes-sigs/controller-runtime/master/hack/setup-envtest.sh
-	source ${ENVTEST_ASSETS_DIR}/setup-envtest.sh; fetch_envtest_tools $(ENVTEST_ASSETS_DIR); setup_envtest_env $(ENVTEST_ASSETS_DIR); go test ./... -coverprofile cover.out
+	mkdir -p $(ENVTEST_ASSETS_DIR)
+	test -f $(ENVTEST_ASSETS_DIR)/setup-envtest.sh || curl -sSLo $(ENVTEST_ASSETS_DIR)/setup-envtest.sh https://raw.githubusercontent.com/kubernetes-sigs/controller-runtime/v0.6.3/hack/setup-envtest.sh
+	source $(ENVTEST_ASSETS_DIR)/setup-envtest.sh; fetch_envtest_tools $(ENVTEST_ASSETS_DIR); setup_envtest_env $(ENVTEST_ASSETS_DIR); go test ./... -coverprofile cover.out
 
 # Build manager binary
 manager: generate fmt vet
@@ -127,15 +129,15 @@ endif
 
 # Generate bundle manifests and metadata, then validate generated files.
 .PHONY: bundle
-bundle: manifests
+bundle: manifests kustomize
 	operator-sdk generate kustomize manifests -q
 	cd config/manager && $(KUSTOMIZE) edit set image controller=$(IMG)
 	$(KUSTOMIZE) build config/manifests | operator-sdk generate bundle -q --overwrite --version $(VERSION) $(BUNDLE_METADATA_OPTS)
 	operator-sdk bundle validate ./bundle
 
-# Build the bundle image
+# Build the bundle image.
 .PHONY: bundle-build
-bundle-build: bundle
+bundle-build:
 	docker build -f bundle.Dockerfile -t $(BUNDLE_IMG) .
 
 # Push the bundle image
@@ -144,7 +146,7 @@ bundle-push:
 
 # Build the index image (only use it for patch version upgrades)
 index-build:
-	opm index add -c docker --bundles $(BUNDLE_IMG) --from-index $(PREVIOUS_INDEX_IMG) --tag $(INDEX_IMG)
+	opm index add -c docker --bundles $(BUNDLE_IMG) $(FROM_INDEX_IMG) --tag $(INDEX_IMG)
 
 # Push the index image
 index-push:

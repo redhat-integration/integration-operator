@@ -63,9 +63,9 @@ metadata:
         }
       ]
     capabilities: Seamless Upgrades
-    operators.operatorframework.io/builder: operator-sdk-v1.1.0
+    operators.operatorframework.io/builder: operator-sdk-v1.2.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v2
-  name: integration-operator.v1.0.0-alpha.2
+  name: integration-operator.v0.0.1
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -411,7 +411,7 @@ spec:
                   value: fuse-online-7.7.x
                 - name: CHANNEL_SERVICE_REGISTRY
                   value: serviceregistry-1
-                image: quay.io/rh_integration/rhi-operator-dev:1.0.0-alpha.2
+                image: quay.io/rh_integration/rhi-operator-dev:latest
                 name: manager
                 resources:
                   limits:
@@ -472,5 +472,4 @@ spec:
   maturity: stable
   provider:
     name: Red Hat
-  replaces: integration-operator.v1.0.0-alpha.1
-  version: 1.0.0-alpha.2
+  version: 0.0.1

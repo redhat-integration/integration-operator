@@ -5,4 +5,4 @@ metadata:
   namespace: openshift-marketplace
 spec:
   sourceType: grpc
-  image: quay.io/rh_integration/rhi-operator-index-dev:1.0.0-alpha.2
+  image: quay.io/rh_integration/rhi-operator-index-dev:0.0.1
