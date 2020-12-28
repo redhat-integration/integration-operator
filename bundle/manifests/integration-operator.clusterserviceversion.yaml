@@ -316,12 +316,8 @@ spec:
           resources:
           - clusterserviceversions
           verbs:
-          - create
-          - delete
           - get
           - list
-          - patch
-          - update
           - watch
         - apiGroups:
           - operators.coreos.com
@@ -346,6 +342,14 @@ spec:
           - list
           - patch
           - update
+          - watch
+        - apiGroups:
+          - packages.operators.coreos.com
+          resources:
+          - packagemanifests
+          verbs:
+          - get
+          - list
           - watch
         - apiGroups:
           - authentication.k8s.io
@@ -411,7 +415,7 @@ spec:
                   value: fuse-online-7.7.x
                 - name: CHANNEL_SERVICE_REGISTRY
                   value: serviceregistry-1
-                image: quay.io/rh_integration/rhi-operator-dev:latest
+                image: quay.io/rh_integration/rhi-operator-dev:0.0.1
                 name: manager
                 resources:
                   limits:

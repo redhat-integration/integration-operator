@@ -24,6 +24,7 @@ import (
 	"github.com/go-logr/logr"
 	operatorsv1 "github.com/operator-framework/api/pkg/operators/v1"
 	operatorsv1alpha1 "github.com/operator-framework/api/pkg/operators/v1alpha1"
+	olmv1 "github.com/operator-framework/operator-lifecycle-manager/pkg/package-server/apis/operators/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -59,7 +60,8 @@ type InstallationReconciler struct {
 // +kubebuilder:rbac:groups="",resources=namespaces,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=operators.coreos.com,resources=operatorgroups,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=operators.coreos.com,resources=subscriptions,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=operators.coreos.com,resources=clusterserviceversions,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=operators.coreos.com,resources=clusterserviceversions,verbs=get;list;watch
+// +kubebuilder:rbac:groups=packages.operators.coreos.com,resources=packagemanifests,verbs=get;list;watch
 
 // Reconcile is called when watch events happen
 func (r *InstallationReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
@@ -72,6 +74,11 @@ func (r *InstallationReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error
 	}
 
 	installationPlans := CreateInstallationPlans(installation, r.Config)
+
+	err = r.validateInstallationPlans(ctx, log, installationPlans)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
 
 	shouldReturn := r.initializeStatus(ctx, log, installation, installationPlans)
 	if shouldReturn {
@@ -98,6 +105,41 @@ func (r *InstallationReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error
 
 	log.Info("Installation completed")
 	return ctrl.Result{}, nil
+}
+
+func (r *InstallationReconciler) validateInstallationPlans(ctx context.Context, log logr.Logger, installationPlans []*InstallationPlan) error {
+	for _, installationPlan := range installationPlans {
+		if installationPlan.Enabled {
+			packageManifest := &olmv1.PackageManifest{}
+			err := r.Get(ctx, types.NamespacedName{Namespace: "openshift-marketplace", Name: installationPlan.PackageName}, packageManifest)
+			if err != nil {
+				if errors.IsNotFound(err) {
+					log.Error(err, "PackageManifest resource not found", "Name", installationPlan.PackageName)
+					installationPlan.Enabled = false
+					installationPlan.StatusMessage = "operator not found"
+					continue
+				}
+				// Error reading the object - requeue the request.
+				log.Error(err, "Failed to get PackageManifest")
+				return err
+			}
+
+			channelFound := false
+			for _, channel := range packageManifest.Status.Channels {
+				if channel.Name == installationPlan.Channel {
+					channelFound = true
+					continue
+				}
+			}
+			if !channelFound {
+				log.Error(err, "Update channel not found", "Channel", installationPlan.Channel, "PackageName", installationPlan.PackageName)
+				installationPlan.Enabled = false
+				installationPlan.StatusMessage = "update channel not found: " + installationPlan.Channel
+			}
+		}
+	}
+
+	return nil
 }
 
 func (r *InstallationReconciler) getInstallation(ctx context.Context, log logr.Logger, req ctrl.Request) (*integrationv1.Installation, error) {
@@ -275,7 +317,7 @@ func (r *InstallationReconciler) initializeStatus(ctx context.Context, log logr.
 				Status:             status,
 				LastTransitionTime: metav1.Now(),
 				Reason:             reason,
-				Message:            "",
+				Message:            installationPlan.StatusMessage,
 			})
 		}
 

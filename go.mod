@@ -8,6 +8,7 @@ require (
 	github.com/onsi/ginkgo v1.14.2
 	github.com/onsi/gomega v1.10.2
 	github.com/operator-framework/api v0.3.25
+	github.com/operator-framework/operator-lifecycle-manager v0.17.0
 	k8s.io/api v0.19.3
 	k8s.io/apimachinery v0.19.3
 	k8s.io/client-go v0.19.3

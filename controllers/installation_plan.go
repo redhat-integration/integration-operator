@@ -35,6 +35,7 @@ type InstallationPlan struct {
 	Name          string
 	Namespace     string
 	PackageName   string
+	StatusMessage string
 }
 
 // IsNamespaceMode returns true when the installation mode is 'namespace'
@@ -61,6 +62,7 @@ func CreateInstallationPlans(installation *integrationv1.Installation, config *I
 			Name:          "3scale-operator",
 			Namespace:     calculateNamespace(input.Mode, input.Namespace, "rhi-3scale"),
 			PackageName:   "3scale-operator",
+			StatusMessage: getStatusMessage(input.Enabled),
 		})
 	}
 	if installation.Spec.ThreeScaleAPIcastInstallationInput != nil {
@@ -73,6 +75,7 @@ func CreateInstallationPlans(installation *integrationv1.Installation, config *I
 			Name:          "3scale-apicast-operator",
 			Namespace:     calculateNamespace(input.Mode, input.Namespace, "rhi-3scale-apicast"),
 			PackageName:   "apicast-operator",
+			StatusMessage: getStatusMessage(input.Enabled),
 		})
 	}
 	if installation.Spec.AMQBrokerInstallationInput != nil {
@@ -85,6 +88,7 @@ func CreateInstallationPlans(installation *integrationv1.Installation, config *I
 			Name:          "amq-broker-operator",
 			Namespace:     calculateNamespace(input.Mode, input.Namespace, "rhi-amq-broker"),
 			PackageName:   "amq-broker",
+			StatusMessage: getStatusMessage(input.Enabled),
 		})
 	}
 	if installation.Spec.AMQInterconnectInstallationInput != nil {
@@ -97,6 +101,7 @@ func CreateInstallationPlans(installation *integrationv1.Installation, config *I
 			Name:          "amq-interconnect-operator",
 			Namespace:     calculateNamespace(input.Mode, input.Namespace, "rhi-amq-interconnect"),
 			PackageName:   "amq7-interconnect-operator",
+			StatusMessage: getStatusMessage(input.Enabled),
 		})
 	}
 	if installation.Spec.AMQStreamsInstallationInput != nil {
@@ -109,6 +114,7 @@ func CreateInstallationPlans(installation *integrationv1.Installation, config *I
 			Name:          "amq-streams-operator",
 			Namespace:     calculateNamespace(input.Mode, input.Namespace, "rhi-amq-streams"),
 			PackageName:   "amq-streams",
+			StatusMessage: getStatusMessage(input.Enabled),
 		})
 	}
 	if installation.Spec.APIDesignerInstallationInput != nil {
@@ -121,6 +127,7 @@ func CreateInstallationPlans(installation *integrationv1.Installation, config *I
 			Name:          "api-designer-operator",
 			Namespace:     calculateNamespace(input.Mode, input.Namespace, "rhi-api-designer"),
 			PackageName:   "fuse-apicurito",
+			StatusMessage: getStatusMessage(input.Enabled),
 		})
 	}
 	if installation.Spec.CamelKInstallationInput != nil {
@@ -133,6 +140,7 @@ func CreateInstallationPlans(installation *integrationv1.Installation, config *I
 			Name:          "camel-k-operator",
 			Namespace:     calculateNamespace(input.Mode, input.Namespace, "rhi-camel-k"),
 			PackageName:   "red-hat-camel-k",
+			StatusMessage: getStatusMessage(input.Enabled),
 		})
 	}
 	if installation.Spec.FuseConsoleInstallationInput != nil {
@@ -145,6 +153,7 @@ func CreateInstallationPlans(installation *integrationv1.Installation, config *I
 			Name:          "fuse-console-operator",
 			Namespace:     calculateNamespace(input.Mode, input.Namespace, "rhi-fuse-console"),
 			PackageName:   "fuse-console",
+			StatusMessage: getStatusMessage(input.Enabled),
 		})
 	}
 	if installation.Spec.FuseOnlineInstallationInput != nil {
@@ -157,6 +166,7 @@ func CreateInstallationPlans(installation *integrationv1.Installation, config *I
 			Name:          "fuse-online-operator",
 			Namespace:     calculateNamespace(input.Mode, input.Namespace, "rhi-fuse-online"),
 			PackageName:   "fuse-online",
+			StatusMessage: getStatusMessage(input.Enabled),
 		})
 	}
 	if installation.Spec.ServiceRegistryInstallationInput != nil {
@@ -169,6 +179,7 @@ func CreateInstallationPlans(installation *integrationv1.Installation, config *I
 			Name:          "service-registry-operator",
 			Namespace:     calculateNamespace(input.Mode, input.Namespace, "rhi-service-registry"),
 			PackageName:   "service-registry-operator",
+			StatusMessage: getStatusMessage(input.Enabled),
 		})
 	}
 
@@ -182,4 +193,11 @@ func calculateNamespace(mode string, namespace string, defaultNamespace string) 
 		return defaultNamespace
 	}
 	return namespace
+}
+
+func getStatusMessage(enabled bool) string {
+	if !enabled {
+		return "installation disabled by user"
+	}
+	return ""
 }
