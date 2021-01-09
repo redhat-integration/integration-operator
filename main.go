@@ -80,10 +80,11 @@ func main() {
 	}
 
 	if err = (&controllers.InstallationReconciler{
-		Client: mgr.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("Installation"),
-		Scheme: mgr.GetScheme(),
-		Config: config,
+		Client:    mgr.GetClient(),
+		APIReader: mgr.GetAPIReader(),
+		Log:       ctrl.Log.WithName("controllers").WithName("Installation"),
+		Scheme:    mgr.GetScheme(),
+		Config:    config,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Installation")
 		os.Exit(1)

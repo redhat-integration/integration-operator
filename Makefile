@@ -11,7 +11,7 @@ export CHANNEL_FUSE_ONLINE = fuse-online-7.7.x
 export CHANNEL_SERVICE_REGISTRY = serviceregistry-1
 
 # Current Operator version
-VERSION ?= 0.0.1
+VERSION ?= 0.0.2
 # Default bundle image tag
 BUNDLE_IMG ?= quay.io/rh_integration/rhi-operator-bundle-dev:$(VERSION)
 # Options for 'bundle-build'
@@ -68,7 +68,7 @@ uninstall: manifests kustomize
 
 # Deploy controller in the configured Kubernetes cluster in ~/.kube/config
 deploy: manifests kustomize
-	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG}
+	cd config/manager && $(KUSTOMIZE) edit set image controller=$(IMG)
 	$(KUSTOMIZE) build config/default | kubectl apply -f -
 
 # Generate manifests e.g. CRD, RBAC etc.
@@ -88,12 +88,12 @@ generate: controller-gen
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
 
 # Build the docker image
-docker-build: test
-	docker build . -t ${IMG}
+docker-build: manager test
+	docker build . -t $(IMG)
 
 # Push the docker image
 docker-push:
-	docker push ${IMG}
+	docker push $(IMG)
 
 # find or download controller-gen
 # download controller-gen if necessary
@@ -137,7 +137,7 @@ bundle: manifests kustomize
 
 # Build the bundle image.
 .PHONY: bundle-build
-bundle-build:
+bundle-build: bundle
 	docker build -f bundle.Dockerfile -t $(BUNDLE_IMG) .
 
 # Push the bundle image

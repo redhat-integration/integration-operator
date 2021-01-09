@@ -50,9 +50,10 @@ const (
 // InstallationReconciler reconciles a Installation object
 type InstallationReconciler struct {
 	client.Client
-	Log    logr.Logger
-	Scheme *runtime.Scheme
-	Config *InstallationConfig
+	APIReader client.Reader
+	Log       logr.Logger
+	Scheme    *runtime.Scheme
+	Config    *InstallationConfig
 }
 
 // +kubebuilder:rbac:groups=integration.redhat.com,resources=installations,verbs=get;list;watch;create;update;patch;delete
@@ -111,7 +112,7 @@ func (r *InstallationReconciler) validateInstallationPlans(ctx context.Context, 
 	for _, installationPlan := range installationPlans {
 		if installationPlan.Enabled {
 			packageManifest := &olmv1.PackageManifest{}
-			err := r.Get(ctx, types.NamespacedName{Namespace: "openshift-marketplace", Name: installationPlan.PackageName}, packageManifest)
+			err := r.APIReader.Get(ctx, types.NamespacedName{Namespace: "openshift-marketplace", Name: installationPlan.PackageName}, packageManifest)
 			if err != nil {
 				if errors.IsNotFound(err) {
 					log.Error(err, "PackageManifest resource not found", "Name", installationPlan.PackageName)
