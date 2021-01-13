@@ -4,11 +4,11 @@ export CHANNEL_3SCALE_APICAST = threescale-2.9
 export CHANNEL_AMQ_BROKER = current
 export CHANNEL_AMQ_INTERCONNECT = 1.2.0
 export CHANNEL_AMQ_STREAMS = stable
-export CHANNEL_API_DESIGNER = fuse-apicurito-7.7.x
+export CHANNEL_API_DESIGNER = fuse-apicurito-7.8.x
 export CHANNEL_CAMEL_K = techpreview
-export CHANNEL_FUSE_CONSOLE = fuse-console-7.7.x
-export CHANNEL_FUSE_ONLINE = fuse-online-7.7.x
-export CHANNEL_SERVICE_REGISTRY = serviceregistry-1
+export CHANNEL_FUSE_CONSOLE = fuse-console-7.8.x
+export CHANNEL_FUSE_ONLINE = fuse-online-v7.8.x
+export CHANNEL_SERVICE_REGISTRY = serviceregistry-1.1
 
 # Current Operator version
 VERSION ?= 0.0.2

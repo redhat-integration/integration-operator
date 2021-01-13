@@ -48,13 +48,13 @@ spec:
           - name: CHANNEL_AMQ_STREAMS
             value: stable
           - name: CHANNEL_API_DESIGNER
-            value: fuse-apicurito-7.7.x
+            value: fuse-apicurito-7.8.x
           - name: CHANNEL_CAMEL_K
             value: techpreview
           - name: CHANNEL_FUSE_CONSOLE
-            value: fuse-console-7.7.x
+            value: fuse-console-7.8.x
           - name: CHANNEL_FUSE_ONLINE
-            value: fuse-online-7.7.x
+            value: fuse-online-v7.8.x
           - name: CHANNEL_SERVICE_REGISTRY
-            value: serviceregistry-1
+            value: serviceregistry-1.1
       terminationGracePeriodSeconds: 10
