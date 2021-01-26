@@ -11,7 +11,7 @@ export CHANNEL_FUSE_ONLINE = fuse-online-v7.8.x
 export CHANNEL_SERVICE_REGISTRY = serviceregistry-1.1
 
 # Current Operator version
-VERSION ?= 0.0.2
+VERSION ?= 0.0.4
 # Default bundle image tag
 BUNDLE_IMG ?= quay.io/rh_integration/rhi-operator-bundle-dev:$(VERSION)
 # Options for 'bundle-build'
