@@ -5,4 +5,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: quay.io/rh_integration/rhi-operator-dev
-  newTag: 0.0.4
+  newTag: 0.0.5
