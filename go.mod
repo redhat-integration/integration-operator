@@ -3,11 +3,9 @@ module github.com/redhat-integration/integration-operator
 go 1.15
 
 require (
-	github.com/apache/thrift v0.14.0 // indirect
-	github.com/go-logr/logr v0.2.1
+	github.com/go-logr/logr v0.4.0
 	github.com/go-logr/zapr v0.2.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/magefile/mage v1.11.0 // indirect
 	github.com/onsi/ginkgo v1.14.2
 	github.com/onsi/gomega v1.10.2

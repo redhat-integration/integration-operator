@@ -1,7 +1,5 @@
 # cloud.google.com/go v0.51.0
 cloud.google.com/go/compute/metadata
-# github.com/apache/thrift v0.14.0
-## explicit
 # github.com/beorn7/perks v1.0.1
 github.com/beorn7/perks/quantile
 # github.com/blang/semver v3.5.1+incompatible
@@ -14,7 +12,7 @@ github.com/davecgh/go-spew/spew
 github.com/evanphx/json-patch
 # github.com/fsnotify/fsnotify v1.4.9
 github.com/fsnotify/fsnotify
-# github.com/go-logr/logr v0.2.1
+# github.com/go-logr/logr v0.4.0
 ## explicit
 github.com/go-logr/logr
 # github.com/go-logr/zapr v0.2.0
@@ -46,8 +44,6 @@ github.com/google/uuid
 github.com/googleapis/gnostic/compiler
 github.com/googleapis/gnostic/extensions
 github.com/googleapis/gnostic/openapiv2
-# github.com/gorilla/websocket v1.4.2
-## explicit
 # github.com/hashicorp/golang-lru v0.5.4
 github.com/hashicorp/golang-lru
 github.com/hashicorp/golang-lru/simplelru
