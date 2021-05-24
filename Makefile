@@ -85,13 +85,13 @@ vet:
 generate: controller-gen
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
 
-# Build the docker image
-docker-build: manager test
-	docker build . -t $(IMG)
+# Build the operator image
+operator-build: manager test
+	podman build . -t $(IMG)
 
-# Push the docker image
-docker-push:
-	docker push $(IMG)
+# Push the operator image
+operator-push:
+	podman push $(IMG)
 
 # find or download controller-gen
 # download controller-gen if necessary
@@ -133,22 +133,22 @@ bundle: manifests kustomize
 	$(KUSTOMIZE) build config/manifests | operator-sdk generate bundle -q --overwrite --version $(VERSION) $(BUNDLE_METADATA_OPTS)
 	operator-sdk bundle validate ./bundle
 
-# Build the bundle image.
+# Build the bundle image
 .PHONY: bundle-build
 bundle-build: bundle
-	docker build -f bundle.Dockerfile -t $(BUNDLE_IMG) .
+	podman build -f bundle.Dockerfile -t $(BUNDLE_IMG) .
 
 # Push the bundle image
 bundle-push:
-	docker push ${BUNDLE_IMG}
+	podman push ${BUNDLE_IMG}
 
 # Build the index image (only use it for patch version upgrades)
 index-build:
-	opm index add -c docker --bundles $(BUNDLE_IMG) $(FROM_INDEX_IMG) --tag $(INDEX_IMG)
+	opm index add -c podman --bundles $(BUNDLE_IMG) $(FROM_INDEX_IMG) --tag $(INDEX_IMG)
 
 # Push the index image
 index-push:
-	docker push $(INDEX_IMG)
+	podman push $(INDEX_IMG)
 
 delete-namespaces:
 	kubectl delete namespace rhi-3scale --ignore-not-found
