@@ -1,17 +1,17 @@
 # Environment variables required for 'make run'
-export CHANNEL_3SCALE = threescale-2.9
-export CHANNEL_3SCALE_APICAST = threescale-2.9
-export CHANNEL_AMQ_BROKER = current
+export CHANNEL_3SCALE = threescale-2.10
+export CHANNEL_3SCALE_APICAST = threescale-2.10
+export CHANNEL_AMQ_BROKER = 7.x
 export CHANNEL_AMQ_INTERCONNECT = 1.2.0
-export CHANNEL_AMQ_STREAMS = amq-streams-1.6.x
+export CHANNEL_AMQ_STREAMS = amq-streams-1.7.x
 export CHANNEL_API_DESIGNER = fuse-apicurito-7.8.x
 export CHANNEL_CAMEL_K = techpreview
 export CHANNEL_FUSE_CONSOLE = fuse-console-7.8.x
 export CHANNEL_FUSE_ONLINE = fuse-online-v7.8.x
-export CHANNEL_SERVICE_REGISTRY = serviceregistry-1.1
+export CHANNEL_SERVICE_REGISTRY = 2.x
 
 # Current Operator version
-VERSION ?= 0.0.5
+VERSION ?= 0.0.7
 # Default bundle image tag
 BUNDLE_IMG ?= quay.io/rh_integration/rhi-operator-bundle-dev:$(VERSION)
 # Options for 'bundle-build'

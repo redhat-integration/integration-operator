@@ -10,15 +10,15 @@ spec:
       - name: manager
         env:
           - name: CHANNEL_3SCALE
-            value: threescale-2.9
+            value: threescale-2.10
           - name: CHANNEL_3SCALE_APICAST
-            value: threescale-2.9
+            value: threescale-2.10
           - name: CHANNEL_AMQ_BROKER
-            value: current
+            value: 7.x
           - name: CHANNEL_AMQ_INTERCONNECT
             value: 1.2.0
           - name: CHANNEL_AMQ_STREAMS
-            value: amq-streams-1.6.x
+            value: amq-streams-1.7.x
           - name: CHANNEL_API_DESIGNER
             value: fuse-apicurito-7.8.x
           - name: CHANNEL_CAMEL_K
@@ -28,4 +28,4 @@ spec:
           - name: CHANNEL_FUSE_ONLINE
             value: fuse-online-v7.8.x
           - name: CHANNEL_SERVICE_REGISTRY
-            value: serviceregistry-1.1
+            value: 2.x

@@ -39,5 +39,5 @@ spec:
     namespace: rhi-fuse-online
   service-registry-installation:
     enabled: true
-    mode: namespace
+    mode: cluster
     namespace: rhi-service-registry
