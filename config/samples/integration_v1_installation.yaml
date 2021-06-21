@@ -40,4 +40,3 @@ spec:
   service-registry-installation:
     enabled: true
     mode: cluster
-    namespace: rhi-service-registry
