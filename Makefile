@@ -11,26 +11,24 @@ export CHANNEL_FUSE_ONLINE = fuse-online-v7.8.x
 export CHANNEL_SERVICE_REGISTRY = 2.x
 
 # Current Operator version
-VERSION ?= 0.0.7
-# Default bundle image tag
-BUNDLE_IMG ?= quay.io/rh_integration/rhi-operator-bundle-dev:$(VERSION)
-# Options for 'bundle-build'
+VERSION ?= 1.1.0
+
+# Options for 'bundle'
 CHANNELS ?= 1.x
 BUNDLE_CHANNELS := --channels=$(CHANNELS)
 DEFAULT_CHANNEL ?= 1.x
 BUNDLE_DEFAULT_CHANNEL := --default-channel=$(DEFAULT_CHANNEL)
 BUNDLE_METADATA_OPTS ?= $(BUNDLE_CHANNELS) $(BUNDLE_DEFAULT_CHANNEL)
 
-# Image URL to use all building/pushing image targets
+# Docker image
 IMG ?= quay.io/rh_integration/rhi-operator-dev:$(VERSION)
 
-# Index image tag
-INDEX_IMG_NAME ?= quay.io/rh_integration/rhi-operator-index-dev
-INDEX_IMG ?= $(INDEX_IMG_NAME):$(VERSION)
-# Options for 'index-build'
-ifneq ($(origin FROM_INDEX_VERSION), undefined)
-FROM_INDEX_IMG := --from-index $(INDEX_IMG_NAME):$(FROM_INDEX_VERSION)
-endif
+# Bundle image
+BUNDLE_IMG ?= quay.io/rh_integration/rhi-operator-bundle-dev:$(VERSION)
+
+# Index image
+INDEX_IMG ?= quay.io/rh_integration/rhi-operator-index-dev:$(VERSION)
+FROM_INDEX_IMG := registry.redhat.io/redhat/redhat-operator-index:v4.7
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
@@ -135,7 +133,7 @@ bundle: manifests kustomize
 
 # Build the bundle image
 .PHONY: bundle-build
-bundle-build: bundle
+bundle-build:
 	podman build -f bundle.Dockerfile -t $(BUNDLE_IMG) .
 
 # Push the bundle image
@@ -144,7 +142,7 @@ bundle-push:
 
 # Build the index image (only use it for patch version upgrades)
 index-build:
-	opm index add -c podman --bundles $(BUNDLE_IMG) $(FROM_INDEX_IMG) --tag $(INDEX_IMG)
+	opm index add -c podman --bundles $(BUNDLE_IMG) --from-index $(FROM_INDEX_IMG) --tag $(INDEX_IMG)
 
 # Push the index image
 index-push:

@@ -56,8 +56,7 @@ metadata:
             },
             "service-registry-installation": {
               "enabled": true,
-              "mode": "cluster",
-              "namespace": "rhi-service-registry"
+              "mode": "cluster"
             }
           }
         }
@@ -65,7 +64,7 @@ metadata:
     capabilities: Seamless Upgrades
     operators.operatorframework.io/builder: operator-sdk-v1.2.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v2
-  name: integration-operator.v0.0.7
+  name: integration-operator.v1.1.0
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -414,7 +413,7 @@ spec:
                   value: fuse-online-v7.8.x
                 - name: CHANNEL_SERVICE_REGISTRY
                   value: 2.x
-                image: quay.io/rh_integration/rhi-operator-dev:0.0.7
+                image: quay.io/rh_integration/rhi-operator-dev:1.1.0
                 name: manager
                 resources:
                   limits:
@@ -475,4 +474,5 @@ spec:
   maturity: stable
   provider:
     name: Red Hat
-  version: 0.0.7
+  version: 1.1.0
+  replaces: integration-operator.v1.0.4

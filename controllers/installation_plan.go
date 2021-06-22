@@ -176,7 +176,7 @@ func CreateInstallationPlans(installation *integrationv1.Installation, config *I
 			ConditionType: "ServiceRegistryOperatorInstalled",
 			Enabled:       input.Enabled,
 			Mode:          input.Mode,
-			Name:          "service-registry-operator-2",
+			Name:          "service-registry-operator",
 			Namespace:     calculateNamespace(input.Mode, input.Namespace, "rhi-service-registry"),
 			PackageName:   "service-registry-operator",
 			StatusMessage: getStatusMessage(input.Enabled),

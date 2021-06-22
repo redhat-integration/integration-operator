@@ -175,7 +175,7 @@ func (r *InstallationReconciler) reconcileInstallationPlan(ctx context.Context, 
 		}
 	}
 
-	result, err := r.reconcileSubscription(ctx, log, installationPlan)
+	result, err := r.reconcileSubscription(ctx, log, installation, installationPlan)
 	if r.shouldReturn(result, err) {
 		return result, err
 	}
@@ -248,7 +248,7 @@ func (r *InstallationReconciler) reconcileOperatorGroup(ctx context.Context, log
 	return ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log logr.Logger, installationPlan *InstallationPlan) (ctrl.Result, error) {
+func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log logr.Logger, installation *integrationv1.Installation, installationPlan *InstallationPlan) (ctrl.Result, error) {
 	name := installationPlan.Name
 	namespace := installationPlan.Namespace
 
@@ -282,6 +282,19 @@ func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log 
 		// Error reading the object - requeue the request
 		log.Error(err, "Failed to get Subscription", "Subscription.Name", name, "Subscription.Namespace", namespace)
 		return ctrl.Result{}, err
+	}
+
+	// Install Service Registry v2 in cluster mode
+	if subscription.Spec.Channel == "serviceregistry-1.1" {
+		installation.Spec.ServiceRegistryInstallationInput.Mode = "cluster"
+		installation.Spec.ServiceRegistryInstallationInput.Namespace = ""
+		err = r.Update(ctx, installation)
+		if err != nil {
+			log.Error(err, "Failed to update Installation", "Installation.Name", installation.Name, "Installation.Namespace", installation.Namespace)
+			return ctrl.Result{}, err
+		}
+		// Installation update - return and requeue
+		return ctrl.Result{Requeue: true}, nil
 	}
 
 	// Ensure the update channel is the same as the spec

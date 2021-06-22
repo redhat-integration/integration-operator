@@ -92,10 +92,10 @@ make bundle-build
 make bundle-push
 ```
 
-### Build the index image (only use it for patch version upgrades)
+### Build the index image
 
 ```sh
-make index-build FROM_INDEX_VERSION=...
+make index-build
 ```
 
 ### Push the index image
