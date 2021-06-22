@@ -153,9 +153,18 @@ delete-namespaces:
 	kubectl delete namespace rhi-3scale-apicast --ignore-not-found
 	kubectl delete namespace rhi-amq-broker --ignore-not-found
 	kubectl delete namespace rhi-amq-interconnect --ignore-not-found
-	kubectl delete namespace rhi-amq-streams --ignore-not-found
 	kubectl delete namespace rhi-api-designer --ignore-not-found
-	kubectl delete namespace rhi-camel-k --ignore-not-found
 	kubectl delete namespace rhi-fuse-console --ignore-not-found
 	kubectl delete namespace rhi-fuse-online --ignore-not-found
-	kubectl delete namespace rhi-service-registry --ignore-not-found
+
+enable-default-catalog-sources:
+	kubectl patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": false}]'
+
+disable-default-catalog-sources:
+	kubectl patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": true}]'
+
+create-dev-catalog-source:
+	kubectl apply -f config/olm/catalog-source.yaml
+
+delete-dev-catalog-source:
+	kubectl delete -f config/olm/catalog-source.yaml
