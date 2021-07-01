@@ -475,4 +475,4 @@ spec:
   provider:
     name: Red Hat
   version: 1.1.0
-  replaces: integration-operator.v1.0.4
+  replaces: integration-operator.v1.0.5

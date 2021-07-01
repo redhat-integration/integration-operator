@@ -293,8 +293,8 @@ func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log 
 			log.Error(err, "Failed to update Installation", "Installation.Name", installation.Name, "Installation.Namespace", installation.Namespace)
 			return ctrl.Result{}, err
 		}
-		// Installation update - return and requeue
-		return ctrl.Result{Requeue: true}, nil
+		// Installation updated - only return because this CR is being watched
+		return ctrl.Result{}, nil
 	}
 
 	// Ensure the update channel is the same as the spec
@@ -305,7 +305,7 @@ func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log 
 			log.Error(err, "Failed to update Subscription", "Subscription.Name", subscription.Name, "Subscription.Namespace", subscription.Namespace)
 			return ctrl.Result{}, err
 		}
-		// Subscription update - return and requeue
+		// Subscription updated - return and requeue
 		return ctrl.Result{Requeue: true}, nil
 	}
 
