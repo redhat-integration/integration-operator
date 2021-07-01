@@ -142,7 +142,7 @@ bundle-push:
 
 # Build the index image (only use it for patch version upgrades)
 index-build:
-	opm index add -c podman --bundles $(BUNDLE_IMG) --from-index $(FROM_INDEX_IMG) --tag $(INDEX_IMG)
+	cd /tmp && opm index add -c podman --bundles $(BUNDLE_IMG) --from-index $(FROM_INDEX_IMG) --tag $(INDEX_IMG)
 
 # Push the index image
 index-push:
