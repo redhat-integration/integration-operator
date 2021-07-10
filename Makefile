@@ -156,6 +156,7 @@ delete-namespaces:
 	kubectl delete namespace rhi-api-designer --ignore-not-found
 	kubectl delete namespace rhi-fuse-console --ignore-not-found
 	kubectl delete namespace rhi-fuse-online --ignore-not-found
+	kubectl delete namespace rhi-service-registry --ignore-not-found
 
 enable-default-catalog-sources:
 	kubectl patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": false}]'
