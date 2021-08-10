@@ -32,6 +32,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
 	integrationv1 "github.com/redhat-integration/integration-operator/api/v1"
 )
@@ -51,7 +52,6 @@ const (
 type InstallationReconciler struct {
 	client.Client
 	APIReader client.Reader
-	Log       logr.Logger
 	Scheme    *runtime.Scheme
 	Config    *InstallationConfig
 }
@@ -65,9 +65,8 @@ type InstallationReconciler struct {
 // +kubebuilder:rbac:groups=packages.operators.coreos.com,resources=packagemanifests,verbs=get;list;watch
 
 // Reconcile is called when watch events happen
-func (r *InstallationReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	ctx := context.Background()
-	log := r.Log.WithValues("installation", req.NamespacedName)
+func (r *InstallationReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+	log := logf.FromContext(ctx)
 
 	installation, err := r.getInstallation(ctx, log, req)
 	if installation == nil || err != nil {

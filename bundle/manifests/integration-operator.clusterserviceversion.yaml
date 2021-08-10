@@ -62,7 +62,7 @@ metadata:
         }
       ]
     capabilities: Seamless Upgrades
-    operators.operatorframework.io/builder: operator-sdk-v1.2.0
+    operators.operatorframework.io/builder: operator-sdk-v1.9.0+git
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v2
   name: integration-operator.v1.1.0
   namespace: placeholder

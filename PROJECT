@@ -3,9 +3,13 @@ layout: go.kubebuilder.io/v2
 projectName: integration-operator
 repo: github.com/redhat-integration/integration-operator
 resources:
-- group: integration
+-
+  controller: true
+  domain: redhat.com
+  group: integration
   kind: Installation
+  path: github.com/redhat-integration/integration-operator/api/v1
   version: v1
-version: 3-alpha
+version: "3"
 plugins:
   go.sdk.operatorframework.io/v2-alpha: {}

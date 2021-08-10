@@ -170,3 +170,6 @@ create-dev-catalog-source:
 
 delete-dev-catalog-source:
 	kubectl delete -f config/olm/catalog-source.yaml
+
+scan:
+	srcclr scan --allow-dirty
