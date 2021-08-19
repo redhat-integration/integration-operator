@@ -377,17 +377,6 @@ spec:
             spec:
               containers:
               - args:
-                - --secure-listen-address=0.0.0.0:8443
-                - --upstream=http://127.0.0.1:8080/
-                - --logtostderr=true
-                - --v=10
-                image: gcr.io/kubebuilder/kube-rbac-proxy:v0.5.0
-                name: kube-rbac-proxy
-                ports:
-                - containerPort: 8443
-                  name: https
-                resources: {}
-              - args:
                 - --metrics-addr=127.0.0.1:8080
                 - --enable-leader-election
                 command:
@@ -404,13 +393,13 @@ spec:
                 - name: CHANNEL_AMQ_STREAMS
                   value: amq-streams-1.7.x
                 - name: CHANNEL_API_DESIGNER
-                  value: fuse-apicurito-7.8.x
+                  value: fuse-apicurito-7.9.x
                 - name: CHANNEL_CAMEL_K
-                  value: techpreview
+                  value: 1.4.x
                 - name: CHANNEL_FUSE_CONSOLE
-                  value: fuse-console-7.8.x
+                  value: 7.9.x
                 - name: CHANNEL_FUSE_ONLINE
-                  value: fuse-online-v7.8.x
+                  value: 7.9.x
                 - name: CHANNEL_SERVICE_REGISTRY
                   value: 2.x
                 image: quay.io/rh_integration/rhi-operator-dev:1.1.0
@@ -422,6 +411,17 @@ spec:
                   requests:
                     cpu: 100m
                     memory: 64Mi
+              - args:
+                - --secure-listen-address=0.0.0.0:8443
+                - --upstream=http://127.0.0.1:8080/
+                - --logtostderr=true
+                - --v=10
+                image: gcr.io/kubebuilder/kube-rbac-proxy:v0.5.0
+                name: kube-rbac-proxy
+                ports:
+                - containerPort: 8443
+                  name: https
+                resources: {}
               terminationGracePeriodSeconds: 10
       permissions:
       - rules:
@@ -475,4 +475,4 @@ spec:
   provider:
     name: Red Hat
   version: 1.1.0
-  replaces: integration-operator.v1.0.5
+  replaces: integration-operator.v1.0.6

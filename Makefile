@@ -4,10 +4,10 @@ export CHANNEL_3SCALE_APICAST = threescale-2.10
 export CHANNEL_AMQ_BROKER = 7.x
 export CHANNEL_AMQ_INTERCONNECT = 1.2.0
 export CHANNEL_AMQ_STREAMS = amq-streams-1.7.x
-export CHANNEL_API_DESIGNER = fuse-apicurito-7.8.x
-export CHANNEL_CAMEL_K = techpreview
-export CHANNEL_FUSE_CONSOLE = fuse-console-7.8.x
-export CHANNEL_FUSE_ONLINE = fuse-online-v7.8.x
+export CHANNEL_API_DESIGNER = fuse-apicurito-7.9.x
+export CHANNEL_CAMEL_K = 1.4.x
+export CHANNEL_FUSE_CONSOLE = 7.9.x
+export CHANNEL_FUSE_ONLINE = 7.9.x
 export CHANNEL_SERVICE_REGISTRY = 2.x
 
 # Current Operator version
@@ -28,7 +28,7 @@ BUNDLE_IMG ?= quay.io/rh_integration/rhi-operator-bundle-dev:$(VERSION)
 
 # Index image
 INDEX_IMG ?= quay.io/rh_integration/rhi-operator-index-dev:$(VERSION)
-FROM_INDEX_IMG := registry.redhat.io/redhat/redhat-operator-index:v4.7
+FROM_INDEX_IMG := registry.redhat.io/redhat/redhat-operator-index:v4.8
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
@@ -142,7 +142,7 @@ bundle-push:
 
 # Build the index image (only use it for patch version upgrades)
 index-build:
-	cd /tmp && opm index add -c podman --bundles $(BUNDLE_IMG) --from-index $(FROM_INDEX_IMG) --tag $(INDEX_IMG)
+	cd /tmp && opm index add --bundles $(BUNDLE_IMG) --from-index $(FROM_INDEX_IMG) --tag $(INDEX_IMG)
 
 # Push the index image
 index-push:
