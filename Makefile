@@ -148,7 +148,7 @@ index-build:
 index-push:
 	podman push $(INDEX_IMG)
 
-delete-namespaces:
+cleanup:
 	kubectl delete namespace rhi-3scale --ignore-not-found
 	kubectl delete namespace rhi-3scale-apicast --ignore-not-found
 	kubectl delete namespace rhi-amq-broker --ignore-not-found
@@ -157,6 +157,7 @@ delete-namespaces:
 	kubectl delete namespace rhi-fuse-console --ignore-not-found
 	kubectl delete namespace rhi-fuse-online --ignore-not-found
 	kubectl delete namespace rhi-service-registry --ignore-not-found
+	kubectl delete crd installations.integration.redhat.com
 
 enable-default-catalog-sources:
 	kubectl patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": false}]'
