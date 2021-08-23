@@ -51,8 +51,8 @@ const (
 // InstallationReconciler reconciles a Installation object
 type InstallationReconciler struct {
 	client.Client
-	APIReader client.Reader
 	Scheme    *runtime.Scheme
+	APIReader client.Reader
 	Config    *InstallationConfig
 }
 

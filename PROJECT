@@ -1,9 +1,15 @@
 domain: redhat.com
-layout: go.kubebuilder.io/v2
+layout:
+- go.kubebuilder.io/v3
+plugins:
+  manifests.sdk.operatorframework.io/v2: {}
+  scorecard.sdk.operatorframework.io/v2: {}
 projectName: integration-operator
 repo: github.com/redhat-integration/integration-operator
 resources:
--
+- api:
+    crdVersion: v1
+    namespaced: false
   controller: true
   domain: redhat.com
   group: integration
@@ -11,5 +17,3 @@ resources:
   path: github.com/redhat-integration/integration-operator/api/v1
   version: v1
 version: "3"
-plugins:
-  go.sdk.operatorframework.io/v2-alpha: {}

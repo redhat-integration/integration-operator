@@ -8,6 +8,10 @@ WORKDIR /workspace
 COPY go.mod go.mod
 COPY go.sum go.sum
 
+# cache deps before building and copying source so that we don't need to re-download as much
+# and so that source changes don't invalidate our downloaded layer
+# RUN go mod download
+
 # Copy vendored dependencies
 COPY vendor/ vendor/
 
@@ -17,11 +21,12 @@ COPY api/ api/
 COPY controllers/ controllers/
 
 # Build
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -a -o manager main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o manager main.go
 
 # Use minimal base image to package the manager binary
 FROM registry.access.redhat.com/ubi8/ubi-minimal
 WORKDIR /
 COPY --from=builder /workspace/manager .
+USER 1001
 
 ENTRYPOINT ["/manager"]
