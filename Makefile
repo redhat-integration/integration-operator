@@ -90,10 +90,10 @@ help: ## Display this help.
 ##@ Development
 
 manifests: controller-gen ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
-	$(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=manager-role webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+	$(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=manager-role webhook paths="./api/..." output:crd:artifacts:config=config/crd/bases
 
 generate: controller-gen ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
-	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
+	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./api/..."
 
 fmt: ## Run go fmt against code.
 	go fmt ./...
@@ -227,7 +227,6 @@ cleanup:
 	kubectl delete namespace rhi-fuse-console --ignore-not-found
 	kubectl delete namespace rhi-fuse-online --ignore-not-found
 	kubectl delete namespace rhi-service-registry --ignore-not-found
-	kubectl delete crd installations.integration.redhat.com
 
 replace-catalog-sources:
 	kubectl patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": true}]'
