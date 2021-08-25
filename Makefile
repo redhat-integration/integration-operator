@@ -229,11 +229,14 @@ cleanup:
 	kubectl delete namespace rhi-service-registry --ignore-not-found
 	kubectl delete crd installations.integration.redhat.com
 
-create-catalog-source:
+replace-catalog-sources:
 	kubectl patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": true}]'
-	kubectl create -f config/olm/catalog-source.yaml
+	kubectl apply -f config/olm/catalog-source.yaml
 
-delete-catalog-source:
+update-catalog-sources:
+	kubectl apply -f config/olm/catalog-source.yaml
+
+rollback-catalog-sources:
 	kubectl delete -f config/olm/catalog-source.yaml
 	kubectl patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": false}]'
 
