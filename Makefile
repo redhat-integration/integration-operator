@@ -210,23 +210,27 @@ endif
 # https://github.com/operator-framework/community-operators/blob/7f1438c/docs/packaging-operator.md#updating-your-existing-operator
 .PHONY: catalog-build
 catalog-build: opm ## Build a catalog image.
-	$(OPM) index add --container-tool podman --tag $(CATALOG_IMG) --bundles $(BUNDLE_IMGS) $(FROM_INDEX_OPT)
-	rm -rf index*
+	cd /tmp && $(OPM) index add --container-tool podman --tag $(CATALOG_IMG) --bundles $(BUNDLE_IMGS) $(FROM_INDEX_OPT)
 
 # Push the catalog image.
 .PHONY: catalog-push
 catalog-push: ## Push a catalog image.
 	podman push $(CATALOG_IMG)
 
+INTEGRATION_OPERATOR_SUBSCRIPTION_NAME = integration-operator
+INTEGRATION_OPERATOR_CURRENT_CSV = $(shell oc get subscription $(INTEGRATION_OPERATOR_SUBSCRIPTION_NAME) -n openshift-operators -o json | jq .status.currentCSV)
+AMQ_STREAMS_SUBSCRIPTION_NAME = amq-streams-operator
+AMQ_STREAMS_CURRENT_CSV = $(shell oc get subscription $(AMQ_STREAMS_SUBSCRIPTION_NAME) -n openshift-operators -o json | jq .status.currentCSV)
+CAMEL_SUBSCRIPTION_NAME = camel-k-operator
+CAMEL_CURRENT_CSV = $(shell oc get subscription $(CAMEL_SUBSCRIPTION_NAME) -n openshift-operators -o json | jq .status.currentCSV)
+SERVICE_REGISTRY_SUBSCRIPTION_NAME = service-registry-operator
+SERVICE_REGISTRY_CURRENT_CSV = $(shell oc get subscription $(SERVICE_REGISTRY_SUBSCRIPTION_NAME) -n openshift-operators -o json | jq .status.currentCSV)
+
 cleanup:
-	kubectl delete namespace rhi-3scale --ignore-not-found
-	kubectl delete namespace rhi-3scale-apicast --ignore-not-found
-	kubectl delete namespace rhi-amq-broker --ignore-not-found
-	kubectl delete namespace rhi-amq-interconnect --ignore-not-found
-	kubectl delete namespace rhi-api-designer --ignore-not-found
-	kubectl delete namespace rhi-fuse-console --ignore-not-found
-	kubectl delete namespace rhi-fuse-online --ignore-not-found
-	kubectl delete namespace rhi-service-registry --ignore-not-found
+	kubectl delete installation rhi-installation --ignore-not-found
+	kubectl delete subscription $(INTEGRATION_OPERATOR_SUBSCRIPTION_NAME) $(AMQ_STREAMS_SUBSCRIPTION_NAME) $(CAMEL_SUBSCRIPTION_NAME) $(SERVICE_REGISTRY_SUBSCRIPTION_NAME) -n openshift-operators --ignore-not-found
+	kubectl delete clusterserviceversion "dummy" $(INTEGRATION_OPERATOR_CURRENT_CSV) $(AMQ_STREAMS_CURRENT_CSV) $(CAMEL_CURRENT_CSV) $(SERVICE_REGISTRY_CURRENT_CSV) -n openshift-operators --ignore-not-found
+	kubectl delete namespace rhi-3scale rhi-3scale-apicast rhi-amq-broker rhi-amq-interconnect rhi-api-designer rhi-fuse-console rhi-fuse-online --ignore-not-found
 
 replace-catalog-sources:
 	kubectl patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": true}]'
