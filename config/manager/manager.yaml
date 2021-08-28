@@ -62,7 +62,7 @@ spec:
         - name: CHANNEL_AMQ_INTERCONNECT
           value: 1.2.0
         - name: CHANNEL_AMQ_STREAMS
-          value: amq-streams-1.7.x
+          value: amq-streams-1.8.x
         - name: CHANNEL_API_DESIGNER
           value: fuse-apicurito-7.9.x
         - name: CHANNEL_CAMEL_K

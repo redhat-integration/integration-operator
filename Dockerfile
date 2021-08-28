@@ -19,6 +19,7 @@ COPY vendor/ vendor/
 COPY main.go main.go
 COPY api/ api/
 COPY controllers/ controllers/
+COPY olm/ olm/
 
 # Build
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o manager main.go

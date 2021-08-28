@@ -216,8 +216,7 @@ spec:
   install:
     spec:
       deployments: null
-    strategy:
-      type: Recreate
+    strategy: ""
   installModes:
   - supported: true
     type: OwnNamespace

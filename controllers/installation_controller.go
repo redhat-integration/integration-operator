@@ -68,46 +68,45 @@ type InstallationReconciler struct {
 func (r *InstallationReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := logf.FromContext(ctx)
 
-	installation, err := r.getInstallation(ctx, log, req)
-	if installation == nil || err != nil {
-		return ctrl.Result{}, err
+	installation := &integrationv1.Installation{}
+	shouldReturn, result, err := r.getInstallation(ctx, log, req.NamespacedName, installation)
+	if shouldReturn {
+		return result, err
 	}
 
 	installationPlans := CreateInstallationPlans(installation, r.Config)
 
-	err = r.validateInstallationPlans(ctx, log, installationPlans)
-	if err != nil {
-		return ctrl.Result{}, err
+	shouldReturn, result, err = r.validateInstallationPlans(ctx, log, installationPlans)
+	if shouldReturn {
+		return result, err
 	}
 
-	shouldReturn := r.initializeStatus(ctx, log, installation, installationPlans)
+	shouldReturn, result, err = r.initializeStatus(ctx, log, installation, installationPlans)
 	if shouldReturn {
-		return ctrl.Result{}, nil
+		return result, err
 	}
 
 	for _, installationPlan := range installationPlans {
 		if installationPlan.Enabled {
-			result, err := r.reconcileInstallationPlan(ctx, log, installation, installationPlan)
-			if r.shouldReturn(result, err) {
+			shouldReturn, result, err = r.reconcileInstallationPlan(ctx, log, installation, installationPlan)
+			if shouldReturn {
 				return result, err
 			}
-			shouldReturn = r.updateStatus(ctx, log, installation, installationPlan)
+			shouldReturn, result, err = r.updateStatus(ctx, log, installation, installationPlan)
 			if shouldReturn {
-				return ctrl.Result{}, nil
+				return result, err
 			}
 		}
 	}
 
 	if r.isInstalling(installation.Status.Conditions) {
-		log.Info("Installation in progress")
-		return ctrl.Result{RequeueAfter: 5 * time.Second}, nil
+		return ctrl.Result{RequeueAfter: 10 * time.Second}, nil
 	}
 
-	log.Info("Installation completed")
 	return ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) validateInstallationPlans(ctx context.Context, log logr.Logger, installationPlans []*InstallationPlan) error {
+func (r *InstallationReconciler) validateInstallationPlans(ctx context.Context, log logr.Logger, installationPlans []*InstallationPlan) (bool, ctrl.Result, error) {
 	for _, installationPlan := range installationPlans {
 		if installationPlan.Enabled {
 			packageManifest := &olmv1.PackageManifest{}
@@ -120,8 +119,8 @@ func (r *InstallationReconciler) validateInstallationPlans(ctx context.Context, 
 					continue
 				}
 				// Error reading the object - requeue the request.
-				log.Error(err, "Failed to get PackageManifest")
-				return err
+				log.Error(err, "Failed to get PackageManifest", "Name", installationPlan.PackageName)
+				return true, ctrl.Result{}, err
 			}
 
 			channelFound := false
@@ -139,50 +138,48 @@ func (r *InstallationReconciler) validateInstallationPlans(ctx context.Context, 
 		}
 	}
 
-	return nil
+	return false, ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) getInstallation(ctx context.Context, log logr.Logger, req ctrl.Request) (*integrationv1.Installation, error) {
-	installation := &integrationv1.Installation{}
-	err := r.Get(ctx, req.NamespacedName, installation)
+func (r *InstallationReconciler) getInstallation(ctx context.Context, log logr.Logger, namespaceName types.NamespacedName, installation *integrationv1.Installation) (bool, ctrl.Result, error) {
+	err := r.Get(ctx, namespaceName, installation)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			// Request object not found, could have been deleted after reconcile request.
 			// Owned objects are automatically garbage collected. For additional cleanup logic use finalizers.
 			// Return and don't requeue
-			log.Info("Installation resource not found. Ignoring since object must be deleted")
-			return nil, nil
+			return true, ctrl.Result{}, nil
 		}
 		// Error reading the object - requeue the request.
 		log.Error(err, "Failed to get Installation")
-		return nil, err
+		return true, ctrl.Result{}, err
 	}
 
-	return installation, nil
+	return false, ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) reconcileInstallationPlan(ctx context.Context, log logr.Logger, installation *integrationv1.Installation, installationPlan *InstallationPlan) (ctrl.Result, error) {
+func (r *InstallationReconciler) reconcileInstallationPlan(ctx context.Context, log logr.Logger, installation *integrationv1.Installation, installationPlan *InstallationPlan) (bool, ctrl.Result, error) {
 	if installationPlan.IsNamespaceMode() {
-		result, err := r.reconcileNamespace(ctx, log, installationPlan.Namespace)
-		if r.shouldReturn(result, err) {
-			return result, err
+		shouldReturn, result, err := r.reconcileNamespace(ctx, log, installationPlan.Namespace)
+		if shouldReturn {
+			return shouldReturn, result, err
 		}
 
-		result, err = r.reconcileOperatorGroup(ctx, log, installationPlan)
-		if r.shouldReturn(result, err) {
-			return result, err
+		shouldReturn, result, err = r.reconcileOperatorGroup(ctx, log, installationPlan)
+		if shouldReturn {
+			return shouldReturn, result, err
 		}
 	}
 
-	result, err := r.reconcileSubscription(ctx, log, installation, installationPlan)
-	if r.shouldReturn(result, err) {
-		return result, err
+	shouldReturn, result, err := r.reconcileSubscription(ctx, log, installation, installationPlan)
+	if shouldReturn {
+		return shouldReturn, result, err
 	}
 
-	return ctrl.Result{}, nil
+	return false, ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) reconcileNamespace(ctx context.Context, log logr.Logger, namespace string) (ctrl.Result, error) {
+func (r *InstallationReconciler) reconcileNamespace(ctx context.Context, log logr.Logger, namespace string) (bool, ctrl.Result, error) {
 	ns := &corev1.Namespace{}
 	err := r.Get(ctx, types.NamespacedName{Name: namespace}, ns)
 	if err != nil {
@@ -193,24 +190,23 @@ func (r *InstallationReconciler) reconcileNamespace(ctx context.Context, log log
 					Name: namespace,
 				},
 			}
-			log.Info("Creating a new Namespace", "Namespace.Name", ns.Name)
 			err = r.Create(ctx, ns)
 			if err != nil {
-				log.Error(err, "Failed to create new Namespace", "Namespace.Name", ns.Name)
-				return ctrl.Result{}, err
+				log.Error(err, "Failed to create Namespace", "Name", namespace)
+				return true, ctrl.Result{}, err
 			}
 			// Namespace created successfully - return and requeue
-			return ctrl.Result{Requeue: true}, nil
+			return true, ctrl.Result{Requeue: true}, nil
 		}
 		// Error reading the object - requeue the request
-		log.Error(err, "Failed to get Namespace", "Namespace.Name", namespace)
-		return ctrl.Result{}, err
+		log.Error(err, "Failed to get Namespace", "Name", namespace)
+		return true, ctrl.Result{}, err
 	}
 
-	return ctrl.Result{}, nil
+	return false, ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) reconcileOperatorGroup(ctx context.Context, log logr.Logger, installationPlan *InstallationPlan) (ctrl.Result, error) {
+func (r *InstallationReconciler) reconcileOperatorGroup(ctx context.Context, log logr.Logger, installationPlan *InstallationPlan) (bool, ctrl.Result, error) {
 	namespace := installationPlan.Namespace
 
 	operatorGroupList := &operatorsv1.OperatorGroupList{}
@@ -218,7 +214,7 @@ func (r *InstallationReconciler) reconcileOperatorGroup(ctx context.Context, log
 	if err != nil {
 		// Error reading objects - requeue the request
 		log.Error(err, "Failed to list OperatorGroups", "Namespace", namespace)
-		return ctrl.Result{}, err
+		return true, ctrl.Result{}, err
 	}
 
 	if len(operatorGroupList.Items) == 0 {
@@ -234,20 +230,19 @@ func (r *InstallationReconciler) reconcileOperatorGroup(ctx context.Context, log
 				},
 			},
 		}
-		log.Info("Creating a new OperatorGroup", "OperatorGroup.Name", operatorGroup.Name, "OperatorGroup.Namespace", operatorGroup.Namespace)
 		err = r.Create(ctx, operatorGroup)
 		if err != nil {
-			log.Error(err, "Failed to create new OperatorGroup", "OperatorGroup.Name", operatorGroup.Name, "OperatorGroup.Namespace", operatorGroup.Namespace)
-			return ctrl.Result{}, err
+			log.Error(err, "Failed to create OperatorGroup", "Name", operatorGroup.Name, "Namespace", operatorGroup.Namespace)
+			return true, ctrl.Result{}, err
 		}
 		// OperatorGroup created successfully - return and requeue
-		return ctrl.Result{Requeue: true}, nil
+		return true, ctrl.Result{Requeue: true}, nil
 	}
 
-	return ctrl.Result{}, nil
+	return false, ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log logr.Logger, installation *integrationv1.Installation, installationPlan *InstallationPlan) (ctrl.Result, error) {
+func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log logr.Logger, installation *integrationv1.Installation, installationPlan *InstallationPlan) (bool, ctrl.Result, error) {
 	name := installationPlan.Name
 	namespace := installationPlan.Namespace
 
@@ -269,31 +264,17 @@ func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log 
 					Package:                installationPlan.PackageName,
 				},
 			}
-			log.Info("Creating a new Subscription", "Subscription.Name", subscription.Name, "Subscription.Namespace", subscription.Namespace)
 			err = r.Create(ctx, subscription)
 			if err != nil {
-				log.Error(err, "Failed to create new Subscription", "Subscription.Name", subscription.Name, "Subscription.Namespace", subscription.Namespace)
-				return ctrl.Result{}, err
+				log.Error(err, "Failed to create Subscription", "Name", subscription.Name, "Namespace", subscription.Namespace)
+				return true, ctrl.Result{}, err
 			}
 			// Subscription created successfully - return and requeue
-			return ctrl.Result{RequeueAfter: 5 * time.Second}, nil
+			return true, ctrl.Result{Requeue: true}, nil
 		}
 		// Error reading the object - requeue the request
-		log.Error(err, "Failed to get Subscription", "Subscription.Name", name, "Subscription.Namespace", namespace)
-		return ctrl.Result{}, err
-	}
-
-	// Install Service Registry v2 in cluster mode
-	if subscription.Spec.Channel == "serviceregistry-1.1" {
-		installation.Spec.ServiceRegistryInstallationInput.Mode = "cluster"
-		installation.Spec.ServiceRegistryInstallationInput.Namespace = ""
-		err = r.Update(ctx, installation)
-		if err != nil {
-			log.Error(err, "Failed to update Installation", "Installation.Name", installation.Name, "Installation.Namespace", installation.Namespace)
-			return ctrl.Result{}, err
-		}
-		// Installation updated - only return because this CR is being watched
-		return ctrl.Result{}, nil
+		log.Error(err, "Failed to get Subscription", "Name", name, "Namespace", namespace)
+		return true, ctrl.Result{}, err
 	}
 
 	// Ensure the update channel is the same as the spec
@@ -301,17 +282,17 @@ func (r *InstallationReconciler) reconcileSubscription(ctx context.Context, log 
 		subscription.Spec.Channel = installationPlan.Channel
 		err = r.Update(ctx, subscription)
 		if err != nil {
-			log.Error(err, "Failed to update Subscription", "Subscription.Name", subscription.Name, "Subscription.Namespace", subscription.Namespace)
-			return ctrl.Result{}, err
+			log.Error(err, "Failed to update Subscription", "Name", subscription.Name, "Namespace", subscription.Namespace)
+			return true, ctrl.Result{}, err
 		}
 		// Subscription updated - return and requeue
-		return ctrl.Result{Requeue: true}, nil
+		return true, ctrl.Result{Requeue: true}, nil
 	}
 
-	return ctrl.Result{}, nil
+	return false, ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) initializeStatus(ctx context.Context, log logr.Logger, installation *integrationv1.Installation, installationPlans []*InstallationPlan) bool {
+func (r *InstallationReconciler) initializeStatus(ctx context.Context, log logr.Logger, installation *integrationv1.Installation, installationPlans []*InstallationPlan) (bool, ctrl.Result, error) {
 	if installation.Status.Conditions == nil {
 		conditions := []metav1.Condition{}
 
@@ -335,19 +316,21 @@ func (r *InstallationReconciler) initializeStatus(ctx context.Context, log logr.
 		}
 
 		installation.Status.Conditions = conditions
+
 		installation.Status.Phase = r.calculatePhase(conditions)
-		log.Info("Initializing Installation status")
+
 		err := r.Status().Update(ctx, installation)
 		if err != nil {
 			log.Error(err, "Failed to initialize Installation status")
+			return true, ctrl.Result{}, err
 		}
-		return true
+		return true, ctrl.Result{}, nil
 	}
 
-	return false
+	return false, ctrl.Result{}, nil
 }
 
-func (r *InstallationReconciler) updateStatus(ctx context.Context, log logr.Logger, installation *integrationv1.Installation, installationPlan *InstallationPlan) bool {
+func (r *InstallationReconciler) updateStatus(ctx context.Context, log logr.Logger, installation *integrationv1.Installation, installationPlan *InstallationPlan) (bool, ctrl.Result, error) {
 	for i, condition := range installation.Status.Conditions {
 		if condition.Type == installationPlan.ConditionType {
 			namespace := installationPlan.Namespace
@@ -357,8 +340,8 @@ func (r *InstallationReconciler) updateStatus(ctx context.Context, log logr.Logg
 			err := r.Get(ctx, types.NamespacedName{Name: subscriptionName, Namespace: namespace}, subscription)
 			if err != nil && !errors.IsNotFound(err) {
 				// Error reading the object - requeue the request
-				log.Error(err, "Failed to get Subscription", "Subscription.Name", subscriptionName, "Subscription.Namespace", namespace)
-				return true
+				log.Error(err, "Failed to get Subscription", "Name", subscriptionName, "Namespace", namespace)
+				return true, ctrl.Result{}, err
 			}
 
 			csv := &operatorsv1alpha1.ClusterServiceVersion{}
@@ -368,8 +351,8 @@ func (r *InstallationReconciler) updateStatus(ctx context.Context, log logr.Logg
 				err = r.Get(ctx, types.NamespacedName{Name: csvName, Namespace: namespace}, csv)
 				if err != nil && !errors.IsNotFound(err) {
 					// Error reading the object - requeue the request
-					log.Error(err, "Failed to get ClusterServiceVersion", "ClusterServiceVersion.Name", csvName, "ClusterServiceVersion.Namespace", namespace)
-					return true
+					log.Error(err, "Failed to get ClusterServiceVersion", "Name", csvName, "Namespace", namespace)
+					return true, ctrl.Result{}, err
 				}
 			}
 
@@ -402,19 +385,20 @@ func (r *InstallationReconciler) updateStatus(ctx context.Context, log logr.Logg
 			if !reflect.DeepEqual(newCondition, condition) {
 				installation.Status.Conditions[i] = newCondition
 				installation.Status.Phase = r.calculatePhase(installation.Status.Conditions)
-				log.Info("Updating Installation status")
+
 				err := r.Status().Update(ctx, installation)
 				if err != nil {
 					log.Error(err, "Failed to update Installation status")
+					return true, ctrl.Result{}, err
 				}
-				return true
+				return true, ctrl.Result{}, nil
 			}
 
 			break
 		}
 	}
 
-	return false
+	return false, ctrl.Result{}, nil
 }
 
 func (r *InstallationReconciler) calculatePhase(conditions []metav1.Condition) operatorsv1alpha1.ClusterServiceVersionPhase {
@@ -436,10 +420,6 @@ func (r *InstallationReconciler) isInstalling(conditions []metav1.Condition) boo
 		}
 	}
 	return false
-}
-
-func (r *InstallationReconciler) shouldReturn(result ctrl.Result, err error) bool {
-	return result.Requeue || result.RequeueAfter > 0 || err != nil
 }
 
 // SetupWithManager configures the controller
