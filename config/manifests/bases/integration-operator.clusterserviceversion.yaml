@@ -209,6 +209,11 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
         - urn:alm:descriptor:com.tectonic.ui:fieldDependency:service-registry-installation.mode:namespace
+      statusDescriptors:
+      - displayName: Conditions
+        path: conditions
+      - displayName: Phase
+        path: phase
       version: v1
   displayName: Red Hat Integration
   icon:

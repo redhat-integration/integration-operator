@@ -213,8 +213,10 @@ type InstallationSpec struct {
 
 // InstallationStatus defines the observed state of Installation
 type InstallationStatus struct {
-	Conditions []metav1.Condition                           `json:"conditions,omitempty"`
-	Phase      operatorsv1alpha1.ClusterServiceVersionPhase `json:"phase,omitempty"`
+	// +operator-sdk:csv:customresourcedefinitions:type=status
+	Conditions []metav1.Condition `json:"conditions,omitempty"`
+	// +operator-sdk:csv:customresourcedefinitions:type=status
+	Phase operatorsv1alpha1.ClusterServiceVersionPhase `json:"phase,omitempty"`
 }
 
 // +kubebuilder:object:root=true
