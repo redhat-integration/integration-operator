@@ -233,6 +233,7 @@ cleanup:
 	kubectl delete subscription $(INTEGRATION_OPERATOR_SUBSCRIPTION_NAME) $(AMQ_BROKER_SUBSCRIPTION_NAME) $(AMQ_STREAMS_SUBSCRIPTION_NAME) $(CAMEL_SUBSCRIPTION_NAME) $(SERVICE_REGISTRY_SUBSCRIPTION_NAME) -n openshift-operators --ignore-not-found
 	kubectl delete clusterserviceversion "dummy" $(INTEGRATION_OPERATOR_CURRENT_CSV) $(AMQ_BROKER_CURRENT_CSV) $(AMQ_STREAMS_CURRENT_CSV) $(CAMEL_CURRENT_CSV) $(SERVICE_REGISTRY_CURRENT_CSV) -n openshift-operators --ignore-not-found
 	kubectl delete namespace rhi-3scale rhi-3scale-apicast rhi-amq-interconnect rhi-api-designer rhi-fuse-console rhi-fuse-online --ignore-not-found
+	kubectl delete -f bundle/manifests/ --ignore-not-found
 
 replace-catalog-sources:
 	kubectl patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": true}]'
