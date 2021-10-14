@@ -23,8 +23,7 @@ metadata:
             },
             "amq-broker-installation": {
               "enabled": true,
-              "mode": "namespace",
-              "namespace": "rhi-amq-broker"
+              "mode": "cluster"
             },
             "amq-interconnect-installation": {
               "enabled": true,
@@ -62,9 +61,9 @@ metadata:
         }
       ]
     capabilities: Seamless Upgrades
-    operators.operatorframework.io/builder: operator-sdk-v1.10.0+git
+    operators.operatorframework.io/builder: operator-sdk-v1.13.0+git
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v3
-  name: integration-operator.v1.2.0
+  name: integration-operator.v1.2.1
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -132,6 +131,7 @@ spec:
         displayName: Installation Mode
         path: amq-broker-installation.mode
         x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:select:cluster
         - urn:alm:descriptor:com.tectonic.ui:select:namespace
       - description: Namespace where the operator will be installed
         displayName: Namespace
@@ -396,13 +396,13 @@ spec:
                 - /manager
                 env:
                 - name: CHANNEL_3SCALE
-                  value: threescale-2.10
+                  value: threescale-2.11
                 - name: CHANNEL_3SCALE_APICAST
-                  value: threescale-2.10
+                  value: threescale-2.11
                 - name: CHANNEL_AMQ_BROKER
                   value: 7.x
                 - name: CHANNEL_AMQ_INTERCONNECT
-                  value: 1.2.0
+                  value: 1.10.x
                 - name: CHANNEL_AMQ_STREAMS
                   value: amq-streams-1.8.x
                 - name: CHANNEL_API_DESIGNER
@@ -415,7 +415,7 @@ spec:
                   value: 7.9.x
                 - name: CHANNEL_SERVICE_REGISTRY
                   value: 2.x
-                image: quay.io/rh_integration/rhi-operator:v1.2.0
+                image: quay.io/rh_integration/rhi-operator:v1.2.1
                 livenessProbe:
                   httpGet:
                     path: /healthz
@@ -497,5 +497,5 @@ spec:
   maturity: stable
   provider:
     name: Red Hat
-  replaces: integration-operator.v1.1.0
-  version: 1.2.0
+  replaces: integration-operator.v1.2.0
+  version: 1.2.1

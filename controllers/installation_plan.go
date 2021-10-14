@@ -87,7 +87,7 @@ func CreateInstallationPlans(installation *integrationv1.Installation, config *I
 			Mode:          input.Mode,
 			Name:          "amq-broker-operator",
 			Namespace:     calculateNamespace(input.Mode, input.Namespace, "rhi-amq-broker"),
-			PackageName:   "amq-broker",
+			PackageName:   "amq-broker-rhel8",
 			StatusMessage: getStatusMessage(input.Enabled),
 		})
 	}

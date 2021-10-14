@@ -65,8 +65,8 @@ type AMQBrokerInstallationInput struct {
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Enabled",xDescriptors="urn:alm:descriptor:com.tectonic.ui:booleanSwitch"
 	Enabled bool `json:"enabled"`
 	// Operator available cluster wide or in a specific namespace
-	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Installation Mode",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:namespace"}
-	// +kubebuilder:validation:Enum=namespace
+	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Installation Mode",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:select:cluster","urn:alm:descriptor:com.tectonic.ui:select:namespace"}
+	// +kubebuilder:validation:Enum=namespace;cluster
 	Mode string `json:"mode"`
 	// Namespace where the operator will be installed
 	// +operator-sdk:csv:customresourcedefinitions:type=spec,displayName="Namespace",xDescriptors={"urn:alm:descriptor:com.tectonic.ui:text","urn:alm:descriptor:com.tectonic.ui:fieldDependency:amq-broker-installation.mode:namespace"}

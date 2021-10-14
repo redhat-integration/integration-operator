@@ -13,8 +13,7 @@ spec:
     namespace: rhi-3scale-apicast
   amq-broker-installation:
     enabled: true
-    mode: namespace
-    namespace: rhi-amq-broker
+    mode: cluster
   amq-interconnect-installation:
     enabled: true
     mode: namespace

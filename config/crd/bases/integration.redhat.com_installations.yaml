@@ -89,6 +89,7 @@ spec:
                       namespace
                     enum:
                     - namespace
+                    - cluster
                     type: string
                   namespace:
                     description: Namespace where the operator will be installed

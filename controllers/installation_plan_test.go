@@ -105,7 +105,7 @@ var _ = Describe("InstallationPlan", func() {
 			Expect(installationPlans[2].IsClusterMode()).To(BeFalse())
 			Expect(installationPlans[2].Name).To(Equal("amq-broker-operator"))
 			Expect(installationPlans[2].Namespace).To(Equal("rhi-amq-broker"))
-			Expect(installationPlans[2].PackageName).To(Equal("amq-broker"))
+			Expect(installationPlans[2].PackageName).To(Equal("amq-broker-rhel8"))
 
 			Expect(installationPlans[3].Channel).To(Equal("channel-amq-interconnect"))
 			Expect(installationPlans[3].ConditionType).To(Equal("AMQInterconnectOperatorInstalled"))

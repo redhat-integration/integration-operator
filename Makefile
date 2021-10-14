@@ -1,8 +1,8 @@
 # Environment variables required for 'make run'
-export CHANNEL_3SCALE = threescale-2.10
-export CHANNEL_3SCALE_APICAST = threescale-2.10
+export CHANNEL_3SCALE = threescale-2.11
+export CHANNEL_3SCALE_APICAST = threescale-2.11
 export CHANNEL_AMQ_BROKER = 7.x
-export CHANNEL_AMQ_INTERCONNECT = 1.2.0
+export CHANNEL_AMQ_INTERCONNECT = 1.10.x
 export CHANNEL_AMQ_STREAMS = amq-streams-1.8.x
 export CHANNEL_API_DESIGNER = fuse-apicurito-7.9.x
 export CHANNEL_CAMEL_K = 1.4.x
@@ -15,7 +15,7 @@ export CHANNEL_SERVICE_REGISTRY = 2.x
 # To re-generate a bundle for another specific version without changing the standard setup, you can:
 # - use the VERSION as arg of the bundle target (e.g make bundle VERSION=0.0.2)
 # - use environment variables to overwrite this value (e.g export VERSION=0.0.2)
-VERSION ?= 1.2.0
+VERSION ?= 1.2.1
 
 # CHANNELS define the bundle channels used in the bundle.
 # Add a new line here if you would like to change its default config. (E.g CHANNELS = "candidate,fast,stable")
@@ -210,7 +210,7 @@ endif
 # https://github.com/operator-framework/community-operators/blob/7f1438c/docs/packaging-operator.md#updating-your-existing-operator
 .PHONY: catalog-build
 catalog-build: opm ## Build a catalog image.
-	cd /tmp && $(OPM) index add --container-tool podman --tag $(CATALOG_IMG) --bundles $(BUNDLE_IMGS) $(FROM_INDEX_OPT)
+	$(OPM) index add --container-tool podman --tag $(CATALOG_IMG) --bundles $(BUNDLE_IMGS) $(FROM_INDEX_OPT)
 
 # Push the catalog image.
 .PHONY: catalog-push
@@ -219,6 +219,8 @@ catalog-push: ## Push a catalog image.
 
 INTEGRATION_OPERATOR_SUBSCRIPTION_NAME = integration-operator
 INTEGRATION_OPERATOR_CURRENT_CSV = $(shell oc get subscription $(INTEGRATION_OPERATOR_SUBSCRIPTION_NAME) -n openshift-operators -o json | jq .status.currentCSV)
+AMQ_BROKER_SUBSCRIPTION_NAME = amq-broker-operator
+AMQ_BROKER_CURRENT_CSV = $(shell oc get subscription $(AMQ_BROKER_SUBSCRIPTION_NAME) -n openshift-operators -o json | jq .status.currentCSV)
 AMQ_STREAMS_SUBSCRIPTION_NAME = amq-streams-operator
 AMQ_STREAMS_CURRENT_CSV = $(shell oc get subscription $(AMQ_STREAMS_SUBSCRIPTION_NAME) -n openshift-operators -o json | jq .status.currentCSV)
 CAMEL_SUBSCRIPTION_NAME = camel-k-operator
@@ -228,9 +230,9 @@ SERVICE_REGISTRY_CURRENT_CSV = $(shell oc get subscription $(SERVICE_REGISTRY_SU
 
 cleanup:
 	kubectl delete installation rhi-installation --ignore-not-found
-	kubectl delete subscription $(INTEGRATION_OPERATOR_SUBSCRIPTION_NAME) $(AMQ_STREAMS_SUBSCRIPTION_NAME) $(CAMEL_SUBSCRIPTION_NAME) $(SERVICE_REGISTRY_SUBSCRIPTION_NAME) -n openshift-operators --ignore-not-found
-	kubectl delete clusterserviceversion "dummy" $(INTEGRATION_OPERATOR_CURRENT_CSV) $(AMQ_STREAMS_CURRENT_CSV) $(CAMEL_CURRENT_CSV) $(SERVICE_REGISTRY_CURRENT_CSV) -n openshift-operators --ignore-not-found
-	kubectl delete namespace rhi-3scale rhi-3scale-apicast rhi-amq-broker rhi-amq-interconnect rhi-api-designer rhi-fuse-console rhi-fuse-online --ignore-not-found
+	kubectl delete subscription $(INTEGRATION_OPERATOR_SUBSCRIPTION_NAME) $(AMQ_BROKER_SUBSCRIPTION_NAME) $(AMQ_STREAMS_SUBSCRIPTION_NAME) $(CAMEL_SUBSCRIPTION_NAME) $(SERVICE_REGISTRY_SUBSCRIPTION_NAME) -n openshift-operators --ignore-not-found
+	kubectl delete clusterserviceversion "dummy" $(INTEGRATION_OPERATOR_CURRENT_CSV) $(AMQ_BROKER_CURRENT_CSV) $(AMQ_STREAMS_CURRENT_CSV) $(CAMEL_CURRENT_CSV) $(SERVICE_REGISTRY_CURRENT_CSV) -n openshift-operators --ignore-not-found
+	kubectl delete namespace rhi-3scale rhi-3scale-apicast rhi-amq-interconnect rhi-api-designer rhi-fuse-console rhi-fuse-online --ignore-not-found
 
 replace-catalog-sources:
 	kubectl patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": true}]'
