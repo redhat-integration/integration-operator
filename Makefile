@@ -3,11 +3,11 @@ export CHANNEL_3SCALE = threescale-2.11
 export CHANNEL_3SCALE_APICAST = threescale-2.11
 export CHANNEL_AMQ_BROKER = 7.x
 export CHANNEL_AMQ_INTERCONNECT = 1.10.x
-export CHANNEL_AMQ_STREAMS = amq-streams-1.8.x
-export CHANNEL_API_DESIGNER = fuse-apicurito-7.9.x
-export CHANNEL_CAMEL_K = 1.4.x
-export CHANNEL_FUSE_CONSOLE = 7.9.x
-export CHANNEL_FUSE_ONLINE = 7.9.x
+export CHANNEL_AMQ_STREAMS = stable
+export CHANNEL_API_DESIGNER = fuse-apicurito-7.10.x
+export CHANNEL_CAMEL_K = 1.6.x
+export CHANNEL_FUSE_CONSOLE = 7.10.x
+export CHANNEL_FUSE_ONLINE = 7.10.x
 export CHANNEL_SERVICE_REGISTRY = 2.x
 
 # VERSION defines the project version for the bundle.
